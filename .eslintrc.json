@@ -1,0 +1,164 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "import-helpers",
+    "react-hooks",
+    "jest",
+    "prettier"
+  ],
+  "extends": [
+    "airbnb",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "react-hooks/rules-of-hooks": "off"
+      }
+    }
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "class-methods-use-this": "off",
+    "camelcase": "off",
+    "no-console": "off",
+    "no-new": "off",
+    "no-async-promise-executor": "off",
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "import/no-dynamic-require": "off",
+    "import/no-duplicates": "off",
+    "import/no-cycle": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "no-await-in-loop": "off",
+    "no-use-before-define": "off",
+    "no-useless-constructor": "off",
+    "no-restricted-syntax": "off",
+    "no-unused-expressions": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "no-underscore-dangle": "off",
+    "jsx-a11y/label-has-for": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-curly-newline": "off",
+    "react/prop-types": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_|^next$"
+      }
+    ],
+    "react/jsx-filename-extension": [
+      "warn",
+      {
+        "extensions": [
+          ".jsx",
+          ".tsx"
+        ]
+      }
+    ],
+    "import-helpers/order-imports": [
+      "warn",
+      {
+        "newlinesBetween": "always",
+        "groups": [
+          [
+            "/^react/"
+          ],
+          "module",
+          "/^@config/",
+          "/^@/",
+          "/^~/",
+          [
+            "parent",
+            "sibling",
+            "index"
+          ]
+        ],
+        "alphabetize": {
+          "order": "asc",
+          "ignoreCase": true
+        }
+      }
+    ],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "interface",
+        "format": [
+          "PascalCase"
+        ],
+        "custom": {
+          "regex": "^[A-Z]",
+          "match": true
+        }
+      }
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "object": false
+        }
+      }
+    ]
+  },
+  "settings": {
+    "import/extensions": [
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx"
+    ],
+    "import/parsers": {
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx"
+      ]
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "packages/**/tsconfig.json"
+      }
+    }
+  }
+}
