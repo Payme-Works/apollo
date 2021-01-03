@@ -4,9 +4,9 @@ import { startedServer } from '@/utils/ares/startAresPythonServer';
 
 let aresApi: AxiosInstance;
 
-aresApi = axios.create({
-  baseURL: `http://localhost:5000`,
-});
+// aresApi = axios.create({
+//   baseURL: `http://localhost:5000`,
+// });
 
 function createAresApi() {
   if (aresApi) {
