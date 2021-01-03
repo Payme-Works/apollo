@@ -29,6 +29,12 @@ export const Container = styled.div<IContainerProps>`
       --border-color-hover: ${theme.colors.palette.green['accent-1']};
     `}
 
+    ${status === 'loss' &&
+    css`
+      --border-color: ${theme.colors.palette.red['accent-2']};
+      --border-color-hover: ${theme.colors.palette.red['accent-1']};
+    `}
+
     color: var(--color);
 
     border: 1px solid var(--border-color);
