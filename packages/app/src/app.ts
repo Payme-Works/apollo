@@ -61,7 +61,7 @@ async function launch() {
   const signalsFilePath = path.resolve(__dirname, 'signals.txt');
 
   const date = updateDate(new Date(), {
-    year: 2020,
+    year: 2021,
     month: Number(process.env.MONTH) - 1,
     date: Number(process.env.DAY),
   });
