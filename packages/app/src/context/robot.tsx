@@ -2,7 +2,8 @@ import React, { createContext, useState, useContext, useCallback } from 'react';
 
 import { subSeconds } from 'date-fns';
 
-import { ISignalWithStatus, useSignals } from '@/context/signals';
+import { ISignalWithStatus, Status, useSignals } from '@/context/signals';
+import getRandomInt from '@/utils/getRandomInt';
 
 interface ITask {
   signal_id: string;
@@ -45,8 +46,6 @@ const RobotProvider: React.FC = ({ children }) => {
         signal_id: signal.id,
         task: setTimeout(() => {
           if (signal.status === 'canceled') {
-            console.log('cancellleddddd');
-
             updateSignal(signal.id, {
               status: 'passed',
             });
@@ -61,9 +60,16 @@ const RobotProvider: React.FC = ({ children }) => {
           // queueSignal(signal);
 
           setTimeout(() => {
-            console.log(2);
+            const randomInt = getRandomInt(0, 100);
+
+            let result: Status = 'loss';
+
+            if (randomInt % 2) {
+              result = 'win';
+            }
+
             updateSignal(signal.id, {
-              status: 'win',
+              status: result,
             });
 
             console.log(signal);

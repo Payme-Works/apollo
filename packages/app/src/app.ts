@@ -462,6 +462,11 @@ async function launch() {
   Cache.set('initial-balance', profile.balance);
   Cache.set('balance', profile.balance);
 
+  // Cache.set<IDuplicateNextOrder>('duplicate-next-order', {
+  //   profit: -12597.7,
+  //   ignore_expiration: undefined,
+  // });
+
   console.log(`Price amount: ${PRICE_AMOUNT}`);
   console.log(`Max martingale: ${MAX_MARTINGALE}`);
   console.log(
