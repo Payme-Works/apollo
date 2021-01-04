@@ -23,6 +23,8 @@ export async function createOrder(
 ): Promise<ICreateOrderResponse> {
   const expiration = getExpirationTime(data.expiration);
 
+  data.price_amount = Number(data.price_amount.toFixed(2));
+
   try {
     const response = await aresApi.post<ICreateOrderAxiosResponse>('/orders', {
       ...data,

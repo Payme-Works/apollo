@@ -35,6 +35,7 @@ const SignalsList: React.FC = () => {
     <Container>
       {sortedSignals.map(signal => (
         <Signal
+          key={signal.id}
           data={signal}
           onCancel={() => handleToggleSignalStatus(signal, 'canceled')}
           onResume={() => handleToggleSignalStatus(signal, 'waiting')}

@@ -27,14 +27,6 @@
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
-  "overrides": [
-    {
-      "files": ["**/*.ts"],
-      "rules": {
-        "react-hooks/rules-of-hooks": "off"
-      }
-    }
-  ],
   "rules": {
     "prettier/prettier": "error",
     "class-methods-use-this": "off",
@@ -65,7 +57,6 @@
     "react/jsx-curly-newline": "off",
     "react/prop-types": "off",
     "react/jsx-one-expression-per-line": "off",
-    "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/no-unused-vars": [
       "error",
