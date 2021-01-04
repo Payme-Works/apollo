@@ -23,6 +23,12 @@ export const Container = styled.div<IContainerProps>`
       --border-color-hover: ${theme.colors.background['accent-2']};
     `}
 
+    ${status === 'in_progress' &&
+    css`
+      --border-color: ${theme.colors.palette.yellow['accent-2']};
+      --border-color-hover: ${theme.colors.palette.yellow['accent-1']};
+    `}
+
     ${status === 'win' &&
     css`
       --border-color: ${theme.colors.palette.green['accent-2']};

@@ -12,7 +12,7 @@ import { Container, Flex, Info } from './styles';
 const Profile: React.FC = () => {
   const theme = useContext(ThemeContext);
 
-  const { profile } = useAuthentication();
+  const { profile, profit } = useAuthentication();
 
   const formattedBalance = useMemo(() => {
     const formatted = formatPrice(profile?.balance);
@@ -23,6 +23,24 @@ const Profile: React.FC = () => {
       decimals: split[1],
     };
   }, [profile]);
+
+  const formattedProfit = useMemo(() => {
+    const formatted = formatPrice(profit);
+    const split = formatted.split(',');
+
+    return {
+      main: split[0],
+      decimals: split[1],
+    };
+  }, [profit]);
+
+  const profitLabelColor = useMemo(
+    () =>
+      profit >= 0
+        ? theme.colors.palette.green.base
+        : theme.colors.palette.red.base,
+    [profit],
+  );
 
   return (
     <Container>
@@ -37,10 +55,11 @@ const Profile: React.FC = () => {
           </dd>
         </Info>
 
-        <Info color={theme.colors.palette.green.base}>
+        <Info color={profitLabelColor}>
           <dt>Hoje</dt>
           <dd>
-            R$ 20,<span id="decimals">10</span>
+            {formattedProfit.main},
+            <span id="decimals">{formattedProfit.decimals}</span>
           </dd>
         </Info>
       </Flex>

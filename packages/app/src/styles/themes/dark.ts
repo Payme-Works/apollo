@@ -32,6 +32,11 @@ const darkTheme: DefaultTheme = {
         'accent-1': '#FF7373',
         'accent-2': '#954D4D',
       },
+      yellow: {
+        base: '#FFD15A',
+        'accent-1': '#FFD773',
+        'accent-2': '#95804D',
+      },
     },
   },
 };

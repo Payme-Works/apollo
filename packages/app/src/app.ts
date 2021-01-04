@@ -14,7 +14,7 @@ import {
 import path from 'path';
 
 import IEvent from '@/interfaces/economic-calendar/IEvent';
-import { InstrumentType } from '@/interfaces/order/IOrder';
+import IOrder, { InstrumentType } from '@/interfaces/order/IOrder';
 import ISignal, { Expiration } from '@/interfaces/signal/ISignal';
 import {
   createOrder,
@@ -310,7 +310,7 @@ async function launch() {
           Cache.set<IDuplicateNextOrder>('duplicate-next-order', null);
         }
 
-        const data = {
+        const data: IOrder = {
           type,
           active: signal.active,
           price_amount: duplicateLastLossPriceAmount || PRICE_AMOUNT,
@@ -322,7 +322,14 @@ async function launch() {
 
         try {
           order = await createOrder(data);
-        } catch {
+        } catch (err) {
+          console.log(
+            `[${formatSignal(
+              signal,
+            )}] Occurred an unexpected error while creating order:`,
+            err,
+          );
+
           signalsInProgress = signalsInProgress.filter(
             item => item.id !== signal.id,
           );

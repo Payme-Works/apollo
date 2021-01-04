@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 
 import { addMinutes } from 'date-fns';
+import { startOfMinute } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 
@@ -22,6 +23,7 @@ export type Status =
 
 export interface ISignalWithStatus extends ISignal {
   status: Status;
+  warning?: string;
   result?: {
     martingale: number;
     profit: number;
@@ -44,42 +46,42 @@ const SignalsProvider: React.FC = ({ children }) => {
     setSignals([
       {
         id: 'a879-aaad-9dwa',
-        active: 'EUR/USD',
+        active: 'EURUSD',
         action: 'call',
-        date: addMinutes(new Date(), 1),
-        expiration: 'm5',
+        date: startOfMinute(addMinutes(new Date(), 2)),
+        expiration: 'm1',
         status: 'waiting',
       },
       {
         id: 'a879-d988-9dwa',
-        active: 'EUR/USD',
+        active: 'EURUSD',
         action: 'call',
-        date: addMinutes(new Date(), 2),
-        expiration: 'm5',
+        date: startOfMinute(addMinutes(new Date(), 3)),
+        expiration: 'm1',
         status: 'waiting',
       },
       {
         id: 'a879-awdad-9dwa',
-        active: 'EUR/USD',
+        active: 'EURUSD',
         action: 'put',
-        date: addMinutes(new Date(), 3),
-        expiration: 'm5',
+        date: startOfMinute(addMinutes(new Date(), 4)),
+        expiration: 'm1',
         status: 'waiting',
       },
       {
         id: 'a879-1233-9dwa',
-        active: 'EUR/USD',
+        active: 'EURUSD',
         action: 'call',
-        date: addMinutes(new Date(), 4),
-        expiration: 'm5',
+        date: startOfMinute(addMinutes(new Date(), 5)),
+        expiration: 'm1',
         status: 'waiting',
       },
       {
         id: 'a879-124a-9dwa',
-        active: 'EUR/USD',
+        active: 'EURUSD',
         action: 'call',
-        date: addMinutes(new Date(), 5),
-        expiration: 'm5',
+        date: startOfMinute(addMinutes(new Date(), 6)),
+        expiration: 'm1',
         status: 'waiting',
       },
     ]);
