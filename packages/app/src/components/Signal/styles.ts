@@ -44,7 +44,7 @@ export const Container = styled.div<IContainerProps>`
     color: var(--color);
 
     border: 1px solid var(--border-color);
-    border-radius: ${theme.borderRadius.lg};
+    border-radius: ${theme.borderRadius.md};
 
     padding: ${theme.spaces[2]} ${theme.spaces[4]};
 
