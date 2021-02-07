@@ -1,4 +1,11 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 
 import { subSeconds } from 'date-fns';
 
@@ -10,7 +17,12 @@ import {
   ICreateOrderResponse,
 } from '@/services/ares/order/CreateOrderService';
 import { useMartingaleStrategy } from '@/services/ares/order/hooks/strategies/MartingaleStrategy';
+import Cache from '@/services/cache';
 import getActiveInfo from '@/utils/getActiveInfo';
+
+interface IRecoverLostOrder {
+  profit: number;
+}
 
 interface ITask {
   signal_id: string;
@@ -23,11 +35,20 @@ interface RobotContext {
   stop(): void;
 }
 
+/* const NOT_AVAILABLE_SIGNAL_STATUS: Status[] = [
+  'expired',
+  'in_progress',
+  'win',
+  'loss',
+]; */
+
 const RobotContext = createContext<RobotContext | null>(null);
 
 const RobotProvider: React.FC = ({ children }) => {
-  const { signals, updateSignal } = useSignals();
-  const { refreshProfile, setProfit } = useAuthentication();
+  const { signals, updateSignal, isSignalAvailable } = useSignals();
+  const { refreshProfile, profit, setProfit } = useAuthentication();
+
+  const checkerTaskIdRef = useRef<NodeJS.Timeout>();
 
   const [isRunning, setIsRunning] = useState(false);
 
@@ -40,21 +61,15 @@ const RobotProvider: React.FC = ({ children }) => {
       let timeout = dateLessThirtySeconds.getTime() - Date.now();
 
       if (timeout <= 0) {
-        updateSignal(signal.id, {
-          status: 'passed',
-        });
-
         return;
       }
-
-      console.log(signal);
 
       const task: ITask = {
         signal_id: signal.id,
         task: setTimeout(async () => {
           if (signal.status === 'canceled') {
             updateSignal(signal.id, {
-              status: 'passed',
+              status: 'expired',
               warning: 'Signal canceled',
             });
 
@@ -73,7 +88,7 @@ const RobotProvider: React.FC = ({ children }) => {
 
             if (!activeInfo.digital.open) {
               updateSignal(signal.id, {
-                status: 'passed',
+                status: 'expired',
                 warning: 'Active closed',
               });
 
@@ -96,10 +111,39 @@ const RobotProvider: React.FC = ({ children }) => {
               status: 'in_progress',
             });
 
+            let priceAmount = 2;
+
+            const differencePercentage = activeProfit / 100;
+
+            let recoverLostOrder = Cache.get<IRecoverLostOrder>(
+              'recover-lost-order',
+            );
+
+            console.log(signal, recoverLostOrder);
+
+            if (recoverLostOrder && recoverLostOrder.profit < 0) {
+              const positiveLastProfit = recoverLostOrder.profit * -1;
+
+              priceAmount = Number(
+                positiveLastProfit / differencePercentage + priceAmount,
+              );
+
+              if (profit - priceAmount <= -10 /* STOP LOSS */) {
+                priceAmount /= 1.5;
+              }
+
+              console.log(
+                signal,
+                `Duplicating order price, because previous order was lost: ${priceAmount}`,
+              );
+
+              Cache.set('recover-lost-order', null);
+            }
+
             const data: IOrder = {
               type,
               active: signal.active,
-              price_amount: 2,
+              price_amount: priceAmount,
               action: signal.action,
               expiration: signal.expiration,
             };
@@ -110,7 +154,7 @@ const RobotProvider: React.FC = ({ children }) => {
               order = await createOrder(data);
             } catch (err) {
               updateSignal(signal.id, {
-                status: 'passed',
+                status: 'expired',
                 warning: 'Unexpected error while creating order',
               });
 
@@ -129,8 +173,8 @@ const RobotProvider: React.FC = ({ children }) => {
                 1,
                 activeProfit,
                 2,
-                ({ profit: martingaleProfit, martingale, result, next }) => {
-                  if (martingaleProfit * -1 + next.price_amount <= 5) {
+                ({ martingale, result, next }) => {
+                  if (profit - next.price_amount <= -10 /* STOP LOSS */) {
                     const nextPriceAmount = next.price_amount / 1.5;
 
                     next.setPriceAmount(nextPriceAmount);
@@ -183,6 +227,22 @@ const RobotProvider: React.FC = ({ children }) => {
               });
             }
 
+            recoverLostOrder = Cache.get<IRecoverLostOrder>(
+              'recover-lost-order',
+            );
+
+            if (finalProfit < 0) {
+              let recoverProfit = finalProfit;
+
+              if (priceAmount > 2) {
+                recoverProfit += priceAmount;
+              }
+
+              Cache.set<IRecoverLostOrder>('recover-lost-order', {
+                profit: recoverProfit,
+              });
+            }
+
             setProfit(state => state + finalProfit);
 
             await refreshProfile();
@@ -196,7 +256,7 @@ const RobotProvider: React.FC = ({ children }) => {
         status: 'waiting',
       });
     },
-    [setProfit, updateSignal],
+    [profit, refreshProfile, setProfit, updateSignal],
   );
 
   const start = useCallback(() => {
@@ -209,7 +269,10 @@ const RobotProvider: React.FC = ({ children }) => {
     signals.forEach(signal => {
       const findTask = tasks.find(task => task.signal_id === signal.id);
 
-      if (findTask && signal.status === 'waiting') {
+      if (
+        findTask &&
+        (signal.status === 'waiting' || signal.status === 'canceled')
+      ) {
         clearTimeout(findTask.task);
 
         const newTasks = tasks.filter(task => task.signal_id === signal.id);
@@ -220,6 +283,37 @@ const RobotProvider: React.FC = ({ children }) => {
 
     setIsRunning(false);
   }, [signals, tasks]);
+
+  useEffect(() => {
+    const checkerTaskId = checkerTaskIdRef.current;
+
+    if (checkerTaskId) {
+      clearInterval(checkerTaskId);
+
+      if (isRunning) {
+        return;
+      }
+    }
+
+    checkerTaskIdRef.current = setInterval(() => {
+      console.log(checkerTaskId);
+
+      signals.forEach(signal => {
+        if (
+          (signal.status !== 'waiting' && signal.status !== 'canceled') ||
+          isSignalAvailable(signal, ['date'])
+        ) {
+          return;
+        }
+
+        console.log(signal);
+
+        updateSignal(signal.id, {
+          status: 'expired',
+        });
+      });
+    }, 1000);
+  }, [signals, isSignalAvailable, isRunning, updateSignal]);
 
   return (
     <RobotContext.Provider

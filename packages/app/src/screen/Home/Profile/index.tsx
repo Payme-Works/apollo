@@ -34,12 +34,20 @@ const Profile: React.FC = () => {
     };
   }, [profit]);
 
+  const balanceLabelColor = useMemo(
+    () =>
+      profile?.balance_active === 'real'
+        ? theme.colors.foreground.base
+        : theme.colors.palette.orange.base,
+    [profile, theme],
+  );
+
   const profitLabelColor = useMemo(
     () =>
       profit >= 0
         ? theme.colors.palette.green.base
         : theme.colors.palette.red.base,
-    [profit],
+    [profit, theme],
   );
 
   return (
@@ -47,7 +55,7 @@ const Profile: React.FC = () => {
       <Flex>
         <Avatar />
 
-        <Info color={theme.colors.foreground.base}>
+        <Info color={balanceLabelColor}>
           <dt>Seu saldo</dt>
           <dd>
             {formattedBalance.main},

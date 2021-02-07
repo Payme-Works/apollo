@@ -55,7 +55,7 @@ export const Info = styled.dl<IInfoProps>`
     cursor: default;
 
     > dt {
-      color: ${theme.colors.foreground['accent-1']};
+      color: ${theme.colors.foreground.base};
       font-weight: ${theme.fonts.weights.light};
       font-size: ${theme.fonts.sizes.xl};
     }

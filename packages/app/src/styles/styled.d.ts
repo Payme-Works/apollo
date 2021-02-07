@@ -27,6 +27,7 @@ declare module 'styled-components' {
         green: IAccent;
         red: IAccent;
         yellow: IAccent;
+        orange: IAccent;
       };
     };
     fonts: {

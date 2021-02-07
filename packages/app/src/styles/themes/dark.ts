@@ -37,6 +37,11 @@ const darkTheme: DefaultTheme = {
         'accent-1': '#FFD773',
         'accent-2': '#95804D',
       },
+      orange: {
+        base: '#F97153',
+        'accent-1': '#FB8F76',
+        'accent-2': '#D92E08',
+      },
     },
   },
 };
