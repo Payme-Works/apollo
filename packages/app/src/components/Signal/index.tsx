@@ -32,11 +32,16 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     data,
   ]);
 
+  const activeLabelWidth = useMemo(
+    () => (data.active.includes('OTC') ? theme.sizes[32] : theme.sizes[20]),
+    [data.active, theme.sizes],
+  );
+
   return (
     <Container status={data.status}>
       <Flex>
         <Label width={theme.sizes[14]}>{formattedData.date}</Label>
-        <Label width={theme.sizes[32]}>{formattedData.active}</Label>
+        <Label width={activeLabelWidth}>{formattedData.active}</Label>
         <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
         <Label width={theme.sizes[10]}>{formattedData.action}</Label>
       </Flex>
