@@ -25,6 +25,10 @@ export async function createOrder(
 
   data.price_amount = Number(data.price_amount.toFixed(2));
 
+  if (data.price_amount < 2) {
+    data.price_amount = 2;
+  }
+
   try {
     const response = await aresApi.post<ICreateOrderAxiosResponse>('/orders', {
       ...data,

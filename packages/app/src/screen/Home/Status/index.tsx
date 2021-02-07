@@ -43,7 +43,7 @@ const Status: React.FC = () => {
       <Content>
         {isRunning ? (
           <>
-            <p>O robô está rodando.</p>
+            <p>O robô está em execução.</p>
             <Button onClick={handleStop}>Parar</Button>
           </>
         ) : (

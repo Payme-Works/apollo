@@ -1,9 +1,9 @@
 import React, { useContext, useMemo } from 'react';
 
-import { format, isBefore } from 'date-fns';
+import { format } from 'date-fns';
 import { ThemeContext } from 'styled-components';
 
-import { ISignalWithStatus, Status } from '@/context/signals';
+import { ISignalWithStatus, useSignals } from '@/context/signals';
 
 import { Container, Flex, Label } from './styles';
 
@@ -13,10 +13,10 @@ interface ISignalProps {
   onResume(): void;
 }
 
-const PASSED_STATUS: Status[] = ['passed', 'in_progress', 'win', 'loss'];
-
 const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
   const theme = useContext(ThemeContext);
+
+  const { isSignalAvailable } = useSignals();
 
   const formattedData = useMemo(() => {
     return {
@@ -27,22 +27,21 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     };
   }, [data]);
 
-  const isPassed = useMemo(() => {
-    return (
-      PASSED_STATUS.includes(data.status) || isBefore(data.date, new Date())
-    );
-  }, [data.status, data.date]);
+  const isAvailable = useMemo(() => isSignalAvailable(data), [
+    isSignalAvailable,
+    data,
+  ]);
 
   return (
     <Container status={data.status}>
       <Flex>
         <Label width={theme.sizes[14]}>{formattedData.date}</Label>
-        <Label width={theme.sizes[20]}>{formattedData.active}</Label>
+        <Label width={theme.sizes[32]}>{formattedData.active}</Label>
         <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
         <Label width={theme.sizes[10]}>{formattedData.action}</Label>
       </Flex>
 
-      {!isPassed && (
+      {isAvailable && (
         <>
           {data.status === 'canceled' ? (
             <span

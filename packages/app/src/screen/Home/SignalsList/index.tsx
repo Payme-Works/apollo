@@ -17,7 +17,7 @@ const SignalsList: React.FC = () => {
       }
 
       if (isBefore(signal.date.getTime(), Date.now())) {
-        updateSignal(signal.id, { status: 'passed' });
+        updateSignal(signal.id, { status: 'expired' });
         return;
       }
 

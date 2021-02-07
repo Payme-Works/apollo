@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 
-import { addMinutes } from 'date-fns';
+import { addMinutes, isBefore, subSeconds } from 'date-fns';
 import { startOfMinute } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
@@ -15,8 +15,8 @@ import ISignal from '@/interfaces/signal/ISignal';
 
 export type Status =
   | 'waiting'
-  | 'passed'
   | 'canceled'
+  | 'expired'
   | 'in_progress'
   | 'win'
   | 'loss';
@@ -32,9 +32,15 @@ export interface ISignalWithStatus extends ISignal {
 
 type IUpdateSignalData = PartialDeep<Omit<ISignalWithStatus, 'id'>>;
 
+type AvailabilityFactor = 'date' | 'status';
+
 interface SignalsContext {
   signals: ISignalWithStatus[];
   updateSignal(signalId: string, data: IUpdateSignalData): void;
+  isSignalAvailable(
+    signal: ISignalWithStatus,
+    availabilityFactors?: AvailabilityFactor[],
+  ): boolean;
 }
 
 const SignalsContext = createContext<SignalsContext | null>(null);
@@ -46,41 +52,41 @@ const SignalsProvider: React.FC = ({ children }) => {
     setSignals([
       {
         id: 'a879-aaad-9dwa',
-        active: 'EURUSD',
+        active: 'EURUSD-OTC',
+        action: 'call',
+        date: startOfMinute(addMinutes(new Date(), 1)),
+        expiration: 'm1',
+        status: 'waiting',
+      },
+      {
+        id: 'a879-d988-9dwa',
+        active: 'EURUSD-OTC',
         action: 'call',
         date: startOfMinute(addMinutes(new Date(), 2)),
         expiration: 'm1',
         status: 'waiting',
       },
       {
-        id: 'a879-d988-9dwa',
-        active: 'EURUSD',
-        action: 'call',
+        id: 'a879-awdad-9dwa',
+        active: 'EURUSD-OTC',
+        action: 'put',
         date: startOfMinute(addMinutes(new Date(), 3)),
         expiration: 'm1',
         status: 'waiting',
       },
       {
-        id: 'a879-awdad-9dwa',
-        active: 'EURUSD',
-        action: 'put',
+        id: 'a879-1233-9dwa',
+        active: 'EURUSD-OTC',
+        action: 'call',
         date: startOfMinute(addMinutes(new Date(), 4)),
         expiration: 'm1',
         status: 'waiting',
       },
       {
-        id: 'a879-1233-9dwa',
-        active: 'EURUSD',
+        id: 'a879-124a-9dwa',
+        active: 'EURUSD-OTC',
         action: 'call',
         date: startOfMinute(addMinutes(new Date(), 5)),
-        expiration: 'm1',
-        status: 'waiting',
-      },
-      {
-        id: 'a879-124a-9dwa',
-        active: 'EURUSD',
-        action: 'call',
-        date: startOfMinute(addMinutes(new Date(), 6)),
         expiration: 'm1',
         status: 'waiting',
       },
@@ -95,15 +101,42 @@ const SignalsProvider: React.FC = ({ children }) => {
         signal => signal.id === signalId,
       );
 
-      assign(newSignals[signalIndex], data);
+      newSignals[signalIndex] = { ...assign(newSignals[signalIndex], data) };
 
       setSignals(newSignals);
     },
     [signals],
   );
 
+  const isSignalAvailable = useCallback(
+    (
+      signal: ISignalWithStatus,
+      availabilityFactors: AvailabilityFactor[] = ['date', 'status'],
+    ): boolean => {
+      if (
+        availabilityFactors.includes('date') &&
+        !isBefore(Date.now(), subSeconds(signal.date, 30))
+      ) {
+        return false;
+      }
+
+      if (
+        availabilityFactors.includes('status') &&
+        signal.status !== 'waiting' &&
+        signal.status !== 'canceled'
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    [],
+  );
+
   return (
-    <SignalsContext.Provider value={{ signals, updateSignal }}>
+    <SignalsContext.Provider
+      value={{ signals, updateSignal, isSignalAvailable }}
+    >
       {children}
     </SignalsContext.Provider>
   );

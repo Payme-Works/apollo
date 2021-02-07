@@ -16,7 +16,7 @@ export const Container = styled.div<IContainerProps>`
     --border-color: ${theme.colors.background['accent-2']};
     --border-color-hover: ${theme.colors.background['accent-3']};
 
-    ${(status === 'canceled' || status === 'passed') &&
+    ${(status === 'canceled' || status === 'expired') &&
     css`
       --color: ${theme.transparencies[3](theme.colors.foreground['accent-1'])};
       --border-color: ${theme.colors.background['accent-1']};
