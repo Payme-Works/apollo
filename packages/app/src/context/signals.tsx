@@ -32,15 +32,11 @@ export interface ISignalWithStatus extends ISignal {
 
 type IUpdateSignalData = PartialDeep<Omit<ISignalWithStatus, 'id'>>;
 
-type AvailabilityFactor = 'date' | 'status';
-
 interface SignalsContext {
   signals: ISignalWithStatus[];
   updateSignal(signalId: string, data: IUpdateSignalData): void;
-  isSignalAvailable(
-    signal: ISignalWithStatus,
-    availabilityFactors?: AvailabilityFactor[],
-  ): boolean;
+  isSignalAvailable(signal: ISignalWithStatus): boolean;
+  hasSignalResult(signal: ISignalWithStatus): boolean;
 }
 
 const SignalsContext = createContext<SignalsContext | null>(null);
@@ -109,33 +105,20 @@ const SignalsProvider: React.FC = ({ children }) => {
   );
 
   const isSignalAvailable = useCallback(
-    (
-      signal: ISignalWithStatus,
-      availabilityFactors: AvailabilityFactor[] = ['date', 'status'],
-    ): boolean => {
-      if (
-        availabilityFactors.includes('date') &&
-        !isBefore(Date.now(), subSeconds(signal.date, 30))
-      ) {
-        return false;
-      }
+    (signal: ISignalWithStatus): boolean =>
+      isBefore(Date.now(), subSeconds(signal.date, 30)),
+    [],
+  );
 
-      if (
-        availabilityFactors.includes('status') &&
-        signal.status !== 'waiting' &&
-        signal.status !== 'canceled'
-      ) {
-        return false;
-      }
-
-      return true;
-    },
+  const hasSignalResult = useCallback(
+    (signal: ISignalWithStatus) =>
+      signal.status !== 'waiting' && signal.status !== 'canceled',
     [],
   );
 
   return (
     <SignalsContext.Provider
-      value={{ signals, updateSignal, isSignalAvailable }}
+      value={{ signals, updateSignal, isSignalAvailable, hasSignalResult }}
     >
       {children}
     </SignalsContext.Provider>

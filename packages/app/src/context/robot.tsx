@@ -45,7 +45,12 @@ interface RobotContext {
 const RobotContext = createContext<RobotContext | null>(null);
 
 const RobotProvider: React.FC = ({ children }) => {
-  const { signals, updateSignal, isSignalAvailable } = useSignals();
+  const {
+    signals,
+    updateSignal,
+    isSignalAvailable,
+    hasSignalResult,
+  } = useSignals();
   const { refreshProfile, profit, setProfit } = useAuthentication();
 
   const checkerTaskIdRef = useRef<NodeJS.Timeout>();
@@ -296,24 +301,17 @@ const RobotProvider: React.FC = ({ children }) => {
     }
 
     checkerTaskIdRef.current = setInterval(() => {
-      console.log(checkerTaskId);
-
       signals.forEach(signal => {
-        if (
-          (signal.status !== 'waiting' && signal.status !== 'canceled') ||
-          isSignalAvailable(signal, ['date'])
-        ) {
+        if (isSignalAvailable(signal) || hasSignalResult(signal)) {
           return;
         }
-
-        console.log(signal);
 
         updateSignal(signal.id, {
           status: 'expired',
         });
       });
     }, 1000);
-  }, [signals, isSignalAvailable, isRunning, updateSignal]);
+  }, [signals, isSignalAvailable, isRunning, updateSignal, hasSignalResult]);
 
   return (
     <RobotContext.Provider
