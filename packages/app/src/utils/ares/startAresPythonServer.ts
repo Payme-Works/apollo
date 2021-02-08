@@ -1,4 +1,5 @@
 import childProcess from 'child_process';
+import fs from 'fs';
 import { merge } from 'lodash';
 
 import aresConfig from '@/config/ares';
@@ -35,7 +36,13 @@ export default async function startAresPythonServer(): Promise<IServer> {
     if (guessPackaged()) {
       pythonProcess = childProcess.execFile(pythonScriptPath);
     } else {
-      pythonProcess = childProcess.spawn(aresConfig.virtualEnvPath.python3, [
+      let pythonCommand = aresConfig.virtualEnvPath.python3;
+
+      if (!fs.existsSync(pythonCommand)) {
+        pythonCommand = 'python3';
+      }
+
+      pythonProcess = childProcess.spawn(pythonCommand, [
         pythonScriptPath,
         `--port`,
         String(port),
@@ -60,7 +67,7 @@ export default async function startAresPythonServer(): Promise<IServer> {
       }
     });
 
-    pythonProcess.on('close', code => {
+    pythonProcess.on('close', (code: number) => {
       console.log(`Child process exited with code ${code}.`);
     });
   });
