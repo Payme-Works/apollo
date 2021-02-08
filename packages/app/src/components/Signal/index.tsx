@@ -16,7 +16,7 @@ interface ISignalProps {
 const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
   const theme = useContext(ThemeContext);
 
-  const { isSignalAvailable } = useSignals();
+  const { isSignalAvailable, hasSignalResult } = useSignals();
 
   const formattedData = useMemo(() => {
     return {
@@ -27,10 +27,10 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     };
   }, [data]);
 
-  const isAvailable = useMemo(() => isSignalAvailable(data), [
-    isSignalAvailable,
-    data,
-  ]);
+  const isAvailable = useMemo(
+    () => [isSignalAvailable(data), !hasSignalResult(data)].every(Boolean),
+    [isSignalAvailable, data, hasSignalResult],
+  );
 
   const activeLabelWidth = useMemo(
     () => (data.active.includes('OTC') ? theme.sizes[32] : theme.sizes[20]),
