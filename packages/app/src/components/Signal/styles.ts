@@ -13,12 +13,14 @@ export const Container = styled.div<IContainerProps>`
 
   ${({ theme, status }) => css`
     --color: ${theme.colors.foreground['accent-1']};
+    --color-hover: ${theme.colors.foreground.base};
     --border-color: ${theme.colors.background['accent-2']};
     --border-color-hover: ${theme.colors.background['accent-3']};
 
     ${(status === 'canceled' || status === 'expired') &&
     css`
       --color: ${theme.transparencies[3](theme.colors.foreground['accent-1'])};
+      --color-hover: ${theme.colors.foreground['accent-1']};
       --border-color: ${theme.colors.background['accent-1']};
       --border-color-hover: ${theme.colors.background['accent-2']};
     `}
@@ -51,7 +53,12 @@ export const Container = styled.div<IContainerProps>`
     transition: all 0.2s;
 
     &:hover {
+      color: var(--color-hover);
       border-color: var(--border-color-hover);
+
+      > #action {
+        color: ${theme.transparencies[3](theme.colors.foreground['accent-1'])};
+      }
     }
 
     & + ${Container} {

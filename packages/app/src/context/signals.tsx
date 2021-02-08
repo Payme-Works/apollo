@@ -6,8 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 
-import { addMinutes, isBefore, subSeconds } from 'date-fns';
-import { startOfMinute } from 'date-fns/esm';
+import { addMinutes, isBefore, subSeconds, startOfMinute } from 'date-fns';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 
@@ -35,6 +34,7 @@ type IUpdateSignalData = PartialDeep<Omit<ISignalWithStatus, 'id'>>;
 interface SignalsContext {
   signals: ISignalWithStatus[];
   updateSignal(signalId: string, data: IUpdateSignalData): void;
+  getSignalAvailableDate(signal: ISignalWithStatus): Date;
   isSignalAvailable(signal: ISignalWithStatus): boolean;
   hasSignalResult(signal: ISignalWithStatus): boolean;
 }
@@ -48,7 +48,7 @@ const SignalsProvider: React.FC = ({ children }) => {
     setSignals([
       {
         id: 'a879-aaad-9dwa',
-        active: 'EURUSD-OTC',
+        active: 'EURUSD',
         action: 'call',
         date: startOfMinute(addMinutes(new Date(), 1)),
         expiration: 'm1',
@@ -56,7 +56,7 @@ const SignalsProvider: React.FC = ({ children }) => {
       },
       {
         id: 'a879-d988-9dwa',
-        active: 'EURUSD-OTC',
+        active: 'EURUSD',
         action: 'call',
         date: startOfMinute(addMinutes(new Date(), 2)),
         expiration: 'm1',
@@ -64,7 +64,7 @@ const SignalsProvider: React.FC = ({ children }) => {
       },
       {
         id: 'a879-awdad-9dwa',
-        active: 'EURUSD-OTC',
+        active: 'EURUSD',
         action: 'put',
         date: startOfMinute(addMinutes(new Date(), 3)),
         expiration: 'm1',
@@ -72,7 +72,7 @@ const SignalsProvider: React.FC = ({ children }) => {
       },
       {
         id: 'a879-1233-9dwa',
-        active: 'EURUSD-OTC',
+        active: 'EURUSD',
         action: 'call',
         date: startOfMinute(addMinutes(new Date(), 4)),
         expiration: 'm1',
@@ -80,7 +80,7 @@ const SignalsProvider: React.FC = ({ children }) => {
       },
       {
         id: 'a879-124a-9dwa',
-        active: 'EURUSD-OTC',
+        active: 'EURUSD',
         action: 'call',
         date: startOfMinute(addMinutes(new Date(), 5)),
         expiration: 'm1',
@@ -104,6 +104,11 @@ const SignalsProvider: React.FC = ({ children }) => {
     [signals],
   );
 
+  const getSignalAvailableDate = useCallback(
+    (signal: ISignalWithStatus): Date => subSeconds(signal.date, 30),
+    [],
+  );
+
   const isSignalAvailable = useCallback(
     (signal: ISignalWithStatus): boolean =>
       isBefore(Date.now(), subSeconds(signal.date, 30)),
@@ -118,7 +123,13 @@ const SignalsProvider: React.FC = ({ children }) => {
 
   return (
     <SignalsContext.Provider
-      value={{ signals, updateSignal, isSignalAvailable, hasSignalResult }}
+      value={{
+        signals,
+        updateSignal,
+        getSignalAvailableDate,
+        isSignalAvailable,
+        hasSignalResult,
+      }}
     >
       {children}
     </SignalsContext.Provider>
