@@ -154,7 +154,7 @@ const RobotProvider: React.FC = ({ children }) => {
               status: 'in_progress',
             });
 
-            let priceAmount = 2;
+            let priceAmount = 20; /* PRICE AMOUNT */
 
             const differencePercentage = activeProfit / 100;
 
@@ -171,7 +171,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 positiveLastProfit / differencePercentage + priceAmount,
               );
 
-              if (profit - priceAmount <= -10 /* STOP LOSS */) {
+              if (profit - priceAmount <= -100 /* STOP LOSS */) {
                 priceAmount /= 1.5;
               }
 
@@ -204,6 +204,8 @@ const RobotProvider: React.FC = ({ children }) => {
               console.error(err);
             }
 
+            refreshProfile();
+
             console.log(signal, data, order.order_id);
 
             let martingaleAmount = 0;
@@ -217,7 +219,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 activeProfit,
                 2,
                 ({ martingale, result, next }) => {
-                  if (profit - next.price_amount <= -10 /* STOP LOSS */) {
+                  if (profit - next.price_amount <= -100 /* STOP LOSS */) {
                     const nextPriceAmount = next.price_amount / 1.5;
 
                     next.setPriceAmount(nextPriceAmount);
@@ -277,7 +279,7 @@ const RobotProvider: React.FC = ({ children }) => {
             if (finalProfit < 0) {
               let recoverProfit = finalProfit;
 
-              if (priceAmount > 2) {
+              if (priceAmount > 20 /* PRICE AMOUNT */) {
                 recoverProfit += priceAmount;
               }
 
