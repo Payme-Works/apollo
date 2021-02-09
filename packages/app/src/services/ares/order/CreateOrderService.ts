@@ -21,13 +21,15 @@ export interface ICreateOrderResponse extends ICreateOrderAxiosResponse {
 export async function createOrder(
   data: IRequest,
 ): Promise<ICreateOrderResponse> {
-  const expiration = getExpirationTime(data.expiration);
+  data.active = data.active.replace('/', '');
 
   data.price_amount = Number(data.price_amount.toFixed(2));
 
   if (data.price_amount < 2) {
     data.price_amount = 2;
   }
+
+  const expiration = getExpirationTime(data.expiration);
 
   try {
     const response = await aresApi.post<ICreateOrderAxiosResponse>('/orders', {

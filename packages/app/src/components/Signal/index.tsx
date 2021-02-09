@@ -29,7 +29,7 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
   }, [data]);
 
   const isAvailable = useMemo(
-    () => [isSignalAvailable(data), !hasSignalResult(data)].every(Boolean),
+    () => isSignalAvailable(data) && !hasSignalResult(data),
     [isSignalAvailable, data, hasSignalResult],
   );
 

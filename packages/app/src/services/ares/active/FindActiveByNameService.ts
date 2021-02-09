@@ -25,7 +25,7 @@ export async function findActiveByName({
   const expiration = getExpirationTime(rest.expiration);
 
   const response = await aresApi.get<IFindActiveByNameResponse>(
-    `/actives/${active}`,
+    `/actives/${active.replace('/', '')}`,
     {
       params: {
         type,
