@@ -5,7 +5,10 @@ import IOrderResult from '@/interfaces/order/IOrderResult';
 import { getLastRealtimeCandleOnActive } from '@/services/ares/active/candle/GetLastRealtimeCandleOnActiveService';
 import { startRealtimeCandlesOnActive } from '@/services/ares/active/candle/StartRealtimeCandlesOnActiveService';
 import { stopRealtimeCandlesOnActive } from '@/services/ares/active/candle/StopRealtimeCandlesOnActiveService';
-import { createOrder } from '@/services/ares/order/CreateOrderService';
+import {
+  createOrder,
+  ICreateOrderResponse,
+} from '@/services/ares/order/CreateOrderService';
 import {
   Result,
   waitForOrderById,
@@ -26,6 +29,10 @@ interface IOnLossAndCreateNextMartingaleOrderPayload {
   cancel(): void;
 }
 
+interface ICreateMartingaleOrderPayload {
+  order: ICreateOrderResponse;
+}
+
 export function useMartingaleStrategy(
   max: number,
   payout: number,
@@ -33,6 +40,7 @@ export function useMartingaleStrategy(
   onLossAndCreateNextMartingaleOrder?: (
     data: IOnLossAndCreateNextMartingaleOrderPayload,
   ) => void,
+  onCreateMartingaleOrder?: (data: ICreateMartingaleOrderPayload) => void,
   _current = 0,
   _profit = 0,
 ): UseOrderHook<IOrderResult> {
@@ -142,6 +150,12 @@ export function useMartingaleStrategy(
 
               const martingaleOrder = await createOrder(data);
 
+              if (onCreateMartingaleOrder) {
+                onCreateMartingaleOrder({
+                  order: martingaleOrder,
+                });
+              }
+
               if (!waitForOrder) {
                 waitForOrder = await waitForOrderById(order_id);
               }
@@ -152,6 +166,7 @@ export function useMartingaleStrategy(
                   payout,
                   priceAmount,
                   onLossAndCreateNextMartingaleOrder,
+                  onCreateMartingaleOrder,
                   _current + 1,
                   _profit + waitForOrder.profit,
                 ),

@@ -1,7 +1,6 @@
 import 'dotenv/config';
 
 import {
-  set as updateDate,
   startOfMinute,
   subSeconds,
   isAfter,
@@ -11,7 +10,6 @@ import {
   isWithinInterval,
   addMinutes,
 } from 'date-fns';
-import path from 'path';
 
 import IEvent from '@/interfaces/economic-calendar/IEvent';
 import IOrder, { InstrumentType } from '@/interfaces/order/IOrder';
@@ -27,7 +25,6 @@ import checkActionInFavorToTrend from '@/utils/checkActionInFavorToTrend';
 import getActiveInfo from '@/utils/getActiveInfo';
 import getRandomInt from '@/utils/getRandomInt';
 import formatSignal from '@/utils/logging/formatSignal';
-import parseSignalsFile from '@/utils/parseSignalsFile';
 
 import { logIn } from './services/ares/account/LogInService';
 
@@ -58,15 +55,15 @@ interface IDuplicateNextOrder {
 }
 
 async function launch() {
-  const signalsFilePath = path.resolve(__dirname, 'signals.txt');
+  /* const signalsFilePath = path.resolve(__dirname, 'signals.txt');
 
   const date = updateDate(new Date(), {
     year: 2021,
     month: Number(process.env.MONTH) - 1,
     date: Number(process.env.DAY),
-  });
+  }); */
 
-  const parsedSignals = await parseSignalsFile(signalsFilePath, date);
+  const parsedSignals = [];
 
   const blackListActives: string[] = [];
   let signalsInProgress: ISignal[] = [];
@@ -148,7 +145,7 @@ async function launch() {
       return;
     }
 
-    const activeInfo = await getActiveInfo(signal.active, signal.expiration);
+    const activeInfo = await getActiveInfo(signal.currency, signal.expiration);
 
     let type: InstrumentType = 'binary';
 
@@ -185,13 +182,13 @@ async function launch() {
       FILTER_TREND_EXPIRATIONS.includes(signal.expiration.toLowerCase())
     ) {
       const isActionInFavor = checkActionInFavorToTrend(
-        signal.action,
+        signal.operation,
         activeInfo[type].trend,
       );
 
       if (!isActionInFavor) {
         const info = {
-          action: signal.action,
+          action: signal.operation,
           trend: activeInfo[type].trend,
         };
 
@@ -210,13 +207,13 @@ async function launch() {
 
     const checkHasEvent = events
       .filter(event =>
-        signal.active.toLowerCase().includes(event.economy.toLowerCase()),
+        signal.currency.toLowerCase().includes(event.economy.toLowerCase()),
       )
       .some(event => {
         const dateParsed = parseISO(event.date);
 
-        const dateLessFifteenMinutes = subMinutes(signal.date, 30);
-        const datePlusFifteenMinutes = addMinutes(signal.date, 30);
+        const dateLessFifteenMinutes = subMinutes(parseISO(signal.date), 30);
+        const datePlusFifteenMinutes = addMinutes(parseISO(signal.date), 30);
 
         return isWithinInterval(dateParsed, {
           start: dateLessFifteenMinutes,
@@ -234,12 +231,15 @@ async function launch() {
     }
 
     const now = new Date();
-    const dateLessThreeSeconds = subSeconds(startOfMinute(signal.date), 3);
+    const dateLessThreeSeconds = subSeconds(
+      startOfMinute(parseISO(signal.date)),
+      3,
+    );
 
     const timeout = dateLessThreeSeconds.getTime() - now.getTime();
 
     setTimeout(async () => {
-      if (blackListActives.includes(signal.active)) {
+      if (blackListActives.includes(signal.currency)) {
         printSkippedSignal(signal, 'Active is in black list');
         return;
       }
@@ -312,9 +312,9 @@ async function launch() {
 
         const data: IOrder = {
           type,
-          active: signal.active,
+          active: signal.currency,
           price_amount: duplicateLastLossPriceAmount || PRICE_AMOUNT,
-          action: signal.action,
+          action: signal.operation,
           expiration: signal.expiration,
         };
 
@@ -409,7 +409,7 @@ async function launch() {
         } else {
           statistics.losses++;
 
-          blackListActives.push(signal.active);
+          blackListActives.push(signal.currency);
         }
 
         signalsInProgress = signalsInProgress.filter(

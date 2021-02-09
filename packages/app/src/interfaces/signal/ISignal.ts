@@ -4,8 +4,8 @@ export type Action = 'call' | 'put';
 
 export default interface ISignal {
   id: string;
-  active: string;
-  date: Date;
-  action: Action;
+  currency: string;
+  date: string;
+  operation: Action;
   expiration: Expiration;
 }

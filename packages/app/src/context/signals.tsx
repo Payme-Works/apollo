@@ -6,28 +6,13 @@ import React, {
   useEffect,
 } from 'react';
 
-import { addMinutes, isBefore, subSeconds, startOfMinute } from 'date-fns';
+import { isBefore, subSeconds } from 'date-fns';
+import { parseISO } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 
-import ISignal from '@/interfaces/signal/ISignal';
-
-export type Status =
-  | 'waiting'
-  | 'canceled'
-  | 'expired'
-  | 'in_progress'
-  | 'win'
-  | 'loss';
-
-export interface ISignalWithStatus extends ISignal {
-  status: Status;
-  warning?: string;
-  result?: {
-    martingale: number;
-    profit: number;
-  };
-}
+import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
+import { getSignalsFromDate } from '@/services/kore/signal/GetSignalsFromDateService';
 
 type IUpdateSignalData = PartialDeep<Omit<ISignalWithStatus, 'id'>>;
 
@@ -45,48 +30,39 @@ const SignalsProvider: React.FC = ({ children }) => {
   const [signals, setSignals] = useState<ISignalWithStatus[]>([]);
 
   useEffect(() => {
-    setSignals([
-      {
-        id: 'a879-aaad-9dwa',
-        active: 'EURUSD',
-        action: 'call',
-        date: startOfMinute(addMinutes(new Date(), 1)),
-        expiration: 'm1',
+    async function loadSignals() {
+      const now = new Date();
+
+      const date = {
+        year: now.getFullYear(),
+        month: now.getMonth() + 1,
+        day: now.getDate(),
+      };
+
+      try {
+        await getSignalsFromDate({ ...date, expiration: 'm5' });
+      } catch (err) {
+        console.log({ ...err });
+      }
+
+      const [m5, m15, m30, h1] = await Promise.all([
+        getSignalsFromDate({ ...date, expiration: 'm5' }),
+        getSignalsFromDate({ ...date, expiration: 'm15' }),
+        getSignalsFromDate({ ...date, expiration: 'm30' }),
+        getSignalsFromDate({ ...date, expiration: 'h1' }),
+      ]);
+
+      const joinSignals = [...m5, ...m15, ...m30, ...h1];
+
+      const newSignals = joinSignals.map<ISignalWithStatus>(signal => ({
+        ...signal,
         status: 'waiting',
-      },
-      {
-        id: 'a879-d988-9dwa',
-        active: 'EURUSD',
-        action: 'call',
-        date: startOfMinute(addMinutes(new Date(), 2)),
-        expiration: 'm1',
-        status: 'waiting',
-      },
-      {
-        id: 'a879-awdad-9dwa',
-        active: 'EURUSD',
-        action: 'put',
-        date: startOfMinute(addMinutes(new Date(), 3)),
-        expiration: 'm1',
-        status: 'waiting',
-      },
-      {
-        id: 'a879-1233-9dwa',
-        active: 'EURUSD',
-        action: 'call',
-        date: startOfMinute(addMinutes(new Date(), 4)),
-        expiration: 'm1',
-        status: 'waiting',
-      },
-      {
-        id: 'a879-124a-9dwa',
-        active: 'EURUSD',
-        action: 'call',
-        date: startOfMinute(addMinutes(new Date(), 5)),
-        expiration: 'm1',
-        status: 'waiting',
-      },
-    ]);
+      }));
+
+      setSignals(newSignals);
+    }
+
+    loadSignals();
   }, []);
 
   const updateSignal = useCallback(
@@ -105,13 +81,13 @@ const SignalsProvider: React.FC = ({ children }) => {
   );
 
   const getSignalAvailableDate = useCallback(
-    (signal: ISignalWithStatus): Date => subSeconds(signal.date, 30),
+    (signal: ISignalWithStatus): Date => subSeconds(parseISO(signal.date), 30),
     [],
   );
 
   const isSignalAvailable = useCallback(
     (signal: ISignalWithStatus): boolean =>
-      isBefore(Date.now(), subSeconds(signal.date, 30)),
+      isBefore(Date.now(), subSeconds(parseISO(signal.date), 30)),
     [],
   );
 

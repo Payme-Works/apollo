@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import { Status } from '@/context/signals';
+import { Status } from '@/interfaces/signal/ISignalWithStatus';
 
 interface IContainerProps {
   status: Status;
