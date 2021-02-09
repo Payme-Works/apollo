@@ -1,6 +1,7 @@
 import React, { lazy, useState, useEffect, Suspense } from 'react';
 import { render } from 'react-dom';
 import Modal from 'react-modal';
+import { HashRouter as Router } from 'react-router-dom';
 
 import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
@@ -11,7 +12,6 @@ import darkTheme from '@/styles/themes/dark';
 import startAresPythonServer from '@/utils/ares/startAresPythonServer';
 
 import '../i18n';
-import { HashRouter as Router } from 'react-router-dom';
 
 const AppProvider = lazy(() => import('./context'));
 const Routes = lazy(() => import('./routes'));

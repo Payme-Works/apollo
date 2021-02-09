@@ -45,7 +45,7 @@
     "@unform/core": "^2.1.3",
     "@unform/web": "^2.1.3",
     "axios": "^0.21.0",
-    "date-fns": "^2.16.1",
+    "date-fns": "^2.17.0",
     "dotenv": "^8.2.0",
     "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",

@@ -7,11 +7,12 @@ import React, {
   useRef,
 } from 'react';
 
-import { subSeconds } from 'date-fns';
+import { parseISO, subSeconds } from 'date-fns';
 
 import { useBrokerAuthentication } from '@/context/broker-authentication';
-import { ISignalWithStatus, useSignals } from '@/context/signals';
+import { useSignals } from '@/context/signals';
 import IOrder, { InstrumentType } from '@/interfaces/order/IOrder';
+import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 import {
   createOrder,
   ICreateOrderResponse,
@@ -120,7 +121,7 @@ const RobotProvider: React.FC = ({ children }) => {
           }
 
           const activeInfo = await getActiveInfo(
-            signal.active,
+            signal.currency,
             signal.expiration,
           );
 
@@ -145,16 +146,16 @@ const RobotProvider: React.FC = ({ children }) => {
 
           const activeProfit = activeInfo[type].profit;
 
-          const dateLessThreeSeconds = subSeconds(signal.date, 3);
+          updateSignal(signal.id, {
+            status: 'in_progress',
+          });
+
+          const dateLessThreeSeconds = subSeconds(parseISO(signal.date), 3);
 
           timeout = dateLessThreeSeconds.getTime() - Date.now();
 
           setTimeout(async () => {
-            updateSignal(signal.id, {
-              status: 'in_progress',
-            });
-
-            let priceAmount = 20; /* PRICE AMOUNT */
+            let priceAmount = 2500; /* PRICE AMOUNT */
 
             const differencePercentage = activeProfit / 100;
 
@@ -171,7 +172,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 positiveLastProfit / differencePercentage + priceAmount,
               );
 
-              if (profit - priceAmount <= -100 /* STOP LOSS */) {
+              if (profit - priceAmount <= -10000 /* STOP LOSS */) {
                 priceAmount /= 1.5;
               }
 
@@ -185,9 +186,9 @@ const RobotProvider: React.FC = ({ children }) => {
 
             const data: IOrder = {
               type,
-              active: signal.active,
+              active: signal.currency,
               price_amount: priceAmount,
-              action: signal.action,
+              action: signal.operation,
               expiration: signal.expiration,
             };
 
@@ -202,6 +203,8 @@ const RobotProvider: React.FC = ({ children }) => {
               });
 
               console.error(err);
+
+              return;
             }
 
             refreshProfile();
@@ -219,7 +222,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 activeProfit,
                 2,
                 ({ martingale, result, next }) => {
-                  if (profit - next.price_amount <= -100 /* STOP LOSS */) {
+                  if (profit - next.price_amount <= -10000 /* STOP LOSS */) {
                     const nextPriceAmount = next.price_amount / 1.5;
 
                     next.setPriceAmount(nextPriceAmount);
@@ -242,6 +245,9 @@ const RobotProvider: React.FC = ({ children }) => {
                     signal,
                     `[${martingale}] Martingale result: ${result}`,
                   );
+                },
+                () => {
+                  refreshProfile();
                 },
               ),
             );
@@ -279,7 +285,7 @@ const RobotProvider: React.FC = ({ children }) => {
             if (finalProfit < 0) {
               let recoverProfit = finalProfit;
 
-              if (priceAmount > 20 /* PRICE AMOUNT */) {
+              if (priceAmount > 2500 /* PRICE AMOUNT */) {
                 recoverProfit += priceAmount;
               }
 

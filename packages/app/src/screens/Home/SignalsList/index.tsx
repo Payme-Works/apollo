@@ -1,9 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { compareAsc, isBefore } from 'date-fns';
+import { parseISO } from 'date-fns/esm';
 
 import Signal from '@/components/Signal';
-import { ISignalWithStatus, useSignals } from '@/context/signals';
+import { useSignals } from '@/context/signals';
 
 import { Container } from './styles';
 
@@ -27,7 +28,8 @@ const SignalsList: React.FC = () => {
   );
 
   const sortedSignals = useMemo(
-    () => signals.sort((a, b) => compareAsc(a.date, b.date)),
+    () =>
+      signals.sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date))),
     [signals],
   );
 
