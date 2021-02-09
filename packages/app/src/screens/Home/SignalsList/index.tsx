@@ -1,15 +1,21 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { compareAsc, isBefore } from 'date-fns';
+import { compareAsc, isAfter } from 'date-fns';
 import { parseISO } from 'date-fns/esm';
 
 import Signal from '@/components/Signal';
 import { useSignals } from '@/context/signals';
+import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 
 import { Container } from './styles';
 
 const SignalsList: React.FC = () => {
-  const { signals, updateSignal } = useSignals();
+  const {
+    signals,
+    updateSignal,
+    isSignalAvailable,
+    hasSignalResult,
+  } = useSignals();
 
   const handleToggleSignalStatus = useCallback(
     (signal: ISignalWithStatus, status: 'canceled' | 'waiting') => {
@@ -17,8 +23,9 @@ const SignalsList: React.FC = () => {
         return;
       }
 
-      if (isBefore(signal.date.getTime(), Date.now())) {
+      if (isAfter(Date.now(), parseISO(signal.date))) {
         updateSignal(signal.id, { status: 'expired' });
+
         return;
       }
 
@@ -27,11 +34,25 @@ const SignalsList: React.FC = () => {
     [updateSignal],
   );
 
-  const sortedSignals = useMemo(
-    () =>
-      signals.sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date))),
-    [signals],
-  );
+  const sortedSignals = useMemo(() => {
+    const list: ISignalWithStatus[] = [];
+
+    const sorted = signals.sort((a, b) =>
+      compareAsc(parseISO(a.date), parseISO(b.date)),
+    );
+
+    list.push(
+      ...sorted.filter(
+        signal => isSignalAvailable(signal) && !hasSignalResult(signal),
+      ),
+    );
+
+    list.push(
+      ...sorted.filter(signal => !list.some(item => item.id === signal.id)),
+    );
+
+    return list;
+  }, [hasSignalResult, isSignalAvailable, signals]);
 
   return (
     <Container>
