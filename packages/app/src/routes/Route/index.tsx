@@ -1,5 +1,3 @@
-/* eslint-disable no-nested-ternary */
-
 import React from 'react';
 import {
   Route as ReactDOMRoute,
@@ -11,12 +9,12 @@ import { useAuthentication } from '@/context/authentication';
 
 interface IRouteProps extends ReactDOMRouteProps {
   component: React.ComponentType;
-  path?: string | string[];
+  isPrivate?: boolean;
 }
 
-const Permission: React.FC<IRouteProps> = ({
+const Route: React.FC<IRouteProps> = ({
   component: Component,
-  path,
+  isPrivate = false,
   ...rest
 }) => {
   const { isLoggedIn } = useAuthentication();
@@ -24,11 +22,20 @@ const Permission: React.FC<IRouteProps> = ({
   return (
     <ReactDOMRoute
       {...rest}
-      render={() =>
-        isLoggedIn && path === '/' ? <Component /> : <Redirect to="/" />
-      }
+      render={({ location }) => {
+        return isPrivate === isLoggedIn ? (
+          <Component />
+        ) : (
+          <Redirect
+            to={{
+              pathname: isPrivate ? '/' : '/app',
+              state: { from: location },
+            }}
+          />
+        );
+      }}
     />
   );
 };
 
-export default Permission;
+export default Route;

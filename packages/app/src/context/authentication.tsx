@@ -6,58 +6,37 @@ import React, {
   useMemo,
 } from 'react';
 
-import IProfile from '@/interfaces/account/IProfile';
-import { getProfile } from '@/services/ares/account/GetProfileService';
-import { logIn as doLogIn } from '@/services/ares/account/LogInService';
-
 interface AuthenticationContext {
-  profile?: IProfile;
-  profit: number;
-  isLoggedIn: boolean;
+  user?: any;
   isLoggingIn: boolean;
+  isLoggedIn: boolean;
   logIn(): Promise<void>;
-  refreshProfile(): Promise<void>;
-  setProfit: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const AuthenticationContext = createContext<AuthenticationContext | null>(null);
 
 const AuthenticationProvider: React.FC = ({ children }) => {
-  const [profile, setProfile] = useState<IProfile>();
-  const [profit, setProfit] = useState<number>(0);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [user, setUser] = useState<any>();
+  const [isLoggingIn, setLoggingIn] = useState<any>();
 
-  const isLoggedIn = useMemo(() => !!profile, [profile]);
+  const isLoggedIn = useMemo(() => !!user, [user]);
 
   const logIn = useCallback(async () => {
-    setIsLoggingIn(true);
+    setLoggingIn(true);
 
-    const loggedInProfile = await doLogIn({
-      email: String(process.env.IQ_OPTION_ACCOUNT_EMAIL),
-      password: String(process.env.IQ_OPTION_ACCOUNT_PASSWORD),
-      balance: 'practice',
+    setTimeout(() => {
+      setUser({});
+      setLoggingIn(false);
     });
-
-    setProfile(loggedInProfile);
-    setIsLoggingIn(false);
-  }, []);
-
-  const refreshProfile = useCallback(async () => {
-    const newProfile = await getProfile();
-
-    setProfile(newProfile);
   }, []);
 
   return (
     <AuthenticationContext.Provider
       value={{
-        profile,
-        profit,
+        user,
         isLoggedIn,
         isLoggingIn,
         logIn,
-        refreshProfile,
-        setProfit,
       }}
     >
       {children}

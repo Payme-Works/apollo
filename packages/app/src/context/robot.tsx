@@ -9,7 +9,7 @@ import React, {
 
 import { subSeconds } from 'date-fns';
 
-import { useAuthentication } from '@/context/authentication';
+import { useBrokerAuthentication } from '@/context/broker-authentication';
 import { ISignalWithStatus, useSignals } from '@/context/signals';
 import IOrder, { InstrumentType } from '@/interfaces/order/IOrder';
 import {
@@ -52,7 +52,7 @@ const RobotProvider: React.FC = ({ children }) => {
     isSignalAvailable,
     hasSignalResult,
   } = useSignals();
-  const { refreshProfile, profit, setProfit } = useAuthentication();
+  const { refreshProfile, profit, setProfit } = useBrokerAuthentication();
 
   const checkerTasksRef = useRef<NodeJS.Timeout[]>([]);
 

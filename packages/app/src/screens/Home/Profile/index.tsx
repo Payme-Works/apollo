@@ -4,7 +4,7 @@ import { FiSettings } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 
 import Avatar from '@/components/Avatar';
-import { useAuthentication } from '@/context/authentication';
+import { useBrokerAuthentication } from '@/context/broker-authentication';
 import formatPrice from '@/utils/formatPrice';
 
 import { Container, Flex, Info } from './styles';
@@ -12,7 +12,7 @@ import { Container, Flex, Info } from './styles';
 const Profile: React.FC = () => {
   const theme = useContext(ThemeContext);
 
-  const { profile, profit } = useAuthentication();
+  const { profile, profit } = useBrokerAuthentication();
 
   const formattedBalance = useMemo(() => {
     const formatted = formatPrice(profile?.balance);

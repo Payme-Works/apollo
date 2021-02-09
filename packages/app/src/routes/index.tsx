@@ -1,18 +1,24 @@
 import React from 'react';
-import { MemoryRouter as Router, Switch } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
-import Home from '@/screen/Home';
-import Settings from '@/screen/Settings';
+import Home from '@/screens/Home';
+import Settings from '@/screens/Settings';
+import SignIn from '@/screens/SignIn';
 
 import Route from './Route';
+import { Container } from './styles';
 
-const Navigator = () => (
-  <Router>
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/settings" component={Settings} />
-    </Switch>
-  </Router>
-);
+const Routes: React.FC = () => {
+  return (
+    <Container>
+      <Switch>
+        <Route path="/" exact component={SignIn} />
 
-export default Navigator;
+        <Route path="/app" component={Home} isPrivate />
+        <Route path="/settings" component={Settings} isPrivate />
+      </Switch>
+    </Container>
+  );
+};
+
+export default Routes;
