@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { FiSettings } from 'react-icons/fi';
+import { useHistory } from 'react-router-dom';
 
 import { ThemeContext } from 'styled-components';
 
@@ -10,6 +11,8 @@ import formatPrice from '@/utils/formatPrice';
 import { Container, Flex, Info } from './styles';
 
 const Profile: React.FC = () => {
+  const history = useHistory();
+
   const theme = useContext(ThemeContext);
 
   const { profile, profit } = useBrokerAuthentication();
@@ -72,7 +75,7 @@ const Profile: React.FC = () => {
         </Info>
       </Flex>
 
-      <FiSettings strokeWidth={1} />
+      <FiSettings onClick={() => history.push('/settings')} strokeWidth={1} />
     </Container>
   );
 };

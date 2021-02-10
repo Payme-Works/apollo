@@ -12,7 +12,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
     mainFields: ['main', 'module', 'browser'],
     alias: {
-       '@': path.resolve(rootPath, 'src')
+      '@': path.resolve(rootPath, 'src')
     }
   },
   entry: path.resolve(rootPath, 'src', 'App.tsx'),
