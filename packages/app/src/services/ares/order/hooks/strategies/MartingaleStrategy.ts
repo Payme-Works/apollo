@@ -148,7 +148,15 @@ export function useMartingaleStrategy(
                 price_amount,
               };
 
-              const martingaleOrder = await createOrder(data);
+              let martingaleOrder: ICreateOrderResponse;
+
+              try {
+                martingaleOrder = await createOrder(data);
+              } catch (err) {
+                reject(err);
+
+                return;
+              }
 
               if (onCreateMartingaleOrder) {
                 onCreateMartingaleOrder({
