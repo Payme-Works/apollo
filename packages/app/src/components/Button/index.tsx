@@ -3,20 +3,28 @@ import { FiLoader } from 'react-icons/fi';
 
 import { Container, Loading } from './styles';
 
-interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  loading?: boolean;
+export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'solid' | 'outline';
+  size?: 'sm' | 'md';
+  loading?: boolean;
 }
 
 const Button: React.FC<IButtonProps> = ({
-  children,
   type = 'button',
   variant = 'solid',
+  size = 'md',
   loading = false,
+  children,
   ...rest
 }) => {
   return (
-    <Container disabled={loading} type={type} variant={variant} {...rest}>
+    <Container
+      disabled={loading}
+      type={type}
+      variant={variant}
+      size={size}
+      {...rest}
+    >
       {loading ? (
         <Loading>
           <FiLoader />
