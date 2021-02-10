@@ -28,7 +28,7 @@ export const GlobalStyle = createGlobalStyle`
     ${({ theme }) => css`
       font-family: ${theme.fonts.families.body};
       font-size: ${theme.fonts.sizes.md};
-      font-weight: ${theme.fonts.weights.normal};
+      font-weight: ${theme.fonts.weights.regular};
     `}
   }
 

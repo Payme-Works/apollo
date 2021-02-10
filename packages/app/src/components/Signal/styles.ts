@@ -14,13 +14,18 @@ export const Container = styled.div<IContainerProps>`
   ${({ theme, status }) => css`
     --color: ${theme.colors.foreground['accent-1']};
     --color-hover: ${theme.colors.foreground.base};
+
     --border-color: ${theme.colors.background['accent-2']};
     --border-color-hover: ${theme.colors.background['accent-3']};
+
+    --gale-image-opacity: 0.8;
+    --gale-image-opacity-hover: 1;
 
     ${(status === 'canceled' || status === 'expired') &&
     css`
       --color: ${theme.transparencies[3](theme.colors.foreground['accent-1'])};
       --color-hover: ${theme.colors.foreground['accent-1']};
+
       --border-color: ${theme.colors.background['accent-1']};
       --border-color-hover: ${theme.colors.background['accent-2']};
     `}
@@ -59,10 +64,29 @@ export const Container = styled.div<IContainerProps>`
       > #action {
         color: ${theme.transparencies[3](theme.colors.foreground['accent-1'])};
       }
+
+      > div {
+        > img#gale {
+          opacity: var(--gale-image-opacity-hover);
+        }
+      }
     }
 
     & + ${Container} {
       margin-top: ${theme.spaces[4]};
+    }
+
+    > div {
+      display: flex;
+      align-items: center;
+
+      width: 100%;
+
+      > img#gale {
+        transition: all 0.2s;
+
+        opacity: var(--gale-image-opacity);
+      }
     }
 
     > #action {
@@ -80,13 +104,6 @@ export const Container = styled.div<IContainerProps>`
   `}
 `;
 
-export const Flex = styled.div`
-  display: flex;
-  align-items: center;
-
-  width: 100%;
-`;
-
 interface ILabelProps {
   width: string;
 }
@@ -97,4 +114,11 @@ export const Label = styled.span<ILabelProps>`
   & + span {
     margin-left: ${props => props.theme.spaces[1]};
   }
+`;
+
+export const GaleImage = styled.img`
+  ${({ theme }) => css`
+    height: ${theme.sizes[5]};
+    margin-left: ${theme.spaces[4]};
+  `}
 `;

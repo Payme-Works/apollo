@@ -11,6 +11,7 @@ interface AuthenticationContext {
   isLoggingIn: boolean;
   isLoggedIn: boolean;
   logIn(): Promise<void>;
+  logOut(): void;
 }
 
 const AuthenticationContext = createContext<AuthenticationContext | null>(null);
@@ -30,6 +31,10 @@ const AuthenticationProvider: React.FC = ({ children }) => {
     });
   }, []);
 
+  const logOut = useCallback(() => {
+    setUser(null);
+  }, []);
+
   return (
     <AuthenticationContext.Provider
       value={{
@@ -37,6 +42,7 @@ const AuthenticationProvider: React.FC = ({ children }) => {
         isLoggedIn,
         isLoggingIn,
         logIn,
+        logOut,
       }}
     >
       {children}

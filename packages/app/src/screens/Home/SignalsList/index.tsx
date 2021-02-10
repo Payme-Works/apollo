@@ -43,7 +43,9 @@ const SignalsList: React.FC = () => {
 
     list.push(
       ...sorted.filter(
-        signal => isSignalAvailable(signal) && !hasSignalResult(signal),
+        signal =>
+          isSignalAvailable(signal) ||
+          (hasSignalResult(signal) && signal.status !== 'expired'),
       ),
     );
 

@@ -155,7 +155,7 @@ const RobotProvider: React.FC = ({ children }) => {
           timeout = dateLessThreeSeconds.getTime() - Date.now();
 
           setTimeout(async () => {
-            let priceAmount = 2500; /* PRICE AMOUNT */
+            let priceAmount = 1000; /* PRICE AMOUNT */
 
             const differencePercentage = activeProfit / 100;
 
@@ -264,7 +264,7 @@ const RobotProvider: React.FC = ({ children }) => {
               updateSignal(signal.id, {
                 status: 'win',
                 result: {
-                  martingale: martingaleAmount,
+                  martingales: martingaleAmount,
                   profit: finalProfit,
                 },
               });
@@ -272,7 +272,7 @@ const RobotProvider: React.FC = ({ children }) => {
               updateSignal(signal.id, {
                 status: 'loss',
                 result: {
-                  martingale: martingaleAmount,
+                  martingales: martingaleAmount,
                   profit: finalProfit,
                 },
               });
@@ -285,7 +285,7 @@ const RobotProvider: React.FC = ({ children }) => {
             if (finalProfit < 0) {
               let recoverProfit = finalProfit;
 
-              if (priceAmount > 2500 /* PRICE AMOUNT */) {
+              if (priceAmount > 1000 /* PRICE AMOUNT */) {
                 recoverProfit += priceAmount;
               }
 

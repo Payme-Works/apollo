@@ -12,7 +12,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
     mainFields: ['main', 'module', 'browser'],
     alias: {
-       '@': path.resolve(rootPath, 'src')
+      '@': path.resolve(rootPath, 'src')
     }
   },
   entry: path.resolve(rootPath, 'src', 'App.tsx'),
@@ -23,8 +23,17 @@ module.exports = {
       {
         test: /\.(js|ts|tsx)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.css$/,
+        loader: 'css-loader'
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]?[hash]'
         }
       }
     ]

@@ -15,13 +15,13 @@ interface IServer {
   process: any;
 }
 
-export const startedServer = {
+export const aresPythonServerStatus = {
   started: false,
 } as IServer;
 
 export default async function startAresPythonServer(): Promise<IServer> {
-  if (startedServer.started) {
-    return startedServer;
+  if (aresPythonServerStatus.started) {
+    return aresPythonServerStatus;
   }
 
   const server = await new Promise<IServer>(resolve => {
@@ -72,7 +72,7 @@ export default async function startAresPythonServer(): Promise<IServer> {
     });
   });
 
-  merge(startedServer, server);
+  merge(aresPythonServerStatus, server);
 
   return server;
 }

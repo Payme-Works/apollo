@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { startedServer } from '@/utils/ares/startAresPythonServer';
+import { aresPythonServerStatus } from '@/utils/ares/startAresPythonServer';
 
 let aresApi: AxiosInstance;
 
@@ -13,12 +13,12 @@ function createAresApi() {
     return aresApi;
   }
 
-  if (!startedServer.started) {
+  if (!aresPythonServerStatus.started) {
     return undefined;
   }
 
   aresApi = axios.create({
-    baseURL: `http://localhost:${startedServer.port}`,
+    baseURL: `http://localhost:${aresPythonServerStatus.port}`,
   });
 
   return aresApi;

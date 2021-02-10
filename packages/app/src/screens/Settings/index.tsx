@@ -1,11 +1,45 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { FiChevronLeft } from 'react-icons/fi';
+import { useHistory } from 'react-router-dom';
 
-const Setings: React.FC = () => {
+import FooterBox from '@/components/FooterBox';
+import { useAuthentication } from '@/context/authentication';
+
+import { Container } from './styles';
+
+const Settings: React.FC = () => {
+  const history = useHistory();
+  const { logOut } = useAuthentication();
+
+  const handleLogOut = useCallback(() => {
+    history.push('/');
+
+    setTimeout(() => logOut(), 2000);
+  }, [history, logOut]);
+
   return (
-    <div>
-      <h1>Settings</h1>
-    </div>
+    <Container>
+      <FiChevronLeft
+        onClick={handleLogOut}
+        size={32}
+        style={{ marginBottom: 32 }}
+      />
+
+      <FooterBox
+        title="Corretora"
+        description="Autentique-se na corretora para que seja possível fazer as operações em sua conta."
+        footer={{
+          tip: 'Suas credenciais ficam em seu dispositivo, seguras.',
+          button: {
+            text: 'Entrar',
+            onClick: () => handleLogOut(),
+          },
+        }}
+      >
+        <h1>Inputs</h1>
+      </FooterBox>
+    </Container>
   );
 };
 
-export default Setings;
+export default Settings;

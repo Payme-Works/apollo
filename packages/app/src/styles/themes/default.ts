@@ -59,7 +59,7 @@ const defaultTheme = {
     },
     weights: {
       light: 300,
-      normal: 400,
+      regular: 400,
       medium: 500,
       semibold: 600,
       bold: 700,

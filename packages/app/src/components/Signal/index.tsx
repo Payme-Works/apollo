@@ -3,10 +3,11 @@ import React, { useContext, useMemo } from 'react';
 import { format, parseISO } from 'date-fns';
 import { ThemeContext } from 'styled-components';
 
+import galeImg from '@/assets/gale.png';
 import { useSignals } from '@/context/signals';
 import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 
-import { Container, Flex, Label } from './styles';
+import { Container, Label, GaleImage } from './styles';
 
 interface ISignalProps {
   data: ISignalWithStatus;
@@ -38,14 +39,29 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     [data.currency, theme.sizes],
   );
 
+  const shouldShowMartingales = useMemo(
+    () => data.status === 'win' && data.result?.martingales > 0,
+    [data.result?.martingales, data.status],
+  );
+
   return (
     <Container status={data.status}>
-      <Flex>
+      <div>
         <Label width={theme.sizes[14]}>{formattedData.date}</Label>
         <Label width={activeLabelWidth}>{formattedData.currency}</Label>
         <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
         <Label width={theme.sizes[10]}>{formattedData.operation}</Label>
-      </Flex>
+
+        {shouldShowMartingales &&
+          [...Array(data.result?.martingales)].map((item, index) => (
+            <GaleImage
+              key={item}
+              id="gale"
+              src={galeImg}
+              alt={`Gale ${index + 1}`}
+            />
+          ))}
+      </div>
 
       {isAvailable && (
         <>

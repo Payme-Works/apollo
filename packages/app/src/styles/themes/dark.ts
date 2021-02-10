@@ -14,6 +14,7 @@ const darkTheme: DefaultTheme = {
     foreground: {
       base: '#FFFFFF',
       'accent-1': '#D0D0D0',
+      'accent-2': '#999999',
     },
     primary: {
       base: '#FFFFFF',

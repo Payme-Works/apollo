@@ -6,10 +6,11 @@ import React, {
   useEffect,
 } from 'react';
 
-import { isBefore, subSeconds } from 'date-fns';
+import { addMinutes, isBefore, startOfMinute, subSeconds } from 'date-fns';
 import { parseISO } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
+import { v4 as uuid } from 'uuid';
 
 import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 import { getSignalsFromDate } from '@/services/kore/signal/GetSignalsFromDateService';
@@ -31,35 +32,76 @@ const SignalsProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadSignals() {
-      const now = new Date();
+      const debugSignals = String(process.env.DEBUG_SIGNALS) === 'true';
 
-      const date = {
-        year: now.getFullYear(),
-        month: now.getMonth() + 1,
-        day: now.getDate(),
-      };
+      if (!debugSignals) {
+        const now = new Date();
 
-      try {
-        await getSignalsFromDate({ ...date, expiration: 'm5' });
-      } catch (err) {
-        console.log({ ...err });
+        const date = {
+          year: now.getFullYear(),
+          month: now.getMonth() + 1,
+          day: now.getDate(),
+        };
+
+        const [m5, m15, m30, h1] = await Promise.all([
+          getSignalsFromDate({ ...date, expiration: 'm5' }),
+          getSignalsFromDate({ ...date, expiration: 'm15' }),
+          getSignalsFromDate({ ...date, expiration: 'm30' }),
+          getSignalsFromDate({ ...date, expiration: 'h1' }),
+        ]);
+
+        const joinSignals = [...m5, ...m15, ...m30, ...h1];
+
+        const newSignals = joinSignals.map<ISignalWithStatus>(signal => ({
+          ...signal,
+          status: 'waiting',
+        }));
+
+        setSignals(newSignals);
+      } else {
+        setSignals([
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 1)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 3)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 4)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 5)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+        ]);
       }
-
-      const [m5, m15, m30, h1] = await Promise.all([
-        getSignalsFromDate({ ...date, expiration: 'm5' }),
-        getSignalsFromDate({ ...date, expiration: 'm15' }),
-        getSignalsFromDate({ ...date, expiration: 'm30' }),
-        getSignalsFromDate({ ...date, expiration: 'h1' }),
-      ]);
-
-      const joinSignals = [...m5, ...m15, ...m30, ...h1];
-
-      const newSignals = joinSignals.map<ISignalWithStatus>(signal => ({
-        ...signal,
-        status: 'waiting',
-      }));
-
-      setSignals(newSignals);
     }
 
     loadSignals();

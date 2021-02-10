@@ -50,7 +50,7 @@ declare module 'styled-components' {
       };
       weights: {
         light: number;
-        normal: number;
+        regular: number;
         medium: number;
         semibold: number;
         bold: number;
