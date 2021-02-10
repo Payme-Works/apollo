@@ -12,7 +12,7 @@ export default interface ISignalWithStatus extends ISignal {
   status: Status;
   warning?: string;
   result?: {
-    martingale: number;
+    martingales: number;
     profit: number;
   };
 }

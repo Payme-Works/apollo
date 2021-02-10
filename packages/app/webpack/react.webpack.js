@@ -23,14 +23,19 @@ module.exports = {
       {
         test: /\.(js|ts|tsx)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
+        loader: 'babel-loader'
       },
       {
         test: /\.css$/,
         loader: 'css-loader'
-    },
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]?[hash]'
+        }
+      }
     ]
   },
   devServer: {
