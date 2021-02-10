@@ -90,6 +90,7 @@
     "babel-loader": "^8.2.2",
     "commitizen": "^4.2.2",
     "cross-env": "^7.0.3",
+    "css-loader": "^5.0.2",
     "cz-conventional-changelog": "^3.3.0",
     "electron": "^11.0.3",
     "electron-builder": "^22.9.1",
