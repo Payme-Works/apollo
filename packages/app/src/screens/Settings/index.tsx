@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
 import FooterBox from '@/components/FooterBox';
+import { useAuthentication } from '@/context/authentication';
 
 import { Container } from './styles';
 
 const Settings: React.FC = () => {
   const history = useHistory();
+  const { logOut } = useAuthentication();
+
+  const handleLogOut = useCallback(() => {
+    history.push('/');
+
+    setTimeout(() => logOut(), 2000);
+  }, [history, logOut]);
 
   return (
     <Container>
       <FiChevronLeft
-        onClick={() => history.goBack()}
+        onClick={handleLogOut}
         size={32}
         style={{ marginBottom: 32 }}
       />
@@ -24,7 +32,7 @@ const Settings: React.FC = () => {
           tip: 'Suas credenciais ficam em seu dispositivo, seguras.',
           button: {
             text: 'Entrar',
-            onClick: () => history.goBack(),
+            onClick: () => handleLogOut(),
           },
         }}
       >
