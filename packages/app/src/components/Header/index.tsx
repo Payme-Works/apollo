@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, memo } from 'react';
-import { FiX, FiMinus, FiSquare } from 'react-icons/fi';
+import { FiX, FiMinus, FiSquare, FiChevronLeft } from 'react-icons/fi';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { remote } from 'electron';
 import os from 'os';
@@ -10,9 +11,13 @@ import {
   WindowActions,
   MacActionButton,
   DefaultActionButton,
+  GoBackButton,
 } from './styles';
 
 const Header: React.FC = () => {
+  const location = useLocation();
+  const history = useHistory();
+
   const handleCloseWindow = useCallback(() => {
     const window = remote.getCurrentWindow();
 
@@ -52,6 +57,17 @@ const Header: React.FC = () => {
     );
   }, [useMacOSWindowActionButtons]);
 
+  const shouldGoBackShow = useMemo(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const shouldGoback = searchParams.get('showGoBackButton');
+
+    if (shouldGoback === 'true') {
+      return true;
+    }
+
+    return false;
+  }, [location]);
+
   return (
     <Container>
       <strong>Apollo</strong>
@@ -63,6 +79,12 @@ const Header: React.FC = () => {
           <MacActionButton action="minimize" onClick={handleMinimize} />
 
           <MacActionButton action="maximize" onClick={handleMaximize} />
+
+          {shouldGoBackShow && (
+            <GoBackButton onClick={() => history.goBack()}>
+              <FiChevronLeft />
+            </GoBackButton>
+          )}
         </WindowActions>
       ) : (
         <WindowActions position="right">

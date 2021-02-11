@@ -67,26 +67,26 @@ export const MacActionButton = styled.button<MacActionButtonProps>`
   align-items: center;
   justify-content: center;
 
-  ${({ theme }) => css`
-    width: ${theme.sizes[4]};
-    height: ${theme.sizes[4]};
-  `}
-
-  border-radius: 50%;
-
   -webkit-app-region: no-drag;
   background: ${props => colors[props.action]};
   border: 0;
 
-  transition: opacity 0.2s;
+  ${({ theme }) => css`
+    width: ${theme.sizes[4]};
+    height: ${theme.sizes[4]};
 
-  &:hover {
-    opacity: 0.6;
-  }
+    border-radius: 50%;
 
-  & + button {
-    margin-left: 8px;
-  }
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.6;
+    }
+
+    & + button {
+      margin-left: ${theme.spaces[4]};
+    }
+  `}
 `;
 
 export const DefaultActionButton = styled.button`
@@ -117,4 +117,29 @@ export const DefaultActionButton = styled.button`
   & + button {
     margin-left: 12px;
   }
+`;
+
+export const GoBackButton = styled.button`
+  ${({ theme }) => css`
+    width: ${theme.sizes[10]};
+    height: ${theme.sizes[6]};
+
+    margin-left: ${theme.spaces[8]};
+
+    background: ${theme.colors.background['accent-2']};
+    border-radius: 5px;
+    border: 0;
+
+    cursor: pointer;
+
+    -webkit-app-region: no-drag;
+
+    svg {
+      color: ${theme.colors.foreground['accent-1']};
+    }
+
+    :hover {
+      opacity: 0.8;
+    }
+  `}
 `;
