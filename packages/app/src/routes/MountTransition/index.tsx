@@ -1,17 +1,12 @@
-import React, { FC } from 'react';
+import React from 'react';
 
 import { motion } from 'framer-motion';
 
-type Props = {
-  slide?: number;
-  slideUp?: number;
-};
-
-const MountTransition: FC<Props> = ({ children, slide = 0, slideUp = 0 }) => (
+const MountTransition: React.FC = ({ children }) => (
   <motion.div
-    exit={{ opacity: 0, x: slide, y: slideUp }}
-    initial={{ opacity: 0, x: slide, y: slideUp }}
-    animate={{ opacity: 1, x: 0, y: 0 }}
+    exit={{ opacity: 0 }}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
     transition={{ duration: 0.1 }}
   >
     {children}

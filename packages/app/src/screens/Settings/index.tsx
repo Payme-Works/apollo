@@ -9,18 +9,17 @@ import { Container } from './styles';
 
 const Settings: React.FC = () => {
   const history = useHistory();
+
   const { logOut } = useAuthentication();
 
   const handleLogOut = useCallback(() => {
-    history.push('/');
-
-    setTimeout(() => logOut(), 2000);
-  }, [history, logOut]);
+    logOut();
+  }, [logOut]);
 
   return (
     <Container>
       <FiChevronLeft
-        onClick={handleLogOut}
+        onClick={() => history.goBack()}
         size={32}
         style={{ marginBottom: 32 }}
       />
