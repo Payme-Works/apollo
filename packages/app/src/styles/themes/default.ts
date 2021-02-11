@@ -136,6 +136,7 @@ const defaultTheme = {
     hide: -1,
     auto: 'auto',
     base: 0,
+    overSelect: 1,
   },
 } as DefaultTheme;
 

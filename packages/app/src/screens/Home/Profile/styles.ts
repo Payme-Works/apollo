@@ -26,7 +26,7 @@ export const Container = styled.div`
 
       cursor: pointer;
       color: ${theme.colors.primary.base};
-      opacity: 0.64;
+      opacity: 0.6;
 
       transition: opacity 0.2s;
 

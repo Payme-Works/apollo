@@ -161,6 +161,7 @@ declare module 'styled-components' {
       hide: number;
       auto: string;
       base: number;
+      overSelect: number;
     };
   }
 }
