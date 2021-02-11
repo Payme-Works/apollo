@@ -8,7 +8,7 @@ interface IFooterBoxProps {
   title: string;
   description: string;
   footer: {
-    tip: string;
+    hint: string;
     button: {
       text: string;
     } & IButtonProps;
@@ -32,7 +32,7 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
 
       {footer && (
         <Footer>
-          <p>{footer.tip}</p>
+          <p>{footer.hint}</p>
 
           <Button size="sm" {...footer.button}>
             {footer.button.text}

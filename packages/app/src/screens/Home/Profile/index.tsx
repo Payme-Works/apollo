@@ -75,7 +75,15 @@ const Profile: React.FC = () => {
         </Info>
       </Flex>
 
-      <FiSettings onClick={() => history.push('/settings')} strokeWidth={1} />
+      <FiSettings
+        onClick={() =>
+          history.push({
+            pathname: '/settings',
+            search: '?showGoBackButton=true',
+          })
+        }
+        strokeWidth={1}
+      />
     </Container>
   );
 };

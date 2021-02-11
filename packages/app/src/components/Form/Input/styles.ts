@@ -1,89 +1,132 @@
 import styled, { css } from 'styled-components';
 
-import defaultTheme from '@/styles/themes/default';
-
-interface InputContainerProps {
-  isFocused: boolean;
-  isErrored: boolean;
-}
-
 export const Container = styled.div`
   flex: 1;
-  margin-top: 16px;
-
-  &:first-child {
-    margin: 0;
-  }
-
-  input {
-    width: 100%;
-    border: 0;
-    font-size: 16px;
-    color: ${props => props.theme.colors.foreground.base};
-    background: transparent;
-    flex: 1;
-
-    ::placeholder {
-      color: ${({ theme }) => theme.colors.foreground['accent-1']};
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      color: ${({ theme }) => theme.colors.foreground['accent-1']};
-    }
-  }
 `;
 
 export const TitleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  margin-bottom: 8px;
+  ${({ theme }) => css`
+    display: flex;
+    align-items: flex-end;
 
-  small {
-    font-size: 11px;
-    line-height: 13px;
-    margin-left: 8px;
-  }
+    margin-bottom: ${theme.spaces[2]};
 
-  label {
-    display: block;
-    color: ${props => props.theme.colors.foreground.base};
-    font-size: 14px;
-    font-weight: 600;
-  }
+    label {
+      display: block;
+
+      color: ${theme.colors.foreground['accent-1']};
+      font-size: ${theme.fonts.sizes.sm};
+    }
+
+    small {
+      color: ${theme.colors.foreground['accent-2']};
+      font-size: ${theme.fonts.sizes.xs};
+      margin-left: ${theme.spaces[2]};
+    }
+  `}
 `;
 
+interface InputContainerProps {
+  isDisabled: boolean;
+  isErrored: boolean;
+  isFocused: boolean;
+  isFilled: boolean;
+  hasIcon: boolean;
+}
+
 export const InputContainer = styled.span<InputContainerProps>`
-  display: flex;
-  align-items: center;
+  ${({ theme, isDisabled, isErrored, isFocused, isFilled, hasIcon }) => css`
+    position: relative;
 
-  height: 42px;
-  border-radius: 4px;
-  background: ${props => props.theme.colors.palette.transparent};
-  border: 1px solid ${props => props.theme.colors.background['accent-2']};
+    display: flex;
+    align-items: center;
 
-  padding: 0 16px;
+    height: ${theme.sizes[9]};
 
-  transition: border 0.2s;
+    background: ${theme.colors.palette.transparent};
+    border: 1px solid ${theme.colors.background['accent-2']};
+    border-radius: ${theme.borderRadius.md};
 
-  svg {
-    width: 20px;
-    height: 20px;
-    margin-left: 8px;
-    color: ${defaultTheme.colors.palette.red.base};
-  }
+    cursor: text;
 
-  ${props =>
-    props.isErrored &&
+    transition: border 0.2s;
+
+    ${isDisabled &&
     css`
-      border-color: ${defaultTheme.colors.palette.red.base};
+      cursor: not-allowed;
+      opacity: 0.6;
     `}
 
-  ${props =>
-    props.isFocused &&
+    ${isErrored &&
     css`
-      border-color: ${props.theme.colors.foreground.base};
-      outline: 0;
+      border-color: ${theme.colors.palette.red.base};
     `}
+
+    ${isFocused &&
+    css`
+      border-color: ${theme.colors.primary['accent-1']};
+    `}
+
+    > input {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+
+      padding: 0 ${theme.spaces[3]};
+
+      ${hasIcon &&
+      css`
+        padding-left: ${theme.spaces[10]};
+      `}
+
+      ${isErrored &&
+      css`
+        padding-right: ${theme.spaces[10]};
+      `}
+
+      border: 0;
+      background: ${theme.colors.palette.transparent};
+
+      font-size: ${theme.fonts.sizes.md};
+      color: ${theme.colors.foreground.base};
+
+      ::placeholder {
+        color: ${theme.colors.foreground['accent-2']};
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+      }
+    }
+
+    > svg {
+      width: ${theme.sizes[5]};
+      height: ${theme.sizes[5]};
+
+      cursor: text;
+    }
+
+    > svg#icon {
+      position: absolute;
+      left: ${theme.spaces[3]};
+
+      color: ${theme.colors.foreground['accent-2']};
+
+      margin-right: ${theme.spaces[2]};
+
+      ${(isFocused || isFilled) &&
+      css`
+        color: ${theme.colors.foreground.base};
+      `}
+    }
+
+    > svg#icon-alert {
+      position: absolute;
+      right: ${theme.spaces[3]};
+
+      color: ${theme.colors.palette.red.base};
+
+      margin-left: ${theme.spaces[2]};
+    }
+  `}
 `;
