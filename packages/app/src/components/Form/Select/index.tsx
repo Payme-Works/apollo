@@ -8,7 +8,7 @@ import { useField } from '@unform/core';
 
 import { Container, TitleContainer, SelectContainer } from './styles';
 
-interface ISelected {
+export interface ISelectValue {
   label: string;
   value: string;
 }
@@ -19,7 +19,7 @@ interface ISelectProps extends ReactSelectProps {
   hint?: string;
   icon?: IconType;
   disabled?: boolean;
-  defaultValue?: ISelected;
+  defaultValue?: ISelectValue;
 }
 
 const animatedComponents = makeAnimated();
@@ -47,12 +47,12 @@ const Select: React.FC<ISelectProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const [selected, setSelected] = useState<ISelected>(
+  const [selected, setSelected] = useState<ISelectValue>(
     defaultValue || formDefaultValue,
   );
 
   useEffect(() => {
-    registerField<ISelected>({
+    registerField<ISelectValue>({
       name: fieldName,
       getValue() {
         return selected;
@@ -71,7 +71,7 @@ const Select: React.FC<ISelectProps> = ({
     selectRef.current.onMenuOpen();
   }, []);
 
-  const handleChangeSelected = useCallback((newValue: ISelected) => {
+  const handleChangeSelected = useCallback((newValue: ISelectValue) => {
     setSelected(newValue);
   }, []);
 

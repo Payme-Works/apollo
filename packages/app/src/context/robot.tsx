@@ -202,7 +202,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 warning: 'Unexpected error while creating order',
               });
 
-              console.error(err);
+              console.log(err);
 
               return;
             }

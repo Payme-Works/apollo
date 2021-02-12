@@ -120,6 +120,22 @@ export const InputContainer = styled.span<InputContainerProps>`
       `}
     }
 
+    > svg#icon-eye {
+      position: absolute;
+      right: ${theme.spaces[3]};
+
+      color: ${theme.colors.foreground['accent-2']};
+
+      margin-left: ${theme.spaces[2]};
+
+      cursor: pointer;
+
+      ${(isFocused || isFilled) &&
+      css`
+        color: ${theme.colors.foreground.base};
+      `}
+    }
+
     > svg#icon-alert {
       position: absolute;
       right: ${theme.spaces[3]};
