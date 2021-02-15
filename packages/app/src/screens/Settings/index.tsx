@@ -1,23 +1,33 @@
 import React, { useCallback, useRef } from 'react';
-import { FiAirplay, FiUser } from 'react-icons/fi';
+import { FiAirplay, FiLock, FiUser } from 'react-icons/fi';
 
 import FooterBox from '@/components/FooterBox';
 import Input from '@/components/Form/Input';
-import Select from '@/components/Form/Select';
+import Select, { ISelectValue } from '@/components/Form/Select';
 import { useAuthentication } from '@/context/authentication';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
 import { Container } from './styles';
 
+interface IBrokerFormData {
+  broker: ISelectValue;
+  email: string;
+}
+
 const Settings: React.FC = () => {
   const brokerFormRef = useRef<FormHandles>(null);
 
   const { logOut } = useAuthentication();
 
-  const handleSignInBroker = useCallback(() => {
-    logOut();
-  }, [logOut]);
+  const handleSignInBroker = useCallback(
+    (data: IBrokerFormData) => {
+      console.log(data);
+
+      logOut();
+    },
+    [logOut],
+  );
 
   return (
     <Container>
@@ -53,7 +63,21 @@ const Settings: React.FC = () => {
             name="email"
             label="E-mail"
             icon={FiUser}
+            type="email"
             placeholder="joao@exemplo.com"
+            containerProps={{
+              style: {
+                marginTop: 16,
+              },
+            }}
+          />
+
+          <Input
+            name="password"
+            label="Password"
+            icon={FiLock}
+            type="password"
+            placeholder="••••••"
             containerProps={{
               style: {
                 marginTop: 16,

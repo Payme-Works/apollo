@@ -344,7 +344,7 @@ async function launch() {
 
         let martingaleAmount = 0;
 
-        const { result: finalResult, profit: finalProfit } = await order.use(
+        const { status: finalResult, profit: finalProfit } = await order.use(
           useMartingaleStrategy(
             MAX_MARTINGALE,
             activeProfit,

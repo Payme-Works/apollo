@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { format, parseISO } from 'date-fns';
 import { ThemeContext } from 'styled-components';
+import { v4 as uuid } from 'uuid';
 
 import galeImg from '@/assets/gale.png';
 import { useSignals } from '@/context/signals';
@@ -55,7 +56,7 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
         {shouldShowMartingales &&
           [...Array(data.result?.martingales)].map((item, index) => (
             <GaleImage
-              key={item}
+              key={uuid()}
               id="gale"
               src={galeImg}
               alt={`Gale ${index + 1}`}

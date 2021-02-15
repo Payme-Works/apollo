@@ -7,7 +7,7 @@ import React, {
   memo,
 } from 'react';
 import { IconType } from 'react-icons';
-import { FiAlertCircle } from 'react-icons/fi';
+import { FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 
 import { useField } from '@unform/core';
 
@@ -18,7 +18,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   hint?: string;
   icon?: IconType;
-  containerProps: JSX.IntrinsicElements['div'];
+  containerProps: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -26,6 +26,7 @@ const Input: React.FC<InputProps> = ({
   name,
   hint,
   icon: Icon,
+  type,
   disabled = false,
   containerProps,
   ...rest
@@ -42,6 +43,8 @@ const Input: React.FC<InputProps> = ({
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
+
+  const [inputType, setInputType] = useState(type);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -68,6 +71,14 @@ const Input: React.FC<InputProps> = ({
     setIsFilled(!!inputRef.current?.value);
   }, []);
 
+  const handleToggleShowPassword = useCallback(() => {
+    if (inputType === 'password') {
+      setInputType('text');
+    } else {
+      setInputType('password');
+    }
+  }, [inputType]);
+
   return (
     <Container {...containerProps}>
       {(label || hint) && (
@@ -92,9 +103,25 @@ const Input: React.FC<InputProps> = ({
           ref={inputRef}
           defaultValue={defaultValue}
           disabled={disabled}
+          type={inputType}
           {...rest}
           onBlur={handleInputBlur}
         />
+
+        {type === 'password' &&
+          (inputType === 'password' ? (
+            <FiEye
+              id="icon-eye"
+              strokeWidth={1}
+              onClick={handleToggleShowPassword}
+            />
+          ) : (
+            <FiEyeOff
+              id="icon-eye"
+              strokeWidth={1}
+              onClick={handleToggleShowPassword}
+            />
+          ))}
 
         {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
       </InputContainer>
