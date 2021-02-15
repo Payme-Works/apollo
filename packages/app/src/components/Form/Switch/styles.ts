@@ -1,10 +1,10 @@
 import styled, { css } from 'styled-components';
 
 interface ILabelProps {
-  size: 'md' | 's';
+  size: 'md' | 'sm';
 }
 
-export const SwitchContainer = styled.div`
+export const Container = styled.div`
   display: flex;
   align-items: center;
 `;
@@ -20,50 +20,50 @@ export const Checkbox = styled.input`
     }
 
     :checked + label:after {
-      left: calc(100% - ${theme.sizes[1.5]});
+      left: calc(100% - ${theme.sizes.px});
       transform: translateX(-100%);
     }
   `}
 `;
 
-export const Label = styled.label<ILabelProps>`
+export const Circle = styled.label<ILabelProps>`
   ${({ theme, size }) => css`
     cursor: pointer;
     text-indent: -9999px;
 
-    ${size === 's' &&
+    ${size === 'sm' &&
     css`
-      width: ${theme.sizes[10]};
+      width: ${theme.sizes[9]};
       height: ${theme.sizes[5]};
     `}
 
     ${size === 'md' &&
     css`
-      width: ${theme.sizes[12]};
+      width: ${theme.sizes[10]};
       height: ${theme.sizes[6]};
     `}
 
     background: ${theme.colors.background['accent-2']};
     display: block;
-    border-radius: 100px;
+    border-radius: 14px;
     position: relative;
 
     ::after {
       content: '';
       position: absolute;
-      top: ${theme.sizes[1]};
-      left: ${theme.sizes[1]};
+      top: ${theme.sizes.px};
+      left: ${theme.sizes.px};
 
-      ${size === 's' &&
+      ${size === 'sm' &&
       css`
-        width: ${theme.sizes[3]};
-        height: ${theme.sizes[3]};
+        width: ${theme.sizes[4.5]};
+        height: ${theme.sizes[4.5]};
       `}
 
       ${size === 'md' &&
       css`
-        width: ${theme.sizes[4]};
-        height: ${theme.sizes[4]};
+        width: ${theme.sizes[5.5]};
+        height: ${theme.sizes[5.5]};
       `}
 
       background: ${theme.colors.background.base};
@@ -72,13 +72,21 @@ export const Label = styled.label<ILabelProps>`
     }
 
     :active:after {
-      width: ${theme.sizes[5]};
+      ${size === 'sm' &&
+      css`
+        width: ${theme.sizes[5]};
+      `}
+
+      ${size === 'md' &&
+      css`
+        width: ${theme.sizes[6]};
+      `}
     }
   `}
 `;
 
-export const SwitchStatus = styled.label`
+export const Label = styled.label`
   ${({ theme }) => css`
-    margin-left: ${theme.sizes[1.5]};
+    margin-left: ${theme.sizes[2]};
   `}
 `;

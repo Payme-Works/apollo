@@ -44,7 +44,7 @@ const Settings: React.FC = () => {
         }}
       >
         <Form ref={brokerFormRef} onSubmit={handleSignInBroker}>
-          <Switch name="switch" size="md" />
+          <Switch name="switch" label />
 
           <Select
             name="broker"

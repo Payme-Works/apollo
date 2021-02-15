@@ -91,7 +91,9 @@ declare module 'styled-components' {
       3: string;
       3.5: string;
       4: string;
+      4.5: string;
       5: string;
+      5.5: string;
       6: string;
       7: string;
       8: string;
