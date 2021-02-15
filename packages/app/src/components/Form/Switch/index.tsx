@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useField } from '@unform/core';
 
-import { Checkbox, Label } from './styles';
+import { Checkbox, Label, SwitchContainer, SwitchStatus } from './styles';
 
 interface ISwitchProps {
   size: 's' | 'md';
@@ -12,6 +12,8 @@ interface ISwitchProps {
 
 const Switch: React.FC<ISwitchProps> = ({ size, name }) => {
   const switchRef = useRef<HTMLInputElement>(null);
+
+  const [checked, setChecked] = useState<boolean>(false);
 
   const { fieldName, registerField } = useField(name);
 
@@ -25,13 +27,26 @@ const Switch: React.FC<ISwitchProps> = ({ size, name }) => {
     }
   }, [registerField, switchRef, fieldName]);
 
+  const handleClick = useCallback(() => {
+    setChecked(!checked);
+  }, [checked]);
+
   return (
-    <>
-      <Checkbox ref={switchRef} name={name} type="checkbox" id="switch" />
+    <SwitchContainer>
+      <Checkbox
+        onClick={handleClick}
+        ref={switchRef}
+        name={name}
+        type="checkbox"
+        id="switch"
+      />
       <Label size={size} htmlFor="switch">
         Toggle
       </Label>
-    </>
+      <SwitchStatus htmlFor="switch">
+        {checked === true ? 'Ativado' : 'Desativado'}
+      </SwitchStatus>
+    </SwitchContainer>
   );
 };
 
