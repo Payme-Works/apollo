@@ -4,6 +4,11 @@ interface ILabelProps {
   size: 'md' | 's';
 }
 
+export const SwitchContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 export const Checkbox = styled.input`
   ${({ theme }) => css`
     height: 0;
@@ -15,7 +20,7 @@ export const Checkbox = styled.input`
     }
 
     :checked + label:after {
-      left: calc(100% - 5px);
+      left: calc(100% - ${theme.sizes[1.5]});
       transform: translateX(-100%);
     }
   `}
@@ -28,14 +33,14 @@ export const Label = styled.label<ILabelProps>`
 
     ${size === 's' &&
     css`
-      width: 40px;
-      height: 20px;
+      width: ${theme.sizes[10]};
+      height: ${theme.sizes[5]};
     `}
 
     ${size === 'md' &&
     css`
-      width: 50px;
-      height: 25px;
+      width: ${theme.sizes[12]};
+      height: ${theme.sizes[6]};
     `}
 
     background: ${theme.colors.background['accent-2']};
@@ -46,28 +51,34 @@ export const Label = styled.label<ILabelProps>`
     ::after {
       content: '';
       position: absolute;
-      top: 5px;
-      left: 5px;
+      top: ${theme.sizes[1]};
+      left: ${theme.sizes[1]};
 
       ${size === 's' &&
       css`
-        width: 12px;
-        height: 12px;
+        width: ${theme.sizes[3]};
+        height: ${theme.sizes[3]};
       `}
 
       ${size === 'md' &&
       css`
-        width: 17px;
-        height: 17px;
+        width: ${theme.sizes[4]};
+        height: ${theme.sizes[4]};
       `}
 
       background: ${theme.colors.background.base};
-      border-radius: 90px;
+      border-radius: ${theme.sizes[24]};
       transition: 0.3s;
     }
 
     :active:after {
-      width: 30px;
+      width: ${theme.sizes[5]};
     }
+  `}
+`;
+
+export const SwitchStatus = styled.label`
+  ${({ theme }) => css`
+    margin-left: ${theme.sizes[1.5]};
   `}
 `;

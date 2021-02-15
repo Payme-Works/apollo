@@ -4,6 +4,7 @@ import { FiAirplay, FiLock, FiUser } from 'react-icons/fi';
 import FooterBox from '@/components/FooterBox';
 import Input from '@/components/Form/Input';
 import Select, { ISelectValue } from '@/components/Form/Select';
+import Switch from '@/components/Switch';
 import { useAuthentication } from '@/context/authentication';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -43,6 +44,8 @@ const Settings: React.FC = () => {
         }}
       >
         <Form ref={brokerFormRef} onSubmit={handleSignInBroker}>
+          <Switch name="switch" size="md" />
+
           <Select
             name="broker"
             icon={FiAirplay}
