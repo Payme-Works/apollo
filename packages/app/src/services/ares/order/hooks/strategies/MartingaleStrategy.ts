@@ -10,7 +10,7 @@ import {
   ICreateOrderResponse,
 } from '@/services/ares/order/CreateOrderService';
 import {
-  Result,
+  Status,
   waitForOrderById,
   IWaitOrderByIdResponse,
 } from '@/services/ares/order/WaitForOrderByIdService';
@@ -21,7 +21,7 @@ import UseOrderHook from '../UseOrderHook';
 interface IOnLossAndCreateNextMartingaleOrderPayload {
   martingale: number;
   profit: number;
-  result: Result;
+  result: Status;
   next: {
     price_amount: number;
     setPriceAmount(newPriceAmount: number): void;
@@ -72,7 +72,7 @@ export function useMartingaleStrategy(
           timeout = expiration.getTime() - now.getTime();
 
           setTimeout(async () => {
-            let result: Result = 'win';
+            let result: Status = 'win';
 
             const lastRealtimeCandle = await getLastRealtimeCandleOnActive({
               active: order.data.active,
@@ -96,7 +96,7 @@ export function useMartingaleStrategy(
             } else {
               waitForOrder = await waitForOrderById(order_id);
 
-              result = waitForOrder.result;
+              result = waitForOrder.status;
             }
 
             if (result === 'loose' && max > 0 && _current < max) {
@@ -136,7 +136,7 @@ export function useMartingaleStrategy(
                 }
 
                 resolve({
-                  result,
+                  status: result,
                   profit: _profit + waitForOrder.profit,
                 });
 
@@ -190,11 +190,11 @@ export function useMartingaleStrategy(
               if (!waitForOrder) {
                 waitForOrder = await waitForOrderById(order_id);
 
-                result = waitForOrder.result;
+                result = waitForOrder.status;
               }
 
               resolve({
-                result,
+                status: result,
                 profit: _profit + waitForOrder.profit,
               });
             }

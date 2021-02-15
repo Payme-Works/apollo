@@ -12,6 +12,7 @@ import { parseISO, subSeconds } from 'date-fns';
 import { useBrokerAuthentication } from '@/context/broker-authentication';
 import { useSignals } from '@/context/signals';
 import IOrder, { InstrumentType } from '@/interfaces/order/IOrder';
+import IOrderResult from '@/interfaces/order/IOrderResult';
 import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 import {
   createOrder,
@@ -202,7 +203,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 warning: 'Unexpected error while creating order',
               });
 
-              console.log(err);
+              console.error(err);
 
               return;
             }
@@ -213,59 +214,69 @@ const RobotProvider: React.FC = ({ children }) => {
 
             let martingaleAmount = 0;
 
-            const {
-              result: finalResult,
-              profit: finalProfit,
-            } = await order.use(
-              useMartingaleStrategy(
-                1,
-                activeProfit,
-                2,
-                ({ martingale, result, next }) => {
-                  if (profit - next.price_amount <= -10000 /* STOP LOSS */) {
-                    const nextPriceAmount = next.price_amount / 1.5;
+            let orderResult: IOrderResult;
 
-                    next.setPriceAmount(nextPriceAmount);
+            try {
+              orderResult = await order.use(
+                useMartingaleStrategy(
+                  1,
+                  activeProfit,
+                  2,
+                  ({ martingale, result, next }) => {
+                    if (profit - next.price_amount <= -10000 /* STOP LOSS */) {
+                      const nextPriceAmount = next.price_amount / 1.5;
+
+                      next.setPriceAmount(nextPriceAmount);
+
+                      console.log(
+                        signal,
+                        `[${martingale}] Changing next order price amount to: R$ ${nextPriceAmount}`,
+                      );
+                    }
+
+                    martingaleAmount = martingale + 1;
+
+                    if (martingale === 0) {
+                      console.log(signal, `[${martingale}] Result: ${result}`);
+
+                      return;
+                    }
 
                     console.log(
                       signal,
-                      `[${martingale}] Changing next order price amount to: R$ ${nextPriceAmount}`,
+                      `[${martingale}] Martingale result: ${result}`,
                     );
-                  }
+                  },
+                  () => {
+                    refreshProfile();
+                  },
+                ),
+              );
+            } catch (err) {
+              updateSignal(signal.id, {
+                status: 'expired',
+                warning: 'Unexpected error while creating martingale order',
+              });
 
-                  martingaleAmount = martingale + 1;
+              console.error(err);
 
-                  if (martingale === 0) {
-                    console.log(signal, `[${martingale}] Result: ${result}`);
-
-                    return;
-                  }
-
-                  console.log(
-                    signal,
-                    `[${martingale}] Martingale result: ${result}`,
-                  );
-                },
-                () => {
-                  refreshProfile();
-                },
-              ),
-            );
+              return;
+            }
 
             console.log(
               signal,
-              `[${martingaleAmount}] Final result: ${finalResult} (R$ ${finalProfit.toFixed(
-                2,
-              )})`,
+              `[${martingaleAmount}] Final result: ${
+                orderResult.status
+              } (R$ ${orderResult.profit.toFixed(2)})`,
               '\n',
             );
 
-            if (finalResult === 'win') {
+            if (orderResult.status === 'win') {
               updateSignal(signal.id, {
                 status: 'win',
                 result: {
                   martingales: martingaleAmount,
-                  profit: finalProfit,
+                  profit: orderResult.profit,
                 },
               });
             } else {
@@ -273,7 +284,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 status: 'loss',
                 result: {
                   martingales: martingaleAmount,
-                  profit: finalProfit,
+                  profit: orderResult.profit,
                 },
               });
             }
@@ -282,8 +293,8 @@ const RobotProvider: React.FC = ({ children }) => {
               'recover-lost-order',
             );
 
-            if (finalProfit < 0) {
-              let recoverProfit = finalProfit;
+            if (orderResult.profit < 0) {
+              let recoverProfit = orderResult.profit;
 
               if (priceAmount > 1000 /* PRICE AMOUNT */) {
                 recoverProfit += priceAmount;
@@ -294,7 +305,7 @@ const RobotProvider: React.FC = ({ children }) => {
               });
             }
 
-            setProfit(state => state + finalProfit);
+            setProfit(state => state + orderResult.profit);
 
             await refreshProfile();
           }, timeout);

@@ -1,9 +1,9 @@
 import aresApi from '@/services/ares/api';
 
-export type Result = 'win' | 'loose' | 'equal';
+export type Status = 'win' | 'loose' | 'equal';
 
 export interface IWaitOrderByIdResponse {
-  result: Result;
+  status: Status;
   profit: number;
 }
 

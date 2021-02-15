@@ -70,6 +70,14 @@ const SignalsProvider: React.FC = ({ children }) => {
           },
           {
             id: uuid(),
+            currency: 'EUR/USD-OTC',
+            date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
             currency: 'EUR/USD',
             date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
             expiration: 'm1',
