@@ -4,7 +4,7 @@ import { FiAirplay, FiLock, FiUser } from 'react-icons/fi';
 import FooterBox from '@/components/FooterBox';
 import Input from '@/components/Form/Input';
 import Select, { ISelectValue } from '@/components/Form/Select';
-import Switch from '@/components/Switch';
+import Switch from '@/components/Form/Switch';
 import { useAuthentication } from '@/context/authentication';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
