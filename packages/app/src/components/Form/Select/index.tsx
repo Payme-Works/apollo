@@ -5,9 +5,7 @@ import { Props as ReactSelectProps } from 'react-select';
 
 import { useField } from '@unform/core';
 
-import SelectWrapper from '@/components/Form/Select/Wrapper';
-
-import { Container, TitleContainer } from './styles';
+import { Container } from './styles';
 
 export interface ISelectValue {
   label: string;
@@ -16,22 +14,16 @@ export interface ISelectValue {
 
 interface ISelectProps extends Omit<ReactSelectProps, 'theme'> {
   name: string;
-  label?: string;
-  hint?: string;
   icon?: IconType;
   disabled?: boolean;
   defaultValue?: ISelectValue;
-  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const Select: React.FC<ISelectProps> = ({
   name,
-  label,
-  hint,
   icon,
   disabled = false,
   defaultValue,
-  containerProps,
   ...rest
 }) => {
   const selectRef = useRef<any>(null);
@@ -82,30 +74,22 @@ const Select: React.FC<ISelectProps> = ({
   );
 
   return (
-    <Container {...containerProps} isErrored={!!error}>
-      {(label || hint) && (
-        <TitleContainer>
-          {label && <label htmlFor={fieldName}>{label}</label>}
-          {hint && <small>{hint}</small>}
-        </TitleContainer>
+    <Container
+      ref={selectRef}
+      isErrored={!!error}
+      {...rest}
+      icon={icon}
+      value={selected}
+      disabled={disabled}
+      onChange={handleChangeSelected}
+    >
+      {!!error && (
+        <FiAlertCircle
+          id="icon-alert"
+          strokeWidth={1}
+          onClick={handleOpenSelect}
+        />
       )}
-
-      <SelectWrapper
-        ref={selectRef}
-        {...rest}
-        icon={icon}
-        value={selected}
-        disabled={disabled}
-        onChange={handleChangeSelected}
-      >
-        {!!error && (
-          <FiAlertCircle
-            id="icon-alert"
-            strokeWidth={1}
-            onClick={handleOpenSelect}
-          />
-        )}
-      </SelectWrapper>
     </Container>
   );
 };

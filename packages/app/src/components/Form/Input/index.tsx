@@ -6,24 +6,18 @@ import { useField } from '@unform/core';
 
 import InputWrapper from '@/components/Form/Input/Wrapper';
 
-import { Container, TitleContainer, InputContainer } from './styles';
+import { Container } from './styles';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
-  label?: string;
-  hint?: string;
   icon?: IconType;
-  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const Input: React.FC<InputProps> = ({
-  label,
   name,
-  hint,
   icon: Icon,
   type,
   disabled = false,
-  containerProps,
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,50 +69,41 @@ const Input: React.FC<InputProps> = ({
   }, [inputType]);
 
   return (
-    <Container {...containerProps}>
-      {(label || hint) && (
-        <TitleContainer>
-          {label && <label htmlFor={fieldName}>{label}</label>}
-          {hint && <small>{hint}</small>}
-        </TitleContainer>
-      )}
+    <Container
+      isErrored={!!error}
+      isFocused={isFocused}
+      isFilled={isFilled}
+      hasIcon={!!Icon}
+      onClick={handleFocusInput}
+    >
+      {Icon && <Icon id="icon" strokeWidth={1} />}
 
-      <InputContainer
-        isErrored={!!error}
-        isFocused={isFocused}
-        isFilled={isFilled}
-        hasIcon={!!Icon}
-        onClick={handleFocusInput}
-      >
-        {Icon && <Icon id="icon" strokeWidth={1} />}
+      <InputWrapper
+        ref={inputRef}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        type={inputType}
+        {...rest}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+      />
 
-        <InputWrapper
-          ref={inputRef}
-          defaultValue={defaultValue}
-          disabled={disabled}
-          type={inputType}
-          {...rest}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-        />
+      {type === 'password' &&
+        (inputType === 'password' ? (
+          <FiEye
+            id="icon-eye"
+            strokeWidth={1}
+            onClick={handleToggleShowPassword}
+          />
+        ) : (
+          <FiEyeOff
+            id="icon-eye"
+            strokeWidth={1}
+            onClick={handleToggleShowPassword}
+          />
+        ))}
 
-        {type === 'password' &&
-          (inputType === 'password' ? (
-            <FiEye
-              id="icon-eye"
-              strokeWidth={1}
-              onClick={handleToggleShowPassword}
-            />
-          ) : (
-            <FiEyeOff
-              id="icon-eye"
-              strokeWidth={1}
-              onClick={handleToggleShowPassword}
-            />
-          ))}
-
-        {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
-      </InputContainer>
+      {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
     </Container>
   );
 };

@@ -5,6 +5,8 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
 import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
+import FormControl from '@/components/Form/FormControl';
+import FormLabel from '@/components/Form/FormLabel';
 import Input from '@/components/Form/Input';
 import Select, { ISelectValue } from '@/components/Form/Select';
 import { useAuthentication } from '@/context/authentication';
@@ -15,7 +17,7 @@ interface IBrokerFormData {
 }
 
 const Broker: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
-  const brokerFormRef = useRef<FormHandles>(null);
+  const formRef = useRef<FormHandles>(null);
 
   const { logOut } = useAuthentication();
 
@@ -36,12 +38,12 @@ const Broker: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         hint: 'Suas credenciais ficam em seu dispositivo, seguras.',
         button: {
           text: 'Entrar',
-          onClick: () => brokerFormRef.current?.submitForm(),
+          onClick: () => formRef.current?.submitForm(),
         },
       }}
       {...rest}
     >
-      <Form ref={brokerFormRef} onSubmit={handleSignInBroker}>
+      <Form ref={formRef} onSubmit={handleSignInBroker}>
         <Select
           name="broker"
           icon={FiAirplay}
@@ -58,31 +60,33 @@ const Broker: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           disabled
         />
 
-        <Input
-          name="email"
-          label="E-mail"
-          icon={FiUser}
-          type="email"
-          placeholder="joao@exemplo.com"
-          containerProps={{
-            style: {
-              marginTop: 16,
-            },
+        <FormControl
+          style={{
+            marginTop: 16,
           }}
-        />
+        >
+          <FormLabel>E-mail</FormLabel>
+          <Input
+            name="email"
+            icon={FiUser}
+            type="email"
+            placeholder="joao@exemplo.com"
+          />
+        </FormControl>
 
-        <Input
-          name="password"
-          label="Password"
-          icon={FiLock}
-          type="password"
-          placeholder="••••••"
-          containerProps={{
-            style: {
-              marginTop: 16,
-            },
+        <FormControl
+          style={{
+            marginTop: 16,
           }}
-        />
+        >
+          <FormLabel>Senha</FormLabel>
+          <Input
+            name="password"
+            icon={FiLock}
+            type="password"
+            placeholder="••••••"
+          />
+        </FormControl>
       </Form>
     </FooterBox>
   );
