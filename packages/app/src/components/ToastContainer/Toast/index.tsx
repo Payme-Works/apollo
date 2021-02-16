@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fi';
 
 import { useToast, ToastMessage } from '../../../context/toast';
+
 import { Container } from './styles';
 
 interface ToastProps {

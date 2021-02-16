@@ -3,8 +3,9 @@ import { createPortal } from 'react-dom';
 import { useTransition } from 'react-spring';
 
 import { ToastMessage } from '../../context/toast';
-import { Container } from './styles';
 import Toast from './Toast';
+
+import { Container } from './styles';
 
 interface ToastContainerProps {
   toasts: ToastMessage[];

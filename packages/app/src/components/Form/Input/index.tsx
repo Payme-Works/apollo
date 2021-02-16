@@ -1,24 +1,19 @@
-import React, {
-  useState,
-  useCallback,
-  InputHTMLAttributes,
-  useRef,
-  useEffect,
-  memo,
-} from 'react';
+import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { IconType } from 'react-icons';
 import { FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 
 import { useField } from '@unform/core';
 
+import InputWrapper from '@/components/Form/Input/Wrapper';
+
 import { Container, TitleContainer, InputContainer } from './styles';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
   hint?: string;
   icon?: IconType;
-  containerProps: React.HTMLAttributes<HTMLDivElement>;
+  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -89,22 +84,21 @@ const Input: React.FC<InputProps> = ({
       )}
 
       <InputContainer
-        isDisabled={disabled}
         isErrored={!!error}
         isFocused={isFocused}
         isFilled={isFilled}
         hasIcon={!!Icon}
         onClick={handleFocusInput}
-        onFocus={handleInputFocus}
       >
         {Icon && <Icon id="icon" strokeWidth={1} />}
 
-        <input
+        <InputWrapper
           ref={inputRef}
           defaultValue={defaultValue}
           disabled={disabled}
           type={inputType}
           {...rest}
+          onFocus={handleInputFocus}
           onBlur={handleInputBlur}
         />
 

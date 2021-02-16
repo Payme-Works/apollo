@@ -8,6 +8,7 @@ import Settings from '@/screens/Settings';
 import SignIn from '@/screens/SignIn';
 
 import Route from './Route';
+
 import { Container } from './styles';
 
 const Routes: React.FC = () => {

@@ -4,22 +4,25 @@ import { useField } from '@unform/core';
 
 import { Checkbox, Circle, Container, Label } from './styles';
 
-interface ISwitchProps {
-  size?: 'sm' | 'md';
+interface ISwitchProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   name: string;
+  size?: 'sm' | 'md';
   label?: boolean;
 }
 
 const Switch: React.FC<ISwitchProps> = ({
-  size = 'md',
   name,
+  size = 'md',
   label = false,
+  defaultChecked,
+  ...rest
 }) => {
   const switchRef = useRef<HTMLInputElement>(null);
 
-  const [checked, setChecked] = useState<boolean>(false);
-
   const { fieldName, registerField } = useField(name);
+
+  const [checked, setChecked] = useState(defaultChecked || false);
 
   useEffect(() => {
     if (switchRef.current) {
@@ -31,22 +34,37 @@ const Switch: React.FC<ISwitchProps> = ({
     }
   }, [registerField, switchRef, fieldName]);
 
-  const handleClick = useCallback(() => {
-    setChecked(!checked);
-  }, [checked]);
+  const handleToggle = useCallback(() => {
+    const newValue = !switchRef.current.checked;
+
+    switchRef.current.checked = newValue;
+
+    setChecked(newValue);
+  }, []);
+
+  const handleChangeCheckbox = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setChecked(event.target.checked);
+    },
+    [],
+  );
 
   return (
-    <Container>
+    <Container onClick={handleToggle}>
       <Checkbox
-        onClick={handleClick}
         ref={switchRef}
+        id="switch"
         name={name}
         type="checkbox"
-        id="switch"
+        defaultChecked={defaultChecked}
+        {...rest}
+        onChange={handleChangeCheckbox}
       />
+
       <Circle size={size} htmlFor="switch">
         Toggle
       </Circle>
+
       {label && (
         <Label htmlFor="switch">{checked ? 'Ativado' : 'Desativado'}</Label>
       )}

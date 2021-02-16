@@ -7,6 +7,8 @@ interface ILabelProps {
 export const Container = styled.div`
   display: flex;
   align-items: center;
+
+  cursor: pointer;
 `;
 
 export const Checkbox = styled.input`
@@ -50,9 +52,10 @@ export const Circle = styled.label<ILabelProps>`
 
     ::after {
       content: '';
+
       position: absolute;
-      top: ${theme.sizes.px};
-      left: ${theme.sizes.px};
+      top: ${theme.spaces.px};
+      left: ${theme.spaces.px};
 
       ${size === 'sm' &&
       css`
@@ -70,23 +73,13 @@ export const Circle = styled.label<ILabelProps>`
       border-radius: ${theme.sizes[24]};
       transition: 0.3s;
     }
-
-    :active:after {
-      ${size === 'sm' &&
-      css`
-        width: ${theme.sizes[5]};
-      `}
-
-      ${size === 'md' &&
-      css`
-        width: ${theme.sizes[6]};
-      `}
-    }
   `}
 `;
 
 export const Label = styled.label`
   ${({ theme }) => css`
-    margin-left: ${theme.sizes[2]};
+    margin-left: ${theme.spaces[3]};
+
+    cursor: pointer;
   `}
 `;

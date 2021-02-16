@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
-  flex: 1;
+  width: 100%;
 `;
 
 export const TitleContainer = styled.div`
@@ -27,7 +27,6 @@ export const TitleContainer = styled.div`
 `;
 
 interface InputContainerProps {
-  isDisabled: boolean;
   isErrored: boolean;
   isFocused: boolean;
   isFilled: boolean;
@@ -35,44 +34,17 @@ interface InputContainerProps {
 }
 
 export const InputContainer = styled.span<InputContainerProps>`
-  ${({ theme, isDisabled, isErrored, isFocused, isFilled, hasIcon }) => css`
+  ${({ theme, isErrored, isFocused, isFilled, hasIcon }) => css`
     position: relative;
 
     display: flex;
     align-items: center;
 
-    height: ${theme.sizes[9]};
-
-    background: ${theme.colors.palette.transparent};
-    border: 1px solid ${theme.colors.background['accent-2']};
-    border-radius: ${theme.borderRadius.md};
-
-    cursor: text;
-
-    transition: border 0.2s;
-
-    ${isDisabled &&
-    css`
-      cursor: not-allowed;
-      opacity: 0.6;
-    `}
-
-    ${isErrored &&
-    css`
-      border-color: ${theme.colors.palette.red.base};
-    `}
-
-    ${isFocused &&
-    css`
-      border-color: ${theme.colors.primary['accent-1']};
-    `}
-
     > input {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-
-      padding: 0 ${theme.spaces[3]};
+      ${isErrored &&
+      css`
+        border-color: ${theme.colors.palette.red.base};
+      `}
 
       ${hasIcon &&
       css`
@@ -83,20 +55,6 @@ export const InputContainer = styled.span<InputContainerProps>`
       css`
         padding-right: ${theme.spaces[10]};
       `}
-
-      border: 0;
-      background: ${theme.colors.palette.transparent};
-
-      font-size: ${theme.fonts.sizes.md};
-      color: ${theme.colors.foreground.base};
-
-      ::placeholder {
-        color: ${theme.colors.foreground['accent-2']};
-      }
-
-      &:disabled {
-        cursor: not-allowed;
-      }
     }
 
     > svg {

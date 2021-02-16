@@ -1,36 +1,37 @@
 import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { IconType } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
-import ReactSelect, { Props as ReactSelectProps } from 'react-select';
-import makeAnimated from 'react-select/animated';
+import { Props as ReactSelectProps } from 'react-select';
 
 import { useField } from '@unform/core';
 
-import { Container, TitleContainer, SelectContainer } from './styles';
+import SelectWrapper from '@/components/Form/Select/Wrapper';
+
+import { Container, TitleContainer } from './styles';
 
 export interface ISelectValue {
   label: string;
   value: string;
 }
 
-interface ISelectProps extends ReactSelectProps {
+interface ISelectProps extends Omit<ReactSelectProps, 'theme'> {
   name: string;
   label?: string;
   hint?: string;
   icon?: IconType;
   disabled?: boolean;
   defaultValue?: ISelectValue;
+  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
-const animatedComponents = makeAnimated();
-
 const Select: React.FC<ISelectProps> = ({
-  label,
   name,
+  label,
   hint,
-  icon: Icon,
+  icon,
   disabled = false,
   defaultValue,
+  containerProps,
   ...rest
 }) => {
   const selectRef = useRef<any>(null);
@@ -42,10 +43,6 @@ const Select: React.FC<ISelectProps> = ({
     error,
     clearError,
   } = useField(name);
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
 
   const [selected, setSelected] = useState<ISelectValue>(
     defaultValue || formDefaultValue,
@@ -67,29 +64,25 @@ const Select: React.FC<ISelectProps> = ({
   }, [registerField, fieldName, selected]);
 
   const handleOpenSelect = useCallback(() => {
+    if (disabled) {
+      return;
+    }
+
     selectRef.current.focus();
     selectRef.current.onMenuOpen();
-  }, []);
+  }, [disabled]);
 
-  const handleChangeSelected = useCallback((newValue: ISelectValue) => {
-    setSelected(newValue);
-  }, []);
+  const handleChangeSelected = useCallback(
+    (newValue: ISelectValue) => {
+      setSelected(newValue);
 
-  const handleOnMenuOpen = useCallback(() => {
-    setIsMenuOpen(true);
-    setIsFocused(true);
-
-    clearError();
-  }, [clearError]);
-
-  const handleOnMenuClose = useCallback(() => {
-    setIsMenuOpen(false);
-    setIsFocused(false);
-    setIsFilled(!!selectRef.current?.state.value);
-  }, []);
+      clearError();
+    },
+    [clearError],
+  );
 
   return (
-    <Container>
+    <Container {...containerProps} isErrored={!!error}>
       {(label || hint) && (
         <TitleContainer>
           {label && <label htmlFor={fieldName}>{label}</label>}
@@ -97,43 +90,22 @@ const Select: React.FC<ISelectProps> = ({
         </TitleContainer>
       )}
 
-      <SelectContainer
-        isDisabled={disabled}
-        isMenuOpen={isMenuOpen}
-        isErrored={!!error}
-        isFocused={isFocused}
-        isFilled={isFilled}
-        hasIcon={!!Icon}
+      <SelectWrapper
+        ref={selectRef}
+        {...rest}
+        icon={icon}
+        value={selected}
+        disabled={disabled}
+        onChange={handleChangeSelected}
       >
-        {Icon && (
-          <Icon
-            id="icon"
-            strokeWidth={1}
-            onClick={() => !disabled && handleOpenSelect()}
-          />
-        )}
-
-        <ReactSelect
-          ref={selectRef}
-          id="react-select"
-          components={animatedComponents}
-          isDisabled={disabled}
-          placeholder="Selecione..."
-          {...rest}
-          value={selected}
-          onChange={handleChangeSelected}
-          onMenuOpen={handleOnMenuOpen}
-          onMenuClose={handleOnMenuClose}
-        />
-
         {!!error && (
           <FiAlertCircle
             id="icon-alert"
             strokeWidth={1}
-            onClick={() => !disabled && handleOpenSelect()}
+            onClick={handleOpenSelect}
           />
         )}
-      </SelectContainer>
+      </SelectWrapper>
     </Container>
   );
 };

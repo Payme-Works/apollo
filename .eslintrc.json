@@ -83,13 +83,13 @@
           ],
           "module",
           "/^@config/",
-          "/^@/",
-          "/^~/",
+          "/^@\//",
           [
             "parent",
             "sibling",
             "index"
-          ]
+          ],
+          "/^./styles/"
         ],
         "alphabetize": {
           "order": "asc",
