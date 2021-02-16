@@ -9,6 +9,7 @@ import Select, { ISelectValue } from '@/components/Form/Select';
 import SelectableInput, {
   ISelectableInputValue,
 } from '@/components/Form/SelectableInput';
+import Switch from '@/components/Form/Switch';
 
 import { Flex } from './styles';
 
@@ -93,6 +94,10 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               },
             }}
           />
+        </Flex>
+
+        <Flex style={{ marginTop: 16 }}>
+          <Switch name="switch" label />
         </Flex>
       </Form>
     </FooterBox>
