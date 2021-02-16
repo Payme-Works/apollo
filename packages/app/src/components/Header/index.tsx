@@ -6,6 +6,7 @@ import { remote } from 'electron';
 import os from 'os';
 
 import { useConfig } from '../../hooks/useConfig';
+
 import {
   Container,
   WindowActions,

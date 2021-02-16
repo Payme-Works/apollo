@@ -4,7 +4,7 @@ import Button, { IButtonProps } from '@/components/Button';
 
 import { Container, Content, Footer } from './styles';
 
-interface IFooterBoxProps {
+export interface IFooterBoxProps {
   title: string;
   description: string;
   footer: {
@@ -13,16 +13,18 @@ interface IFooterBoxProps {
       text: string;
     } & IButtonProps;
   };
+  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const FooterBox: React.FC<IFooterBoxProps> = ({
   title,
   description,
   footer,
+  containerProps,
   children,
 }) => {
   return (
-    <Container>
+    <Container {...containerProps}>
       <Content>
         <h1>{title}</h1>
         <p>{description}</p>
