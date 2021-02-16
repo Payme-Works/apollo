@@ -1,15 +1,20 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { FiBarChart2, FiDollarSign } from 'react-icons/fi';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import * as Yup from 'yup';
 
 import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
+import FormControl from '@/components/Form/FormControl';
+import FormLabel from '@/components/Form/FormLabel';
+import Input from '@/components/Form/Input';
 import Select, { ISelectValue } from '@/components/Form/Select';
 import SelectableInput, {
   ISelectableInputValue,
 } from '@/components/Form/SelectableInput';
 import Switch from '@/components/Form/Switch';
+import getValidationErrors from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
 
@@ -19,11 +24,103 @@ interface IMainAdjustmentsFormData {
 }
 
 const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
-  const mainAdjustmentsFormRef = useRef<FormHandles>(null);
+  const formRef = useRef<FormHandles>(null);
 
-  const handleSave = useCallback((data: IMainAdjustmentsFormData) => {
-    console.log(data);
-  }, []);
+  const [isMartingaleChecked, setIsMartingaleChecked] = useState(false);
+
+  const orderPriceOptions = useMemo(
+    () => [
+      {
+        value: 'real',
+        label: 'R$',
+      },
+    ],
+    [],
+  );
+
+  const operationTypeOptions = useMemo(
+    () => [
+      {
+        value: 'all',
+        label: 'Todos',
+      },
+      {
+        value: 'binary',
+        label: 'Opções binárias',
+      },
+      {
+        value: 'digital',
+        label: 'Opções digitais',
+      },
+    ],
+    [],
+  );
+
+  const handleSave = useCallback(
+    async (data: IMainAdjustmentsFormData) => {
+      console.log(data);
+
+      try {
+        formRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          order_price: Yup.object()
+            .shape({
+              selected: Yup.object().shape({
+                value: Yup.string()
+                  .oneOf(orderPriceOptions.map(item => item.value))
+                  .required(),
+                label: Yup.string()
+                  .oneOf(orderPriceOptions.map(item => item.label))
+                  .required(),
+              }),
+              value: Yup.string()
+                .transform(value =>
+                  Number.isNaN(value) ? undefined : Number(value),
+                )
+                .min(2, 'Valor da entrada deve ser no mínimo R$ 2,00')
+                .max(20000, 'Valor da entrada máximo deve ser R$ 5.000,00')
+                .required(),
+            })
+            .required('Valor da entrada obrigatório'),
+          operation_type: Yup.object()
+            .shape({
+              value: Yup.string()
+                .oneOf(operationTypeOptions.map(item => item.value))
+                .required(),
+              label: Yup.string()
+                .oneOf(operationTypeOptions.map(item => item.label))
+                .required(),
+            })
+            .required('Tipo de operação obrigatório'),
+          martingale: Yup.boolean().required(),
+          martingale_amount: Yup.string().when('martingale', {
+            is: true,
+            then: Yup.string()
+              .transform(value =>
+                Number.isNaN(value) ? undefined : Number(value),
+              )
+              .required('Mãos de martingale obrigatório'),
+          }),
+        });
+
+        await schema.validate(data, { abortEarly: false });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          console.log(errors);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+
+        console.error(err);
+      }
+    },
+    [operationTypeOptions, orderPriceOptions],
+  );
 
   return (
     <FooterBox
@@ -33,71 +130,77 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         hint: 'Tome bastante cuidado com esses ajustes.',
         button: {
           text: 'Salvar',
-          onClick: () => mainAdjustmentsFormRef.current?.submitForm(),
+          onClick: () => formRef.current?.submitForm(),
         },
       }}
       {...rest}
     >
-      <Form ref={mainAdjustmentsFormRef} onSubmit={handleSave}>
-        <Flex style={{ marginTop: 16 }}>
-          <SelectableInput
-            name="order_price"
-            label="Valor da entrada"
-            icon={FiDollarSign}
-            containerProps={{
-              style: {
-                width: '47%',
-              },
+      <Form ref={formRef} onSubmit={handleSave}>
+        <Flex>
+          <FormControl
+            style={{
+              width: '47%',
             }}
-            selectProps={{
-              options: [
-                {
+          >
+            <FormLabel>Valor da entrada</FormLabel>
+            <SelectableInput
+              name="order_price"
+              icon={FiDollarSign}
+              selectProps={{
+                options: orderPriceOptions,
+                defaultValue: {
                   value: 'real',
                   label: 'R$',
                 },
-              ],
-              defaultValue: {
-                value: 'real',
-                label: 'R$',
-              },
-            }}
-            inputProps={{
-              placeholder: '2,00',
-            }}
-          />
+              }}
+              inputProps={{
+                placeholder: '2,00',
+              }}
+            />
+          </FormControl>
 
-          <Select
-            name="operation_type"
-            label="Tipo de operação"
-            icon={FiBarChart2}
-            options={[
-              {
+          <FormControl
+            style={{
+              width: '47%',
+            }}
+          >
+            <FormLabel>Tipo de operação</FormLabel>
+            <Select
+              name="operation_type"
+              icon={FiBarChart2}
+              options={operationTypeOptions}
+              defaultValue={{
                 value: 'all',
                 label: 'Todos',
-              },
-              {
-                value: 'binary',
-                label: 'Opções binárias',
-              },
-              {
-                value: 'digital',
-                label: 'Opções digitais',
-              },
-            ]}
-            defaultValue={{
-              value: 'all',
-              label: 'Todos',
-            }}
-            containerProps={{
-              style: {
-                width: '47%',
-              },
-            }}
-          />
+              }}
+            />
+          </FormControl>
         </Flex>
 
         <Flex style={{ marginTop: 16 }}>
-          <Switch name="switch" label />
+          <FormControl
+            style={{
+              width: '47%',
+            }}
+          >
+            <FormLabel>Martingale</FormLabel>
+            <Switch
+              name="martingale"
+              showCheckedLabel
+              defaultChecked={isMartingaleChecked}
+              onChange={e => setIsMartingaleChecked(e.target.checked)}
+            />
+          </FormControl>
+
+          <FormControl
+            disabled={!isMartingaleChecked}
+            style={{
+              width: '47%',
+            }}
+          >
+            <FormLabel>Mãos de martingale</FormLabel>
+            <Input name="martingale_amount" />
+          </FormControl>
         </Flex>
       </Form>
     </FooterBox>

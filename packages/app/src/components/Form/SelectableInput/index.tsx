@@ -9,7 +9,7 @@ import InputWrapper from '@/components/Form/Input/Wrapper';
 import { ISelectValue } from '@/components/Form/Select';
 import SelectWrapper from '@/components/Form/Select/Wrapper';
 
-import { Container, TitleContainer, SelectableInputContainer } from './styles';
+import { Container } from './styles';
 
 export interface ISelectableInputValue {
   selected?: ISelectValue;
@@ -18,24 +18,18 @@ export interface ISelectableInputValue {
 
 interface ISelectableInputProps {
   name: string;
-  label?: string;
-  hint?: string;
   icon?: IconType;
   disabled?: boolean;
   defaultValue?: ISelectableInputValue;
-  containerProps?: React.HTMLAttributes<HTMLDivElement>;
   selectProps?: ReactSelectProps;
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }
 
 const SelectableInput: React.FC<ISelectableInputProps> = ({
   name,
-  label,
-  hint,
   icon,
   disabled = false,
   defaultValue,
-  containerProps,
   selectProps: {
     theme: _theme,
     defaultValue: selectDefaultValue,
@@ -87,9 +81,7 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);
-
-    clearError();
-  }, [clearError]);
+  }, []);
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
@@ -115,43 +107,29 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
   );
 
   return (
-    <Container {...containerProps}>
-      {(label || hint) && (
-        <TitleContainer>
-          {label && <label htmlFor={fieldName}>{label}</label>}
-          {hint && <small>{hint}</small>}
-        </TitleContainer>
-      )}
+    <Container isErrored={!!error} isFocused={isFocused} isFilled={isFilled}>
+      <SelectWrapper
+        ref={selectRef}
+        {...selectProps}
+        icon={icon}
+        value={value?.selected}
+        disabled={disabled}
+        onChange={handleChangeSelected}
+        onMenuOpen={handleFocus}
+        onMenuClose={handleBlur}
+      />
 
-      <SelectableInputContainer
-        isErrored={!!error}
-        isFocused={isFocused}
-        isFilled={isFilled}
-      >
-        <SelectWrapper
-          ref={selectRef}
-          {...selectProps}
-          isErrored={!!error}
-          icon={icon}
-          value={value?.selected}
-          disabled={disabled}
-          onChange={handleChangeSelected}
-          onMenuOpen={handleFocus}
-          onMenuClose={handleBlur}
-        />
+      <InputWrapper
+        ref={inputRef}
+        {...inputProps}
+        value={value?.value}
+        disabled={disabled}
+        onChange={handleChangeInputValue}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      />
 
-        <InputWrapper
-          ref={inputRef}
-          {...inputProps}
-          value={value?.value}
-          disabled={disabled}
-          onChange={handleChangeInputValue}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-
-        {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
-      </SelectableInputContainer>
+      {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
     </Container>
   );
 };

@@ -1,14 +1,16 @@
 import styled, { css } from 'styled-components';
 
-interface ILabelProps {
-  size: 'md' | 'sm';
-}
-
 export const Container = styled.div`
-  display: flex;
-  align-items: center;
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
 
-  cursor: pointer;
+    cursor: pointer;
+
+    div#form-label + & {
+      margin-top: ${theme.spaces[4]};
+    }
+  `}
 `;
 
 export const Checkbox = styled.input`
@@ -75,6 +77,10 @@ export const Circle = styled.label<ILabelProps>`
     }
   `}
 `;
+
+interface ILabelProps {
+  size: 'md' | 'sm';
+}
 
 export const Label = styled.label`
   ${({ theme }) => css`

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useField } from '@unform/core';
 
@@ -8,14 +8,15 @@ interface ISwitchProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   name: string;
   size?: 'sm' | 'md';
-  label?: boolean;
+  showCheckedLabel?: boolean;
 }
 
 const Switch: React.FC<ISwitchProps> = ({
   name,
   size = 'md',
-  label = false,
+  showCheckedLabel = false,
   defaultChecked,
+  onChange,
   ...rest
 }) => {
   const switchRef = useRef<HTMLInputElement>(null);
@@ -39,12 +40,20 @@ const Switch: React.FC<ISwitchProps> = ({
 
     switchRef.current.checked = newValue;
 
-    setChecked(newValue);
-  }, []);
+    handleChangeCheckbox({
+      target: {
+        checked: newValue,
+      },
+    } as React.ChangeEvent<HTMLInputElement>);
+  }, [handleChangeCheckbox]);
 
   const handleChangeCheckbox = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setChecked(event.target.checked);
+
+      if (onChange) {
+        onChange(event);
+      }
     },
     [],
   );
@@ -65,11 +74,11 @@ const Switch: React.FC<ISwitchProps> = ({
         Toggle
       </Circle>
 
-      {label && (
+      {showCheckedLabel && (
         <Label htmlFor="switch">{checked ? 'Ativado' : 'Desativado'}</Label>
       )}
     </Container>
   );
 };
 
-export default Switch;
+export default memo(Switch);
