@@ -74,10 +74,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                   .oneOf(orderPriceOptions.map(item => item.label))
                   .required(),
               }),
-              value: Yup.string()
-                .transform(value =>
-                  Number.isNaN(value) ? undefined : Number(value),
-                )
+              value: Yup.number()
                 .min(2, 'Valor da entrada deve ser no mínimo R$ 2,00')
                 .max(20000, 'Valor da entrada máximo deve ser R$ 5.000,00')
                 .required(),
@@ -94,17 +91,22 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             })
             .required('Tipo de operação obrigatório'),
           martingale: Yup.boolean().required(),
-          martingale_amount: Yup.string().when('martingale', {
-            is: true,
-            then: Yup.string()
-              .transform(value =>
-                Number.isNaN(value) ? undefined : Number(value),
-              )
-              .required('Mãos de martingale obrigatório'),
-          }),
+          martingale_amount: Yup.number()
+            .positive()
+            .transform((value, original) =>
+              original === '' ? undefined : value,
+            )
+            .when('martingale', {
+              is: true,
+              then: Yup.number().required('Mãos de martingale obrigatório'),
+            }),
         });
 
-        await schema.validate(data, { abortEarly: false });
+        const validatedData = await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        console.log(validatedData);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);

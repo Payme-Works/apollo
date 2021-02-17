@@ -8,7 +8,7 @@ import { Container } from './styles';
 const Settings: React.FC = () => {
   return (
     <Container>
-      <Broker containerProps={{ style: { marginTop: 24 } }} />
+      <Broker />
       <MainAdjustments containerProps={{ style: { marginTop: 24 } }} />
     </Container>
   );

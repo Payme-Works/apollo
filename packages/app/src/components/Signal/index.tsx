@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from 'react';
+import { FiAlertCircle } from 'react-icons/fi';
 
 import { format, parseISO } from 'date-fns';
 import { ThemeContext } from 'styled-components';
@@ -8,7 +9,9 @@ import galeImg from '@/assets/gale.png';
 import { useSignals } from '@/context/signals';
 import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 
-import { Container, Label, GaleImage } from './styles';
+import Tooltip from '../Tooltip';
+
+import { Container, Label, GaleImage, WarningContainer } from './styles';
 
 interface ISignalProps {
   data: ISignalWithStatus;
@@ -52,6 +55,17 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
         <Label width={activeLabelWidth}>{formattedData.currency}</Label>
         <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
         <Label width={theme.sizes[10]}>{formattedData.operation}</Label>
+
+        <WarningContainer width={theme.sizes[10]}>
+          {data.warning && (
+            <Tooltip hint={data.warning}>
+              <FiAlertCircle
+                color={theme.colors.foreground['accent-2']}
+                size={20}
+              />
+            </Tooltip>
+          )}
+        </WarningContainer>
 
         {shouldShowMartingales &&
           [...Array(data.result?.martingales)].map((item, index) => (
