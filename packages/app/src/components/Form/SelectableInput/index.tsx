@@ -58,7 +58,7 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
 
     const loadValue: ISelectableInputValue = {
       selected: selectDefaultValue as ISelectValue,
-      value: inputDefaultValue && String(inputDefaultValue),
+      value: inputDefaultValue ? String(inputDefaultValue) : '',
     };
 
     return loadValue;
