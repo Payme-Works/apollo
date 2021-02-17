@@ -7,7 +7,7 @@ export const Container = styled.div`
 
     cursor: pointer;
 
-    div#form-label + & {
+    #form-label + & {
       margin-top: ${theme.spaces[4]};
     }
   `}
@@ -32,8 +32,20 @@ export const Checkbox = styled.input`
 
 export const Circle = styled.label<ILabelProps>`
   ${({ theme, size }) => css`
+    position: relative;
+
+    display: block;
+
+    background: ${theme.colors.background['accent-2']};
+    border-radius: 14px;
+
     cursor: pointer;
     text-indent: -9999px;
+
+    transition-property: all;
+    transition-delay: 0.12s;
+    transition-duration: 0.2s;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 
     ${size === 'sm' &&
     css`
@@ -47,17 +59,17 @@ export const Circle = styled.label<ILabelProps>`
       height: ${theme.sizes[6]};
     `}
 
-    background: ${theme.colors.background['accent-2']};
-    display: block;
-    border-radius: 14px;
-    position: relative;
-
     ::after {
       content: '';
 
       position: absolute;
       top: ${theme.spaces.px};
       left: ${theme.spaces.px};
+
+      background: ${theme.colors.background.base};
+      border-radius: ${theme.sizes[24]};
+
+      transition: all 0.4s;
 
       ${size === 'sm' &&
       css`
@@ -70,10 +82,6 @@ export const Circle = styled.label<ILabelProps>`
         width: ${theme.sizes[5.5]};
         height: ${theme.sizes[5.5]};
       `}
-
-      background: ${theme.colors.background.base};
-      border-radius: ${theme.sizes[24]};
-      transition: 0.3s;
     }
   `}
 `;
