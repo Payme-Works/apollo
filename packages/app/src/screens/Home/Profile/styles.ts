@@ -8,6 +8,8 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
 
+  z-index: 1000;
+
   backdrop-filter: blur(5px);
 
   ${({ theme }) => css`

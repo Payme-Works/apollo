@@ -116,6 +116,16 @@ export const Label = styled.span<ILabelProps>`
   }
 `;
 
+export const WarningContainer = styled.div<ILabelProps>`
+  width: ${props => props.width};
+
+  margin-left: 16px;
+
+  svg {
+    stroke-width: 1;
+  }
+`;
+
 export const GaleImage = styled.img`
   ${({ theme }) => css`
     height: ${theme.sizes[5]};
