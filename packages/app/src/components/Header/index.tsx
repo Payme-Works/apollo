@@ -48,7 +48,7 @@ const Header: React.FC = () => {
     }
   }, []);
 
-  const useMacOSWindowActionButtons = useConfig('useMacOSWindowActionButtons');
+  const { useMacOSWindowActionButtons } = useConfig('window');
 
   const shouldUseMacOSWindowActions = useMemo(() => {
     return (
@@ -58,11 +58,12 @@ const Header: React.FC = () => {
     );
   }, [useMacOSWindowActionButtons]);
 
-  const shouldGoBackShow = useMemo(() => {
+  const shouldShowGoBackButton = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
-    const shouldGoback = searchParams.get('showGoBackButton');
 
-    if (shouldGoback === 'true') {
+    const showGoBackButton = searchParams.get('showGoBackButton');
+
+    if (showGoBackButton === 'true') {
       return true;
     }
 
@@ -81,7 +82,7 @@ const Header: React.FC = () => {
 
           <MacActionButton action="maximize" onClick={handleMaximize} />
 
-          {shouldGoBackShow && (
+          {shouldShowGoBackButton && (
             <GoBackButton onClick={() => history.goBack()}>
               <FiChevronLeft />
             </GoBackButton>

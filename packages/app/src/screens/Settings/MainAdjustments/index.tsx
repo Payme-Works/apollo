@@ -19,8 +19,8 @@ import getValidationErrors from '@/utils/getValidationErrors';
 import { Flex } from './styles';
 
 interface IMainAdjustmentsFormData {
-  order_price: ISelectableInputValue;
-  operation_type: ISelectValue;
+  orderPrice: ISelectableInputValue;
+  operationType: ISelectValue;
 }
 
 const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
@@ -64,7 +64,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          order_price: Yup.object()
+          orderPrice: Yup.object()
             .shape({
               selected: Yup.object().shape({
                 value: Yup.string()
@@ -80,7 +80,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 .required(),
             })
             .required('Valor da entrada obrigatório'),
-          operation_type: Yup.object()
+          operationType: Yup.object()
             .shape({
               value: Yup.string()
                 .oneOf(operationTypeOptions.map(item => item.value))
@@ -91,7 +91,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             })
             .required('Tipo de operação obrigatório'),
           martingale: Yup.boolean().required(),
-          martingale_amount: Yup.number()
+          martingaleAmount: Yup.number()
             .positive()
             .transform((value, original) =>
               original === '' ? undefined : value,
@@ -146,14 +146,11 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           >
             <FormLabel>Valor da entrada</FormLabel>
             <SelectableInput
-              name="order_price"
+              name="orderPrice"
               icon={FiDollarSign}
               selectProps={{
                 options: orderPriceOptions,
-                defaultValue: {
-                  value: 'real',
-                  label: 'R$',
-                },
+                defaultValue: orderPriceOptions[0],
               }}
               inputProps={{
                 placeholder: '2,00',
@@ -168,13 +165,10 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           >
             <FormLabel>Tipo de operação</FormLabel>
             <Select
-              name="operation_type"
+              name="operationType"
               icon={FiBarChart2}
               options={operationTypeOptions}
-              defaultValue={{
-                value: 'all',
-                label: 'Todos',
-              }}
+              defaultValue={operationTypeOptions[0]}
             />
           </FormControl>
         </Flex>
@@ -201,7 +195,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             }}
           >
             <FormLabel>Mãos de martingale</FormLabel>
-            <Input name="martingale_amount" />
+            <Input name="martingaleAmount" />
           </FormControl>
         </Flex>
       </Form>
