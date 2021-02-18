@@ -20,6 +20,9 @@ import {
 
 let mainWindow: Electron.BrowserWindow | null;
 
+console.log("app.getPath('userData')");
+console.log(app.getPath('userData'));
+
 function createWindow() {
   const icon = nativeImage.createFromPath(`${app.getAppPath()}/build/icon.png`);
 

@@ -72,14 +72,14 @@ export const MacActionButton = styled.button<MacActionButtonProps>`
   border: 0;
 
   ${({ theme }) => css`
-    width: ${theme.sizes[4]};
-    height: ${theme.sizes[4]};
+    width: ${theme.sizes[3.5]};
+    height: ${theme.sizes[3.5]};
 
     border-radius: 50%;
 
     transition: opacity 0.2s;
 
-    &:hover {
+    :hover {
       opacity: 0.6;
     }
 
@@ -102,15 +102,15 @@ export const DefaultActionButton = styled.button`
 
   transition: color 0.2s;
 
-  &:hover svg {
+  :hover svg {
     color: ${props => props.theme.colors.foreground.base};
   }
 
-  &:active {
+  :active {
     opacity: 0.6;
   }
 
-  &:focus {
+  :focus {
     outline: 0;
   }
 

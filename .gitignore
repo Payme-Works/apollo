@@ -9,9 +9,8 @@ lerna-debug.log*
 # Dependency directories
 node_modules
 
-# Build
+# Distribution
 dist
-build
 
 # Coverage directory used by tools like istanbul
 coverage

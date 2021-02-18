@@ -90,13 +90,13 @@ const Input: React.FC<InputProps> = ({
 
       {type === 'password' &&
         (inputType === 'password' ? (
-          <FiEye
+          <FiEyeOff
             id="icon-eye"
             strokeWidth={1}
             onClick={handleToggleShowPassword}
           />
         ) : (
-          <FiEyeOff
+          <FiEye
             id="icon-eye"
             strokeWidth={1}
             onClick={handleToggleShowPassword}

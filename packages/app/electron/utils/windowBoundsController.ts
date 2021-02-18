@@ -1,13 +1,13 @@
 import { Rectangle } from 'electron';
 
-import { config, schema } from '../../src/store/config';
+import { store, schema } from '../../src/store/config';
 
 export const getWindowBounds = (): Rectangle => {
-  const { width, height, x, y } = config.get('windowBounds') as Rectangle;
+  const { width, height, x, y } = store.get('window.windowBounds') as Rectangle;
 
   return {
-    width: width || schema.windowBounds.default.width,
-    height: height || schema.windowBounds.default.height,
+    width: width || schema.window.default.windowBounds.width,
+    height: height || schema.window.default.windowBounds.height,
     x,
     y,
   };
@@ -19,9 +19,9 @@ export const setWindowBounds = (bounds: Rectangle | undefined): void => {
   }
   const { width, height, x, y } = bounds;
 
-  config.set('windowBounds', {
-    width: width || schema.windowBounds.default.width,
-    height: height || schema.windowBounds.default.height,
+  store.set('window.windowBounds', {
+    width: width || schema.window.default.windowBounds.width,
+    height: height || schema.window.default.windowBounds.height,
     x,
     y,
   });
