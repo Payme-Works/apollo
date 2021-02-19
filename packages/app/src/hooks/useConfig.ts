@@ -1,25 +1,34 @@
 import { useState, useEffect } from 'react';
 
-import { config, schema } from '../store/config';
+import { store, schema } from '../store/config';
 
 type Schema = typeof schema;
 
-export function useConfig<K extends keyof Schema>(
-  key: K,
-): Schema[K]['default'] {
-  const defaultValue = config.get(
+interface IUseConfig {
+  setConfig(key: string, value: any): void;
+}
+
+export function useConfig<Key extends keyof Schema>(
+  key: Key,
+): IUseConfig & Schema[Key]['default'] {
+  const defaultValue = store.get(
     key,
     schema[key].default,
-  ) as Schema[K]['default'];
-  const [value, setValue] = useState<Schema[K]['default']>(defaultValue);
+  ) as Schema[Key]['default'];
+  const [value, setValue] = useState<Schema[Key]['default']>(defaultValue);
 
   useEffect(() => {
-    const unsubscribe = config.onDidChange(key, newValue => {
-      setValue(newValue as Schema[K]['default']);
+    const unsubscribe = store.onDidChange(key, newValue => {
+      setValue(newValue as Schema[Key]['default']);
     });
 
     return unsubscribe;
   }, [key]);
 
-  return value;
+  return {
+    ...value,
+    setConfig(configKey, newValue) {
+      store.set(configKey, newValue);
+    },
+  };
 }

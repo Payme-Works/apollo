@@ -1,29 +1,60 @@
+import { animated } from 'react-spring';
+
 import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   ${({ theme }) => css`
     border: 1px solid ${theme.colors.background['accent-2']};
     border-radius: ${theme.borderRadius.md};
+
+    width: 100%;
   `}
 `;
 
-export const Content = styled.div`
+export const Content = styled(animated.div)`
   ${({ theme }) => css`
     width: 100%;
 
     padding: ${theme.spaces[6]};
+  `}
+`;
 
-    > h1 {
+interface IHeaderContainerProps {
+  collapsed: boolean;
+}
+
+export const HeaderContainer = styled.div<IHeaderContainerProps>`
+  ${({ theme, collapsed }) => css`
+    display: flex;
+
+    ${!collapsed &&
+    css`
+      margin-bottom: ${theme.spaces[7]};
+    `}
+
+    justify-content: space-between;
+
+    div > h1 {
       font-size: ${theme.fonts.sizes.xl};
       font-weight: ${theme.fonts.weights.regular};
     }
 
-    > p {
+    div > p {
       font-size: ${theme.fonts.sizes.sm};
       color: ${theme.colors.foreground['accent-2']};
 
       margin-top: ${theme.spaces[3]};
-      margin-bottom: ${theme.spaces[4]};
+      padding-right: ${theme.spaces[1]};
+    }
+
+    svg {
+      color: ${theme.colors.primary['accent-1']};
+
+      cursor: pointer;
+
+      :hover {
+        color: ${theme.colors.background['accent-3']};
+      }
     }
   `}
 `;
