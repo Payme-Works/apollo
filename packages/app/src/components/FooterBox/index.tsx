@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 import Button, { IButtonProps } from '@/components/Button';
 
-import { Container, Content, Footer } from './styles';
+import { Container, Content, Footer, HeaderContainer } from './styles';
 
 export interface IFooterBoxProps {
   title: string;
@@ -23,25 +24,43 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
   containerProps,
   children,
 }) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const handleUpdateCollapsable = useCallback(() => {
+    setIsCollapsed(!isCollapsed);
+  }, [isCollapsed]);
+
   return (
-    <Container {...containerProps}>
-      <Content>
-        <h1>{title}</h1>
-        <p>{description}</p>
+    <>
+      <Container {...containerProps}>
+        <Content>
+          <HeaderContainer collapsed={isCollapsed}>
+            <div>
+              <h1>{title}</h1>
+              <p>{description}</p>
+            </div>
 
-        {children}
-      </Content>
+            {!isCollapsed ? (
+              <FiChevronUp onClick={handleUpdateCollapsable} />
+            ) : (
+              <FiChevronDown onClick={handleUpdateCollapsable} />
+            )}
+          </HeaderContainer>
 
-      {footer && (
-        <Footer>
-          <p>{footer.hint}</p>
+          {!isCollapsed && children}
+        </Content>
 
-          <Button size="sm" {...footer.button}>
-            {footer.button.text}
-          </Button>
-        </Footer>
-      )}
-    </Container>
+        {footer && !isCollapsed && (
+          <Footer>
+            <p>{footer.hint}</p>
+
+            <Button size="sm" {...footer.button}>
+              {footer.button.text}
+            </Button>
+          </Footer>
+        )}
+      </Container>
+    </>
   );
 };
 

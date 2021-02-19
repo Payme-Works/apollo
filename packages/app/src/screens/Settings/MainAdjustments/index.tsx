@@ -127,7 +127,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         console.error(err);
       }
     },
-    [operationTypeOptions, orderPriceOptions],
+    [operationTypeOptions, orderPriceOptions, setConfig],
   );
 
   return (
