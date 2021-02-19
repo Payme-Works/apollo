@@ -14,6 +14,7 @@ import SelectableInput, {
   ISelectableInputValue,
 } from '@/components/Form/SelectableInput';
 import Switch from '@/components/Form/Switch';
+import { useConfig } from '@/hooks/useConfig';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
@@ -26,7 +27,11 @@ interface IMainAdjustmentsFormData {
 const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const formRef = useRef<FormHandles>(null);
 
-  const [isMartingaleChecked, setIsMartingaleChecked] = useState(false);
+  const { mainAdjustments, setConfig } = useConfig('robot');
+
+  const [isMartingaleChecked, setIsMartingaleChecked] = useState(
+    mainAdjustments.martingale,
+  );
 
   const orderPriceOptions = useMemo(
     () => [
@@ -102,11 +107,12 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             }),
         });
 
-        const validatedData = await schema.validate(data, {
+        const transformedData = await schema.validate(data, {
           abortEarly: false,
         });
 
-        console.log(validatedData);
+        console.log(transformedData);
+        setConfig('robot.mainAdjustments', transformedData);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -150,10 +156,11 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               icon={FiDollarSign}
               selectProps={{
                 options: orderPriceOptions,
-                defaultValue: orderPriceOptions[0],
+                defaultValue: mainAdjustments.orderPrice.selected,
               }}
               inputProps={{
                 placeholder: '2,00',
+                defaultValue: mainAdjustments.orderPrice.value,
               }}
             />
           </FormControl>
@@ -168,7 +175,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               name="operationType"
               icon={FiBarChart2}
               options={operationTypeOptions}
-              defaultValue={operationTypeOptions[0]}
+              defaultValue={mainAdjustments.operationType}
             />
           </FormControl>
         </Flex>
@@ -195,7 +202,10 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             }}
           >
             <FormLabel>Mãos de martingale</FormLabel>
-            <Input name="martingaleAmount" />
+            <Input
+              name="martingaleAmount"
+              defaultValue={mainAdjustments.martingaleAmount}
+            />
           </FormControl>
         </Flex>
       </Form>

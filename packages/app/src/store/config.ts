@@ -12,6 +12,26 @@ const schema = {
       },
     },
   },
+  robot: {
+    type: JSONSchemaType.Object,
+    default: {
+      mainAdjustments: {
+        orderPrice: {
+          selected: {
+            value: 'real',
+            label: 'R$',
+          },
+          value: 2,
+        },
+        operationType: {
+          value: 'all',
+          label: 'Todos',
+        },
+        martingale: true,
+        martingaleAmount: 2,
+      },
+    },
+  },
 };
 
 const store = new Store({
