@@ -25,5 +25,10 @@ export function useConfig<Key extends keyof Schema>(
     return unsubscribe;
   }, [key]);
 
-  return { ...value, setConfig: store.set };
+  return {
+    ...value,
+    setConfig(configKey, newValue) {
+      store.set(configKey, newValue);
+    },
+  };
 }
