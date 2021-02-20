@@ -1,9 +1,18 @@
-import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  memo,
+  useContext,
+} from 'react';
 import { IconType } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
 import { Props as ReactSelectProps } from 'react-select';
 
 import { useField } from '@unform/core';
+import { ThemeContext } from 'styled-components';
+import { Except } from 'type-fest';
 
 import { Container } from './styles';
 
@@ -12,11 +21,12 @@ export interface ISelectValue {
   value: string;
 }
 
-interface ISelectProps extends Omit<ReactSelectProps, 'theme'> {
+interface ISelectProps extends Except<ReactSelectProps, 'theme'> {
   name: string;
   icon?: IconType;
   disabled?: boolean;
   defaultValue?: ISelectValue;
+  isMulti?: boolean;
 }
 
 const Select: React.FC<ISelectProps> = ({
@@ -24,9 +34,11 @@ const Select: React.FC<ISelectProps> = ({
   icon,
   disabled = false,
   defaultValue,
+  isMulti = false,
   ...rest
 }) => {
   const selectRef = useRef<any>(null);
+  const theme = useContext(ThemeContext);
 
   const {
     fieldName,
@@ -76,12 +88,34 @@ const Select: React.FC<ISelectProps> = ({
   return (
     <Container
       ref={selectRef}
+      isMulti={isMulti}
       isErrored={!!error}
       {...rest}
       icon={icon}
       value={selected}
       disabled={disabled}
       onChange={handleChangeSelected}
+      styles={
+        isMulti && {
+          multiValueLabel: base => ({
+            ...base,
+            backgroundColor: theme.colors.background.base,
+            color: 'white',
+          }),
+          multiValueRemove: base => ({
+            ...base,
+            backgroundColor: theme.colors.background.base,
+            color: 'white',
+            marginLeft: '6px',
+          }),
+          multiValue: base => ({
+            ...base,
+            backgroundColor: theme.colors.background.base,
+            color: 'white',
+            border: '1px solid #fff',
+          }),
+        }
+      }
     >
       {!!error && (
         <FiAlertCircle
