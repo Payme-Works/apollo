@@ -14,7 +14,7 @@ export const Container = styled.span<ContainerProps>`
     display: flex;
     align-items: center;
 
-    > input {
+    > #input-handler > input {
       ${isErrored &&
       css`
         border-color: ${theme.colors.palette.red.base};
@@ -69,11 +69,13 @@ export const Container = styled.span<ContainerProps>`
       `}
     }
 
-    > svg#icon-alert {
+    > #icon-alert {
       position: absolute;
       right: ${theme.spaces[3]};
 
-      color: ${theme.colors.palette.red.base};
+      > svg {
+        color: ${theme.colors.palette.red.base};
+      }
     }
   `}
 `;

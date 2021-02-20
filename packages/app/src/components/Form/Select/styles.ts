@@ -1,12 +1,12 @@
 import styled, { css } from 'styled-components';
 
-import SelectWrapper from './Wrapper';
+import SelectHandler from './Handler';
 
 interface IContainerProps {
   isErrored: boolean;
 }
 
-export const Container = styled(SelectWrapper)<IContainerProps>`
+export const Container = styled(SelectHandler)<IContainerProps>`
   ${({ theme, isErrored }) => css`
     ${isErrored &&
     css`

@@ -4,20 +4,25 @@ import { FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 
 import { useField } from '@unform/core';
 
-import InputWrapper from '@/components/Form/Input/Wrapper';
+import Tooltip from '@/components/Tooltip';
+
+import InputHandler, { InputHandlerProps } from './Handler';
 
 import { Container } from './styles';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+type InputProps = {
   name: string;
   icon?: IconType;
-}
+} & InputHandlerProps;
 
 const Input: React.FC<InputProps> = ({
   name,
   icon: Icon,
+  variant,
   type,
+  defaultValue: _defaultValue,
   disabled = false,
+  onChange,
   ...rest
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -25,29 +30,51 @@ const Input: React.FC<InputProps> = ({
   const {
     fieldName,
     registerField,
-    defaultValue,
+    defaultValue: formDefaultValue,
     error,
     clearError,
   } = useField(name);
+
+  const defaultValue = _defaultValue || formDefaultValue || '';
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
   const [inputType, setInputType] = useState(type);
 
+  const [value, setValue] = useState<string | number>(defaultValue);
+
   useEffect(() => {
     if (inputRef.current) {
-      registerField({
+      registerField<string | number>({
         name: fieldName,
-        path: 'value',
-        ref: inputRef.current,
+        getValue() {
+          return value;
+        },
+        setValue(_ref, newValue) {
+          setValue(newValue);
+        },
+        clearValue(_ref, newValue) {
+          setValue(newValue);
+        },
       });
     }
-  }, [registerField, fieldName]);
+  }, [registerField, fieldName, value]);
 
   const handleFocusInput = useCallback(() => {
     inputRef.current.focus();
   }, []);
+
+  const handleInputChange = useCallback(
+    (newValue: string | number) => {
+      setValue(newValue);
+
+      if (onChange) {
+        onChange(newValue as never);
+      }
+    },
+    [onChange],
+  );
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -78,12 +105,14 @@ const Input: React.FC<InputProps> = ({
     >
       {Icon && <Icon id="icon" strokeWidth={1} />}
 
-      <InputWrapper
+      <InputHandler
         ref={inputRef}
-        defaultValue={defaultValue}
+        variant={variant}
+        defaultValue={_defaultValue}
         disabled={disabled}
-        type={inputType}
-        {...rest}
+        type={variant === 'native' ? inputType : type}
+        {...(rest as any)}
+        onChangeValue={handleInputChange}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
       />
@@ -103,7 +132,11 @@ const Input: React.FC<InputProps> = ({
           />
         ))}
 
-      {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
+      {!!error && (
+        <Tooltip id="icon-alert" text={error}>
+          <FiAlertCircle strokeWidth={1} />
+        </Tooltip>
+      )}
     </Container>
   );
 };

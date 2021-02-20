@@ -11,7 +11,7 @@ import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 
 import Tooltip from '../Tooltip';
 
-import { Container, Label, GaleImage, WarningContainer } from './styles';
+import { Container, Label, GaleImage, InfoContainer } from './styles';
 
 interface ISignalProps {
   data: ISignalWithStatus;
@@ -56,16 +56,16 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
         <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
         <Label width={theme.sizes[10]}>{formattedData.operation}</Label>
 
-        <WarningContainer width={theme.sizes[10]}>
-          {data.warning && (
-            <Tooltip hint={data.warning}>
+        <InfoContainer width={theme.sizes[10]}>
+          {data.info && (
+            <Tooltip text={data.info}>
               <FiAlertCircle
                 color={theme.colors.foreground['accent-2']}
                 size={20}
               />
             </Tooltip>
           )}
-        </WarningContainer>
+        </InfoContainer>
 
         {shouldShowMartingales &&
           [...Array(data.result?.martingales)].map((item, index) => (

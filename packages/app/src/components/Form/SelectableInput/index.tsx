@@ -5,15 +5,18 @@ import { Props as ReactSelectProps } from 'react-select';
 
 import { useField } from '@unform/core';
 
-import InputWrapper from '@/components/Form/Input/Wrapper';
+import InputHandler, {
+  InputHandlerProps,
+} from '@/components/Form/Input/Handler';
 import { ISelectValue } from '@/components/Form/Select';
-import SelectWrapper from '@/components/Form/Select/Wrapper';
+import SelectHandler from '@/components/Form/Select/Handler';
+import Tooltip from '@/components/Tooltip';
 
 import { Container } from './styles';
 
 export interface ISelectableInputValue {
   selected?: ISelectValue;
-  value?: string;
+  value?: string | number;
 }
 
 interface ISelectableInputProps {
@@ -22,7 +25,7 @@ interface ISelectableInputProps {
   disabled?: boolean;
   defaultValue?: ISelectableInputValue;
   selectProps?: ReactSelectProps;
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  inputProps?: InputHandlerProps;
 }
 
 const SelectableInput: React.FC<ISelectableInputProps> = ({
@@ -98,8 +101,8 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
   );
 
   const handleChangeInputValue = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(state => ({ ...state, value: event.target.value }));
+    (newValue: string | number) => {
+      setValue(state => ({ ...state, value: newValue }));
 
       clearError();
     },
@@ -108,7 +111,7 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
 
   return (
     <Container isErrored={!!error} isFocused={isFocused} isFilled={isFilled}>
-      <SelectWrapper
+      <SelectHandler
         ref={selectRef}
         {...selectProps}
         icon={icon}
@@ -119,17 +122,21 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
         onMenuClose={handleBlur}
       />
 
-      <InputWrapper
+      <InputHandler
         ref={inputRef}
         {...inputProps}
-        value={value?.value}
+        defaultValue={inputDefaultValue as any}
         disabled={disabled}
-        onChange={handleChangeInputValue}
+        onChangeValue={handleChangeInputValue}
         onFocus={handleFocus}
         onBlur={handleBlur}
       />
 
-      {!!error && <FiAlertCircle id="icon-alert" strokeWidth={1} />}
+      {!!error && (
+        <Tooltip id="icon-alert" text={error}>
+          <FiAlertCircle strokeWidth={1} />
+        </Tooltip>
+      )}
     </Container>
   );
 };

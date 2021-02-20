@@ -115,7 +115,7 @@ const RobotProvider: React.FC = ({ children }) => {
           if (signal.status === 'canceled') {
             updateSignal(signal.id, {
               status: 'expired',
-              warning: 'Signal canceled',
+              info: 'Signal canceled',
             });
 
             return;
@@ -134,7 +134,7 @@ const RobotProvider: React.FC = ({ children }) => {
             if (!activeInfo.digital.open) {
               updateSignal(signal.id, {
                 status: 'expired',
-                warning: 'Active closed',
+                info: 'Active closed',
               });
 
               return;
@@ -200,7 +200,7 @@ const RobotProvider: React.FC = ({ children }) => {
             } catch (err) {
               updateSignal(signal.id, {
                 status: 'expired',
-                warning: 'Unexpected error while creating order',
+                info: 'Unexpected error while creating order',
               });
 
               console.error(err);
@@ -255,7 +255,7 @@ const RobotProvider: React.FC = ({ children }) => {
             } catch (err) {
               updateSignal(signal.id, {
                 status: 'expired',
-                warning: 'Unexpected error while creating martingale order',
+                info: 'Unexpected error while creating martingale order',
               });
 
               console.error(err);
