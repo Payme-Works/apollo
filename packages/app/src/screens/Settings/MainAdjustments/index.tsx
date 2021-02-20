@@ -80,6 +80,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                   .required(),
               }),
               value: Yup.number()
+                .typeError('Valor da entrada deve ser um número')
                 .min(2, 'Valor da entrada deve ser no mínimo R$ 2,00')
                 .max(20000, 'Valor da entrada máximo deve ser R$ 5.000,00')
                 .required(),
@@ -96,15 +97,17 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             })
             .required('Tipo de operação obrigatório'),
           martingale: Yup.boolean().required(),
-          martingaleAmount: Yup.number()
-            .positive()
-            .transform((value, original) =>
-              original === '' ? undefined : value,
-            )
-            .when('martingale', {
-              is: true,
-              then: Yup.number().required('Mãos de martingale obrigatório'),
-            }),
+          martingaleAmount: Yup.number().when('martingale', {
+            is: true,
+            then: Yup.number()
+              .positive()
+              .transform((value, original) =>
+                original === '' ? undefined : value,
+              )
+              .min(1, 'Valor zero não permitido, desative o martingale')
+              .max(3, 'É permitido no máximo 3 mãos de martingale')
+              .required('Mãos de martingale obrigatório (1 a 3)'),
+          }),
         });
 
         const transformedData = await schema.validate(data, {
@@ -159,6 +162,7 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 defaultValue: mainAdjustments.orderPrice.selected,
               }}
               inputProps={{
+                variant: 'number-format',
                 placeholder: '2,00',
                 defaultValue: mainAdjustments.orderPrice.value,
               }}
@@ -204,7 +208,13 @@ const MainAdjustments: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             <FormLabel>Mãos de martingale</FormLabel>
             <Input
               name="martingaleAmount"
+              variant="number-format"
               defaultValue={mainAdjustments.martingaleAmount}
+              decimalScale={0}
+              allowNegative={false}
+              isAllowed={({ floatValue }) =>
+                !floatValue || (floatValue >= 0 && floatValue <= 3)
+              }
             />
           </FormControl>
         </Flex>

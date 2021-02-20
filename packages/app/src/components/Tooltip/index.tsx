@@ -2,25 +2,26 @@ import React from 'react';
 
 import Tippy from '@tippyjs/react/headless';
 
-import { TooltipContainer, Arrow, ButtonContainer } from './styles';
+import { TooltipContainer, Arrow, Content } from './styles';
 
-interface ITooltipProps {
+interface ITooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactElement<any>;
-  hint: string;
+  text: string;
 }
 
-const Tooltip: React.FC<ITooltipProps> = ({ hint, children }) => {
+const Tooltip: React.FC<ITooltipProps> = ({ text, children, ...rest }) => {
   return (
     <Tippy
       arrow
-      render={attrs => (
-        <TooltipContainer className="box" tabIndex={-1} {...attrs}>
-          {hint}
+      render={props => (
+        <TooltipContainer tabIndex={-1} {...props} {...rest}>
+          {text}
           <Arrow data-popper-arrow="" />
         </TooltipContainer>
       )}
+      offset={[0, 8]}
     >
-      <ButtonContainer>{children}</ButtonContainer>
+      <Content {...rest}>{children}</Content>
     </Tippy>
   );
 };

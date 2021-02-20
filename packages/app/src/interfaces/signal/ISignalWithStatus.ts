@@ -10,7 +10,7 @@ export type Status =
 
 export default interface ISignalWithStatus extends ISignal {
   status: Status;
-  warning?: string;
+  info?: string;
   result?: {
     martingales: number;
     profit: number;

@@ -116,7 +116,7 @@ export const Label = styled.span<ILabelProps>`
   }
 `;
 
-export const WarningContainer = styled.div<ILabelProps>`
+export const InfoContainer = styled.div<ILabelProps>`
   width: ${props => props.width};
 
   margin-left: 16px;

@@ -10,7 +10,7 @@ import { ISelectValue } from '@/components/Form/Select';
 
 import { Container } from './styles';
 
-export interface ISelectWrapperProps extends ReactSelectProps {
+export interface ISelectHandlerProps extends ReactSelectProps {
   icon?: IconType;
   disabled?: boolean;
   defaultValue?: ISelectValue;
@@ -19,9 +19,9 @@ export interface ISelectWrapperProps extends ReactSelectProps {
 
 const animatedComponents = makeAnimated();
 
-const SelectWrapper: React.ForwardRefRenderFunction<
+const SelectHandler: React.ForwardRefRenderFunction<
   any,
-  ISelectWrapperProps
+  ISelectHandlerProps
 > = (
   {
     icon: Icon,
@@ -111,4 +111,4 @@ const SelectWrapper: React.ForwardRefRenderFunction<
   );
 };
 
-export default forwardRef(SelectWrapper);
+export default forwardRef(SelectHandler);

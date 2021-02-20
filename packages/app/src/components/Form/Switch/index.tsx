@@ -35,6 +35,17 @@ const Switch: React.FC<ISwitchProps> = ({
     }
   }, [registerField, switchRef, fieldName]);
 
+  const handleChangeCheckbox = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setChecked(event.target.checked);
+
+      if (onChange) {
+        onChange(event);
+      }
+    },
+    [onChange],
+  );
+
   const handleToggle = useCallback(() => {
     const newValue = !switchRef.current.checked;
 
@@ -46,17 +57,6 @@ const Switch: React.FC<ISwitchProps> = ({
       },
     } as React.ChangeEvent<HTMLInputElement>);
   }, [handleChangeCheckbox]);
-
-  const handleChangeCheckbox = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setChecked(event.target.checked);
-
-      if (onChange) {
-        onChange(event);
-      }
-    },
-    [],
-  );
 
   return (
     <Container onClick={handleToggle}>

@@ -14,10 +14,6 @@ export const TooltipContainer = styled.div`
   `}
 `;
 
-export const ButtonContainer = styled.div`
-  display: inline-block;
-`;
-
 export const Arrow = styled.div`
   ${({ theme }) => css`
     width: 0;
@@ -27,4 +23,8 @@ export const Arrow = styled.div`
     border-right: ${theme.sizes[5]} solid transparent;
     border-top: ${theme.sizes[5]} solid ${theme.colors.background['accent-2']};
   `}
+`;
+
+export const Content = styled.div`
+  display: inline-block;
 `;

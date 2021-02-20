@@ -49,30 +49,36 @@ export const Container = styled.span<ContainerProps>`
       }
     }
 
-    > input {
+    > #input-handler {
       width: 75%;
 
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
+      > input {
+        flex: 1;
 
-      border-left: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
 
-      ${isErrored &&
-      css`
-        border-color: ${theme.colors.palette.red.base};
-      `}
+        border-left: 0;
 
-      ${isFocused &&
-      css`
-        border-color: ${theme.colors.primary['accent-1']};
-      `}
+        ${isErrored &&
+        css`
+          border-color: ${theme.colors.palette.red.base};
+        `}
+
+        ${isFocused &&
+        css`
+          border-color: ${theme.colors.primary['accent-1']};
+        `}
+      }
     }
 
-    > svg#icon-alert {
+    > #icon-alert {
       position: absolute;
       right: ${theme.spaces[3]};
 
-      color: ${theme.colors.palette.red.base};
+      > svg {
+        color: ${theme.colors.palette.red.base};
+      }
     }
   `}
 `;
