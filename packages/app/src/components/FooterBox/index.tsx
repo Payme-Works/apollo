@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 import Button, { IButtonProps } from '@/components/Button';
 
-import { Container, Content, Footer, HeaderContainer } from './styles';
+import { Container, Content, HeaderContainer, Footer } from './styles';
 
 export interface IFooterBoxProps {
   title: string;
@@ -24,33 +24,44 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
   containerProps,
   children,
 }) => {
+  const headerContainerRef = useRef<HTMLDivElement>(null);
+
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const handleUpdateCollapsable = useCallback(() => {
-    setIsCollapsed(!isCollapsed);
-  }, [isCollapsed]);
+  const handleToggleCollapse = useCallback(() => {
+    setIsCollapsed(state => !state);
+  }, []);
+
+  const headerContainerHeight = useMemo(
+    () => headerContainerRef.current?.offsetHeight,
+    [headerContainerRef],
+  );
 
   return (
     <>
-      <Container {...containerProps}>
+      <Container
+        {...containerProps}
+        isCollapsed={isCollapsed}
+        headerContainerHeight={headerContainerHeight}
+      >
         <Content>
-          <HeaderContainer collapsed={isCollapsed}>
+          <HeaderContainer ref={headerContainerRef}>
             <div>
               <h1>{title}</h1>
               <p>{description}</p>
             </div>
 
             {!isCollapsed ? (
-              <FiChevronUp onClick={handleUpdateCollapsable} />
+              <FiChevronUp onClick={handleToggleCollapse} />
             ) : (
-              <FiChevronDown onClick={handleUpdateCollapsable} />
+              <FiChevronDown onClick={handleToggleCollapse} />
             )}
           </HeaderContainer>
 
-          {!isCollapsed && children}
+          {children}
         </Content>
 
-        {footer && !isCollapsed && (
+        {footer && (
           <Footer>
             <p>{footer.hint}</p>
 
