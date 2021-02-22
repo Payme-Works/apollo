@@ -1,17 +1,48 @@
-import { animated } from 'react-spring';
-
 import styled, { css } from 'styled-components';
 
-export const Container = styled.div`
-  ${({ theme }) => css`
+interface IContainerProps {
+  isCollapsed: boolean;
+  headerContainerHeight: number;
+  contentHeight: number;
+  footerHeight: number;
+}
+
+export const Container = styled.div<IContainerProps>`
+  ${({
+    theme,
+    isCollapsed,
+    headerContainerHeight,
+    contentHeight,
+    footerHeight,
+  }) => css`
     border: 1px solid ${theme.colors.background['accent-2']};
     border-radius: ${theme.borderRadius.md};
 
     width: 100%;
+    max-height: calc(${contentHeight}px + ${footerHeight}px);
+
+    overflow: hidden;
+
+    transition: max-height 0.6s ease-in-out;
+
+    will-change: max-height;
+
+    ${isCollapsed &&
+    css`
+      max-height: calc(${headerContainerHeight}px + ${theme.sizes[12]});
+
+      > ${Content} > ${HeaderContainer} > svg {
+        transform: rotate(180deg);
+      }
+    `}
+
+    > ${Content} > ${HeaderContainer} > svg {
+      transition: transform 0.2s;
+    }
   `}
 `;
 
-export const Content = styled(animated.div)`
+export const Content = styled.div`
   ${({ theme }) => css`
     width: 100%;
 
@@ -19,20 +50,12 @@ export const Content = styled(animated.div)`
   `}
 `;
 
-interface IHeaderContainerProps {
-  collapsed: boolean;
-}
-
-export const HeaderContainer = styled.div<IHeaderContainerProps>`
-  ${({ theme, collapsed }) => css`
+export const HeaderContainer = styled.div`
+  ${({ theme }) => css`
     display: flex;
-
-    ${!collapsed &&
-    css`
-      margin-bottom: ${theme.spaces[7]};
-    `}
-
     justify-content: space-between;
+
+    margin-bottom: ${theme.spaces[7]};
 
     div > h1 {
       font-size: ${theme.fonts.sizes.xl};

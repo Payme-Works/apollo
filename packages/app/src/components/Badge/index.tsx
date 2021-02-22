@@ -44,7 +44,7 @@ const Badge: React.FC<IBadgeProps> = ({
           {closeable && (
             <div
               role="button"
-              tabIndex={0}
+              tabIndex={-1}
               onKeyPress={() => setIsOpen(false)}
               onClick={() => setIsOpen(false)}
             >
