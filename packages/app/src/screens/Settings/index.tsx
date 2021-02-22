@@ -19,6 +19,9 @@ const Settings: React.FC = () => {
     <Container>
       <Broker />
       <MainAdjustments containerProps={{ style: { marginTop: 24 } }} />
+      <MainAdjustments containerProps={{ style: { marginTop: 24 } }} />
+      <MainAdjustments containerProps={{ style: { marginTop: 24 } }} />
+      <MainAdjustments containerProps={{ style: { marginTop: 24 } }} />
 
       <Button
         variant="outline"

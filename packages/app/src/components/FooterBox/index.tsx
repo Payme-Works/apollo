@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { FiChevronUp } from 'react-icons/fi';
 
 import Button, { IButtonProps } from '@/components/Button';
 
@@ -25,53 +25,56 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
   children,
 }) => {
   const headerContainerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const [headerContainerHeight, setHeaderContainerHeight] = useState(32);
+  const [contentHeight, setContentHeight] = useState(0);
+  const [footerHeight, setFooterHeight] = useState(0);
+
+  useEffect(() => {
+    setHeaderContainerHeight(headerContainerRef.current?.offsetHeight);
+    setContentHeight(contentRef.current?.offsetHeight);
+    setFooterHeight(footerRef.current?.offsetHeight);
+  }, [headerContainerRef, contentRef, footerRef]);
 
   const handleToggleCollapse = useCallback(() => {
     setIsCollapsed(state => !state);
   }, []);
 
-  const headerContainerHeight = useMemo(
-    () => headerContainerRef.current?.offsetHeight,
-    [headerContainerRef],
-  );
-
   return (
-    <>
-      <Container
-        {...containerProps}
-        isCollapsed={isCollapsed}
-        headerContainerHeight={headerContainerHeight}
-      >
-        <Content>
-          <HeaderContainer ref={headerContainerRef}>
-            <div>
-              <h1>{title}</h1>
-              <p>{description}</p>
-            </div>
+    <Container
+      {...containerProps}
+      isCollapsed={isCollapsed}
+      headerContainerHeight={headerContainerHeight}
+      contentHeight={contentHeight}
+      footerHeight={footerHeight}
+    >
+      <Content ref={contentRef}>
+        <HeaderContainer ref={headerContainerRef}>
+          <div>
+            <h1>{title}</h1>
+            <p>{description}</p>
+          </div>
 
-            {!isCollapsed ? (
-              <FiChevronUp onClick={handleToggleCollapse} />
-            ) : (
-              <FiChevronDown onClick={handleToggleCollapse} />
-            )}
-          </HeaderContainer>
+          <FiChevronUp onClick={handleToggleCollapse} />
+        </HeaderContainer>
 
-          {children}
-        </Content>
+        {children}
+      </Content>
 
-        {footer && (
-          <Footer>
-            <p>{footer.hint}</p>
+      {footer && (
+        <Footer ref={footerRef}>
+          <p>{footer.hint}</p>
 
-            <Button size="sm" {...footer.button}>
-              {footer.button.text}
-            </Button>
-          </Footer>
-        )}
-      </Container>
-    </>
+          <Button size="sm" {...footer.button}>
+            {footer.button.text}
+          </Button>
+        </Footer>
+      )}
+    </Container>
   );
 };
 
