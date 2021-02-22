@@ -1,17 +1,9 @@
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  memo,
-  useContext,
-} from 'react';
+import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { IconType } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
 import { Props as ReactSelectProps } from 'react-select';
 
 import { useField } from '@unform/core';
-import { ThemeContext } from 'styled-components';
 import { Except } from 'type-fest';
 
 import { Container } from './styles';
@@ -38,7 +30,6 @@ const Select: React.FC<ISelectProps> = ({
   ...rest
 }) => {
   const selectRef = useRef<any>(null);
-  const theme = useContext(ThemeContext);
 
   const {
     fieldName,
@@ -95,27 +86,6 @@ const Select: React.FC<ISelectProps> = ({
       value={selected}
       disabled={disabled}
       onChange={handleChangeSelected}
-      styles={
-        isMulti && {
-          multiValueLabel: base => ({
-            ...base,
-            backgroundColor: theme.colors.background.base,
-            color: 'white',
-          }),
-          multiValueRemove: base => ({
-            ...base,
-            backgroundColor: theme.colors.background.base,
-            color: 'white',
-            marginLeft: '6px',
-          }),
-          multiValue: base => ({
-            ...base,
-            backgroundColor: theme.colors.background.base,
-            color: 'white',
-            border: '1px solid #fff',
-          }),
-        }
-      }
     >
       {!!error && (
         <FiAlertCircle
