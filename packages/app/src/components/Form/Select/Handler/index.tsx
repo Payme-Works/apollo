@@ -4,7 +4,6 @@ import ReactSelect, {
   ActionMeta,
   Props as ReactSelectProps,
 } from 'react-select';
-import makeAnimated from 'react-select/animated';
 
 import { ISelectValue } from '@/components/Form/Select';
 
@@ -16,8 +15,6 @@ export interface ISelectHandlerProps extends ReactSelectProps {
   defaultValue?: ISelectValue;
   containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
-
-const animatedComponents = makeAnimated();
 
 const SelectHandler: React.ForwardRefRenderFunction<
   any,
@@ -96,7 +93,6 @@ const SelectHandler: React.ForwardRefRenderFunction<
       <ReactSelect
         ref={ref}
         id="react-select"
-        components={animatedComponents}
         isDisabled={disabled}
         placeholder="Selecione..."
         value={selected}

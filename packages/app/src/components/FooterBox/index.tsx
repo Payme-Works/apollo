@@ -30,7 +30,7 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const [headerContainerHeight, setHeaderContainerHeight] = useState(32);
+  const [headerContainerHeight, setHeaderContainerHeight] = useState(48);
   const [contentHeight, setContentHeight] = useState(0);
   const [footerHeight, setFooterHeight] = useState(0);
 

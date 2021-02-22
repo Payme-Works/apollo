@@ -49,6 +49,8 @@ export const Container = styled.span<ContainerProps>`
         min-height: auto;
         height: 100%;
 
+        align-items: unset;
+
         background-color: ${theme.colors.palette.transparent};
         box-shadow: none;
         border-width: 0;
@@ -60,6 +62,8 @@ export const Container = styled.span<ContainerProps>`
         }
 
         > div[class*='ValueContainer'] {
+          height: 100%;
+
           ${hasIcon &&
           css`
             padding-left: ${theme.spaces[10]};
@@ -72,6 +76,41 @@ export const Container = styled.span<ContainerProps>`
             css`
               color: ${theme.colors.foreground.base};
             `}
+          }
+
+          > div[class*='multiValue'] {
+            margin: 0;
+
+            justify-content: space-between;
+
+            background-color: ${theme.colors.palette.transparent};
+            border: 1px solid ${theme.colors.foreground['accent-2']};
+
+            border-radius: ${theme.borderRadius.sm};
+
+            transition: border-color 0.2s;
+
+            :hover {
+              border-color: ${theme.colors.foreground['accent-1']};
+            }
+
+            + div[class*='multiValue'] {
+              margin-left: ${theme.spaces[1.5]};
+            }
+
+            > div {
+              color: ${theme.colors.foreground.base};
+
+              + div {
+                border-radius: 0;
+                background-color: ${theme.colors.palette.transparent};
+
+                :hover {
+                  background-color: ${theme.colors.palette.transparent};
+                  color: ${theme.colors.foreground['accent-1']};
+                }
+              }
+            }
           }
         }
 

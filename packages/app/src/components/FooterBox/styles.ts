@@ -1,4 +1,14 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+const delayOverflow = keyframes`
+  from {
+    overflow: hidden;
+  }
+
+  to {
+    overflow: visible;
+  }
+`;
 
 interface IContainerProps {
   isCollapsed: boolean;
@@ -19,16 +29,23 @@ export const Container = styled.div<IContainerProps>`
     border-radius: ${theme.borderRadius.md};
 
     width: 100%;
-    max-height: calc(${contentHeight}px + ${footerHeight}px);
-
-    overflow: hidden;
+    max-height: calc(
+      ${contentHeight}px + ${footerHeight}px + ${theme.sizes[1]}
+    );
 
     transition: max-height 0.6s ease-in-out;
 
     will-change: max-height;
 
+    ${!isCollapsed &&
+    css`
+      animation: 2s ${delayOverflow};
+    `}
+
     ${isCollapsed &&
     css`
+      overflow: hidden;
+
       max-height: calc(${headerContainerHeight}px + ${theme.sizes[12]});
 
       > ${Content} > ${HeaderContainer} > svg {
