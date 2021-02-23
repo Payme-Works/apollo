@@ -1,17 +1,29 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { FiClock, FiDollarSign } from 'react-icons/fi';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-// import * as Yup from 'yup';
+import * as Yup from 'yup';
 
 import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
 import FormControl from '@/components/Form/FormControl';
 import FormLabel from '@/components/Form/FormLabel';
-import Select from '@/components/Form/Select';
-import SelectableInput from '@/components/Form/SelectableInput';
+import Input from '@/components/Form/Input';
+import Select, { ISelectValue } from '@/components/Form/Select';
+import SelectableInput, {
+  ISelectableInputValue,
+} from '@/components/Form/SelectableInput';
+import getValidationErrors from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
+
+interface IManagementsFormData {
+  stopGain: ISelectableInputValue;
+  stopLoss: string;
+  expirations: ISelectValue[];
+  maximumPayments: string;
+  minimumPayments: string;
+}
 
 const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const formRef = useRef<FormHandles>(null);
@@ -58,6 +70,80 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
     [],
   );
 
+  const handleSave = useCallback(
+    async (data: IManagementsFormData) => {
+      try {
+        formRef.current?.setErrors({});
+
+        const schema = Yup.object().shape({
+          stopGain: Yup.object()
+            .shape({
+              selected: Yup.object().shape({
+                value: Yup.string()
+                  .oneOf(stopGainPriceOptions.map(item => item.value))
+                  .required(),
+                label: Yup.string()
+                  .oneOf(stopGainPriceOptions.map(item => item.label))
+                  .required(),
+              }),
+              value: Yup.number()
+                .typeError('Valor de stop gain deve ser um número')
+                .required(),
+            })
+            .required('Valor da entrada obrigatório'),
+          stopLoss: Yup.object()
+            .shape({
+              selected: Yup.object().shape({
+                value: Yup.string()
+                  .oneOf(stopLossPriceOptions.map(item => item.value))
+                  .required(),
+                label: Yup.string()
+                  .oneOf(stopLossPriceOptions.map(item => item.label))
+                  .required(),
+              }),
+              value: Yup.number()
+                .typeError('Valor de stop loss deve ser um número')
+                .required(),
+            })
+            .required('Valor da entrada obrigatório'),
+          expirations: Yup.array()
+            .of(
+              Yup.object().shape({
+                value: Yup.string()
+                  .oneOf(expirationOptions.map(item => item.value))
+                  .required(),
+                label: Yup.string()
+                  .oneOf(expirationOptions.map(item => item.label))
+                  .required(),
+              }),
+            )
+            .min(1, 'Expirações obrigatórias'),
+          minimumPayout: Yup.string().required('Payout mínimo obrigatório.'),
+          maximumPayout: Yup.string().required('Maximum payout obrigatório.'),
+        });
+
+        const transformedData = await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        console.log(transformedData);
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          console.log(errors);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+
+        console.error(err);
+      }
+    },
+    [expirationOptions, stopGainPriceOptions, stopLossPriceOptions],
+  );
+
   return (
     <FooterBox
       title="Gerenciamento"
@@ -71,12 +157,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
       }}
       {...rest}
     >
-      <Form
-        ref={formRef}
-        onSubmit={() => {
-          console.log('hdfshj');
-        }}
-      >
+      <Form ref={formRef} onSubmit={handleSave}>
         <Flex>
           <FormControl
             style={{
@@ -137,22 +218,28 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               icon={FiClock}
               options={expirationOptions}
               isMulti
-              // defaultValue={mainAdjustments.operationType}
             />
           </FormControl>
+        </Flex>
 
-          {/* <FormControl
-            disabled={!isMartingaleChecked}
+        <Flex style={{ marginTop: 16 }}>
+          <FormControl
             style={{
               width: '47%',
             }}
           >
-            <FormLabel>Mãos de martingale</FormLabel>
-            <Input
-              name="martingaleAmount"
-              defaultValue={mainAdjustments.martingaleAmount}
-            />
-          </FormControl> */}
+            <FormLabel>Payout mínimo</FormLabel>
+            <Input name="minimumPayout" defaultValue="70%" />
+          </FormControl>
+
+          <FormControl
+            style={{
+              width: '47%',
+            }}
+          >
+            <FormLabel>Payout máximo</FormLabel>
+            <Input name="maximumPayout" defaultValue="95%" />
+          </FormControl>
         </Flex>
       </Form>
     </FooterBox>
