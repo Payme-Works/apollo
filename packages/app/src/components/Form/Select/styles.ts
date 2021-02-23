@@ -11,9 +11,17 @@ export const Container = styled(SelectHandler)<IContainerProps>`
     ${isErrored &&
     css`
       border-color: ${theme.colors.palette.red.base};
+      border-width: ${theme.sizes.px};
+      border-style: solid;
+
+      & + svg {
+        margin-right: ${theme.spaces[10]};
+      }
     `}
 
-    > div#react-select > div[class*='control'] > div[class*='IndicatorsContainer'] {
+    > div#react-select
+      > div[class*='control']
+      > div[class*='IndicatorsContainer'] {
       ${isErrored &&
       css`
         padding-right: ${theme.spaces[8]};
