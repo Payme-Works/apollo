@@ -69,18 +69,20 @@ const Input: React.FC<InputProps> = ({
     (newValue: string | number) => {
       setValue(newValue);
 
+      if (error) {
+        clearError();
+      }
+
       if (onChange) {
         onChange(newValue as never);
       }
     },
-    [onChange],
+    [clearError, error, onChange],
   );
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
-
-    clearError();
-  }, [clearError]);
+  }, []);
 
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);

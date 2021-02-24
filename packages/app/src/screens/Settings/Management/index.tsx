@@ -88,7 +88,8 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 )
                 .min(1, 'Valor zero não permitido, desative o martingale')
                 .max(3, 'É permitido no máximo 3 mãos de martingale')
-                .required('Mãos de martingale obrigatório (1 a 3)'),
+                .required('Mãos de martingale obrigatório (1 a 3)')
+                .label('_scope_'),
             }),
           }),
           stopGain: Yup.object()
@@ -102,9 +103,8 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                   .required(),
               }),
               value: Yup.number()
-                .transform((value, original) => (original === '' ? 0 : value))
-                .typeError('Valor de stop gain deve ser um número')
-                .required(),
+                .typeError('Stop gain deve ser um número')
+                .required('Stop gain obrigatório'),
             })
             .required('Valor da entrada obrigatório'),
           stopLoss: Yup.object()
@@ -118,9 +118,8 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                   .required(),
               }),
               value: Yup.number()
-                .transform((value, original) => (original === '' ? 0 : value))
-                .typeError('Valor de stop loss deve ser um número')
-                .required(),
+                .typeError('Stop loss deve ser um número')
+                .required('Stop loss obrigatório'),
             })
             .required('Valor da entrada obrigatório'),
         });

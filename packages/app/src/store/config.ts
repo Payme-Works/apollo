@@ -66,8 +66,17 @@ const schema = {
           value: 'all',
           label: 'Todos',
         },
-        minimumPayout: 70,
-        maximumPayout: 95,
+        payout: {
+          minimum: 70,
+          maximum: 95,
+        },
+      },
+      economicEvents: {
+        filter: true,
+        minutes: {
+          before: 30,
+          after: 30,
+        },
       },
     },
   },

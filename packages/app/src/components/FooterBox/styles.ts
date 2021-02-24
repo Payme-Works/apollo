@@ -72,22 +72,32 @@ export const HeaderContainer = styled.div`
     display: flex;
     justify-content: space-between;
 
-    margin-bottom: ${theme.spaces[7]};
+    margin-bottom: ${theme.spaces[6]};
 
-    div > h1 {
-      font-size: ${theme.fonts.sizes.xl};
-      font-weight: ${theme.fonts.weights.regular};
+    > div {
+      margin-right: ${theme.spaces[1]};
+
+      > h1 {
+        font-size: ${theme.fonts.sizes.xl};
+        font-weight: ${theme.fonts.weights.regular};
+      }
+
+      > p {
+        color: ${theme.colors.foreground['accent-2']};
+
+        font-size: ${theme.fonts.sizes.sm};
+        line-height: ${theme.fonts.lineHeights.base};
+
+        text-align: justify;
+
+        margin-top: ${theme.spaces[3]};
+      }
     }
 
-    div > p {
-      font-size: ${theme.fonts.sizes.sm};
-      color: ${theme.colors.foreground['accent-2']};
+    > svg {
+      min-width: ${theme.sizes[4.5]};
+      min-height: ${theme.sizes[4.5]};
 
-      margin-top: ${theme.spaces[3]};
-      padding-right: ${theme.spaces[1]};
-    }
-
-    svg {
       color: ${theme.colors.primary['accent-1']};
 
       cursor: pointer;

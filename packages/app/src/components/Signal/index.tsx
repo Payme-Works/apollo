@@ -48,8 +48,6 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     [data.result?.martingales, data.status],
   );
 
-  console.log(data.status);
-
   return (
     <Container status={data.status}>
       <div>

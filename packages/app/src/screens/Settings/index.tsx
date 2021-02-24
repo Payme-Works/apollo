@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Button from '@/components/Button';
+import EconomicEvents from '@/screens/Settings/EconomicEvents';
 
 import Broker from './Broker';
 import Filters from './Filters';
@@ -21,6 +22,7 @@ const Settings: React.FC = () => {
       <Broker />
       <Management style={{ marginTop: 24 }} />
       <Filters style={{ marginTop: 24 }} />
+      <EconomicEvents style={{ marginTop: 24 }} />
 
       <Button
         variant="outline"
