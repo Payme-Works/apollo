@@ -13,7 +13,7 @@ export interface ISelectValue {
   value: string;
 }
 
-interface ISelectProps extends Omit<ISelectHandlerProps, 'theme'> {
+interface ISelectProps extends ISelectHandlerProps {
   name: string;
   icon?: IconType;
   disabled?: boolean;
@@ -25,6 +25,7 @@ const Select: React.FC<ISelectProps> = ({
   disabled = false,
   defaultValue,
   onChange,
+  theme: _theme,
   ...rest
 }) => {
   const selectRef = useRef<any>(null);

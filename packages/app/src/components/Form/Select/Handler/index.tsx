@@ -9,14 +9,15 @@ import { ISelectValue } from '@/components/Form/Select';
 
 import { Container } from './styles';
 
-export interface ISelectHandlerProps extends ReactSelectProps {
+export interface ISelectHandlerProps
+  extends ReactSelectProps<ISelectValue, boolean> {
   icon?: IconType;
   disabled?: boolean;
   containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const SelectHandler: React.ForwardRefRenderFunction<
-  any,
+  ReactSelect,
   ISelectHandlerProps
 > = (
   {
@@ -30,7 +31,7 @@ const SelectHandler: React.ForwardRefRenderFunction<
     children,
     ...rest
   },
-  ref: React.MutableRefObject<any>,
+  ref: React.MutableRefObject<ReactSelect>,
 ) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
