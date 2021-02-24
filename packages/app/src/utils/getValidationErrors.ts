@@ -8,7 +8,11 @@ export default function getValidationErrors(err: ValidationError): Errors {
   const validationErrors: Errors = {};
 
   err.inner.forEach(error => {
-    const path = error.path.split('.')[0];
+    let { path } = error;
+
+    if (error.params.label !== '_scope_') {
+      [path] = error.path.split('.');
+    }
 
     validationErrors[path] = error.message;
   });

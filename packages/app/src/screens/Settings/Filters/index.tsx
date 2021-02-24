@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { FiBarChart2, FiClock } from 'react-icons/fi';
 
-import { FormHandles } from '@unform/core';
+import { FormHandles, Scope } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
@@ -105,8 +105,12 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 .required(),
             })
             .required('Tipo de operação obrigatório'),
-          minimumPayout: Yup.string().required('Payout mínimo obrigatório'),
-          maximumPayout: Yup.string().required('Payout máximo obrigatório'),
+          payout: Yup.object()
+            .shape({
+              minimum: Yup.number().required('Payout mínimo obrigatório'),
+              maximum: Yup.number().required('Payout máximo obrigatório'),
+            })
+            .required('Payout obrigatório'),
         });
 
         const transformedData = await schema.validate(data, {
@@ -201,45 +205,47 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           </FormControl>
         </Flex>
 
-        <Flex style={{ marginTop: 16 }}>
-          <FormControl
-            style={{
-              width: '47%',
-            }}
-          >
-            <FormLabel>Payout mínimo</FormLabel>
-            <Input
-              name="minimumPayout"
-              variant="number-format"
-              suffix="%"
-              defaultValue={filters.minimumPayout}
-              allowNegative={false}
-              isAllowed={({ floatValue }) =>
-                !floatValue || (floatValue >= 0 && floatValue <= 100)
-              }
-              onChange={handleChange}
-            />
-          </FormControl>
+        <Scope path="payout">
+          <Flex style={{ marginTop: 16 }}>
+            <FormControl
+              style={{
+                width: '47%',
+              }}
+            >
+              <FormLabel>Payout mínimo</FormLabel>
+              <Input
+                name="minimum"
+                variant="number-format"
+                suffix="%"
+                defaultValue={filters.payout.minimum}
+                allowNegative={false}
+                isAllowed={({ floatValue }) =>
+                  !floatValue || (floatValue >= 0 && floatValue <= 100)
+                }
+                onChange={handleChange}
+              />
+            </FormControl>
 
-          <FormControl
-            style={{
-              width: '47%',
-            }}
-          >
-            <FormLabel>Payout máximo</FormLabel>
-            <Input
-              name="maximumPayout"
-              variant="number-format"
-              suffix="%"
-              defaultValue={filters.maximumPayout}
-              allowNegative={false}
-              isAllowed={({ floatValue }) =>
-                !floatValue || (floatValue >= 0 && floatValue <= 100)
-              }
-              onChange={handleChange}
-            />
-          </FormControl>
-        </Flex>
+            <FormControl
+              style={{
+                width: '47%',
+              }}
+            >
+              <FormLabel>Payout máximo</FormLabel>
+              <Input
+                name="maximum"
+                variant="number-format"
+                suffix="%"
+                defaultValue={filters.payout.maximum}
+                allowNegative={false}
+                isAllowed={({ floatValue }) =>
+                  !floatValue || (floatValue >= 0 && floatValue <= 100)
+                }
+                onChange={handleChange}
+              />
+            </FormControl>
+          </Flex>
+        </Scope>
       </Form>
     </FooterBox>
   );

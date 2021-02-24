@@ -15,14 +15,15 @@ export const Container = styled.span<ContainerProps>`
     align-items: center;
 
     > #input-handler > input {
-      ${isErrored &&
-      css`
-        border-color: ${theme.colors.palette.red.base};
-      `}
-
       ${hasIcon &&
       css`
         padding-left: ${theme.spaces[10]};
+      `}
+
+      ${isErrored &&
+      !isFocused &&
+      css`
+        border-color: ${theme.colors.palette.red.base};
       `}
 
       ${isErrored &&
