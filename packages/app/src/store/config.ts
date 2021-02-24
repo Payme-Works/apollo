@@ -15,7 +15,7 @@ const schema = {
   robot: {
     type: JSONSchemaType.Object,
     default: {
-      mainAdjustments: {
+      management: {
         orderPrice: {
           selected: {
             value: 'real',
@@ -23,12 +23,51 @@ const schema = {
           },
           value: 2,
         },
+        martingale: {
+          active: true,
+          amount: 2,
+        },
+        stopGain: {
+          selected: {
+            value: 'real',
+            label: 'R$',
+          },
+          value: 4,
+        },
+        stopLoss: {
+          selected: {
+            value: 'real',
+            label: 'R$',
+          },
+          value: 8,
+        },
+      },
+      filters: {
+        expirations: [
+          {
+            value: 'm5',
+            label: 'M5',
+          },
+          {
+            value: 'm15',
+            label: 'M15',
+          },
+          {
+            value: 'm30',
+            label: 'M30',
+          },
+          {
+            value: 'h1',
+            label: 'H1',
+          },
+        ],
+        parallelOrders: false,
         operationType: {
           value: 'all',
           label: 'Todos',
         },
-        martingale: true,
-        martingaleAmount: 2,
+        minimumPayout: 70,
+        maximumPayout: 95,
       },
     },
   },

@@ -12,7 +12,6 @@ import { Container } from './styles';
 export interface ISelectHandlerProps extends ReactSelectProps {
   icon?: IconType;
   disabled?: boolean;
-  defaultValue?: ISelectValue;
   containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
@@ -37,7 +36,9 @@ const SelectHandler: React.ForwardRefRenderFunction<
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const [selected, setSelected] = useState<ISelectValue>(defaultValue);
+  const [selected, setSelected] = useState<
+    ISelectValue | readonly ISelectValue[]
+  >(defaultValue);
 
   const handleOpenSelect = useCallback(() => {
     if (disabled) {
@@ -45,6 +46,7 @@ const SelectHandler: React.ForwardRefRenderFunction<
     }
 
     ref.current.onMenuOpen();
+    ref.current.focus();
   }, [disabled, ref]);
 
   const handleChangeSelected = useCallback(
@@ -68,8 +70,6 @@ const SelectHandler: React.ForwardRefRenderFunction<
   }, [onMenuOpen]);
 
   const handleOnMenuClose = useCallback(() => {
-    console.log(ref.current);
-
     setIsMenuOpen(false);
     setIsFocused(false);
     setIsFilled(!!ref.current?.state.value);
@@ -92,11 +92,12 @@ const SelectHandler: React.ForwardRefRenderFunction<
 
       <ReactSelect
         ref={ref}
-        id="react-select"
         isDisabled={disabled}
         placeholder="Selecione..."
         value={selected}
+        noOptionsMessage={() => 'Nenhuma opção'}
         {...rest}
+        id="react-select"
         onChange={handleChangeSelected}
         onMenuOpen={handleOnMenuOpen}
         onMenuClose={handleOnMenuClose}

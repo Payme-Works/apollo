@@ -3,22 +3,11 @@ import styled, { css, keyframes } from 'styled-components';
 interface ContainerProps {
   variant: 'solid' | 'outline';
   size: 'sm' | 'md';
+  disableHover: boolean;
 }
 
 export const Container = styled.button<ContainerProps>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  border: 0;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-
-  ${({ theme, variant, size }) => css`
+  ${({ theme, variant, size, disableHover }) => css`
     --background: ${theme.colors.primary.base};
     --background-hover: ${theme.colors.palette.transparent};
     --border-color: ${theme.colors.primary.base};
@@ -28,6 +17,18 @@ export const Container = styled.button<ContainerProps>`
 
     --font-size: ${theme.fonts.sizes.md};
     --height: ${theme.sizes[10]};
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    border: 0;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
 
     ${variant === 'outline' &&
     css`
@@ -59,10 +60,13 @@ export const Container = styled.button<ContainerProps>`
 
     transition: all 0.2s;
 
-    &:hover {
-      background: var(--background-hover);
-      color: var(--color-hover);
-    }
+    ${!disableHover &&
+    css`
+      &:hover {
+        background: var(--background-hover);
+        color: var(--color-hover);
+      }
+    `}
 
     svg {
       margin-right: ${theme.spaces[2]};

@@ -53,7 +53,6 @@ const InputHandler: React.ForwardRefRenderFunction<
           decimalSeparator=","
           thousandSeparator="."
           allowedDecimalSeparators={[',', '.']}
-          fixedDecimalScale
           decimalScale={2}
           {...(rest as NumberFormatProps)}
           getInputRef={(numberFormatInputRef: HTMLInputElement) => {

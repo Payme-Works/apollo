@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useRef } from 'react';
-import { FiClock, FiDollarSign } from 'react-icons/fi';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { FiDollarSign } from 'react-icons/fi';
 
-import { FormHandles } from '@unform/core';
+import { FormHandles, Scope } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
@@ -9,62 +9,42 @@ import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
 import FormControl from '@/components/Form/FormControl';
 import FormLabel from '@/components/Form/FormLabel';
 import Input from '@/components/Form/Input';
-import Select, { ISelectValue } from '@/components/Form/Select';
 import SelectableInput, {
   ISelectableInputValue,
 } from '@/components/Form/SelectableInput';
+import Switch from '@/components/Form/Switch';
+import { useConfig } from '@/hooks/useConfig';
 import getValidationErrors from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
 
 interface IManagementsFormData {
+  orderPrice: ISelectableInputValue;
+  martingale: {
+    active: boolean;
+    amount: string;
+  };
   stopGain: ISelectableInputValue;
-  stopLoss: string;
-  expirations: ISelectValue[];
-  maximumPayments: string;
-  minimumPayments: string;
+  stopLoss: ISelectableInputValue;
 }
 
 const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const formRef = useRef<FormHandles>(null);
 
-  const stopGainPriceOptions = useMemo(
+  const { management, setConfig } = useConfig('robot');
+
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const [isMartingaleChecked, setIsMartingaleChecked] = useState(
+    management.martingale.active,
+  );
+
+  const priceOptions = useMemo(
     () => [
       {
         value: 'real',
         label: 'R$',
-      },
-    ],
-    [],
-  );
-
-  const stopLossPriceOptions = useMemo(
-    () => [
-      {
-        value: 'real',
-        label: 'R$',
-      },
-    ],
-    [],
-  );
-
-  const expirationOptions = useMemo(
-    () => [
-      {
-        value: 'm5',
-        label: 'M5',
-      },
-      {
-        value: 'm15',
-        label: 'M15',
-      },
-      {
-        value: 'm30',
-        label: 'M30',
-      },
-      {
-        value: 'h1',
-        label: 'H1',
       },
     ],
     [],
@@ -72,21 +52,57 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
   const handleSave = useCallback(
     async (data: IManagementsFormData) => {
+      console.log(data);
+
       try {
+        setIsButtonLoading(true);
+
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
+          orderPrice: Yup.object()
+            .shape({
+              selected: Yup.object().shape({
+                value: Yup.string()
+                  .oneOf(priceOptions.map(item => item.value))
+                  .required(),
+                label: Yup.string()
+                  .oneOf(priceOptions.map(item => item.label))
+                  .required(),
+              }),
+              value: Yup.number()
+                .typeError('Valor da entrada deve ser um número')
+                .min(2, 'Valor da entrada deve ser no mínimo R$ 2,00')
+                .max(20000, 'Valor da entrada máximo deve ser R$ 5.000,00')
+                .required(),
+            })
+            .required('Valor da entrada obrigatório'),
+          martingale: Yup.object().shape({
+            active: Yup.boolean().required(),
+            amount: Yup.number().when('martingale.active', {
+              is: true,
+              then: Yup.number()
+                .positive()
+                .transform((value, original) =>
+                  original === '' ? undefined : value,
+                )
+                .min(1, 'Valor zero não permitido, desative o martingale')
+                .max(3, 'É permitido no máximo 3 mãos de martingale')
+                .required('Mãos de martingale obrigatório (1 a 3)'),
+            }),
+          }),
           stopGain: Yup.object()
             .shape({
               selected: Yup.object().shape({
                 value: Yup.string()
-                  .oneOf(stopGainPriceOptions.map(item => item.value))
+                  .oneOf(priceOptions.map(item => item.value))
                   .required(),
                 label: Yup.string()
-                  .oneOf(stopGainPriceOptions.map(item => item.label))
+                  .oneOf(priceOptions.map(item => item.label))
                   .required(),
               }),
               value: Yup.number()
+                .transform((value, original) => (original === '' ? 0 : value))
                 .typeError('Valor de stop gain deve ser um número')
                 .required(),
             })
@@ -95,31 +111,18 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
             .shape({
               selected: Yup.object().shape({
                 value: Yup.string()
-                  .oneOf(stopLossPriceOptions.map(item => item.value))
+                  .oneOf(priceOptions.map(item => item.value))
                   .required(),
                 label: Yup.string()
-                  .oneOf(stopLossPriceOptions.map(item => item.label))
+                  .oneOf(priceOptions.map(item => item.label))
                   .required(),
               }),
               value: Yup.number()
+                .transform((value, original) => (original === '' ? 0 : value))
                 .typeError('Valor de stop loss deve ser um número')
                 .required(),
             })
             .required('Valor da entrada obrigatório'),
-          expirations: Yup.array()
-            .of(
-              Yup.object().shape({
-                value: Yup.string()
-                  .oneOf(expirationOptions.map(item => item.value))
-                  .required(),
-                label: Yup.string()
-                  .oneOf(expirationOptions.map(item => item.label))
-                  .required(),
-              }),
-            )
-            .min(1, 'Expirações obrigatórias'),
-          minimumPayout: Yup.string().required('Payout mínimo obrigatório.'),
-          maximumPayout: Yup.string().required('Maximum payout obrigatório.'),
         });
 
         const transformedData = await schema.validate(data, {
@@ -127,6 +130,9 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         });
 
         console.log(transformedData);
+        setConfig('robot.management', transformedData);
+
+        setIsSaved(true);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -139,26 +145,97 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         }
 
         console.error(err);
+      } finally {
+        setTimeout(() => setIsButtonLoading(false), 1000);
       }
     },
-    [expirationOptions, stopGainPriceOptions, stopLossPriceOptions],
+    [priceOptions, setConfig],
   );
+
+  const handleChange = useCallback(() => {
+    setIsSaved(false);
+  }, []);
 
   return (
     <FooterBox
       title="Gerenciamento"
-      description="Defina o seu limite para não cair na soberania do mercado."
+      description="Usados para fazer as suas entradas de operações. Defina o seu limite para não cair na soberania do mercado."
       footer={{
         hint: 'Tome bastante cuidado com esses ajustes.',
         button: {
-          text: 'Salvar',
+          text: isSaved ? 'Salvo!' : 'Salvar',
+          variant: isSaved ? 'outline' : 'solid',
+          loading: isButtonLoading,
+          disabled: isSaved,
+          disableHover: isSaved,
           onClick: () => formRef.current?.submitForm(),
         },
       }}
       {...rest}
     >
       <Form ref={formRef} onSubmit={handleSave}>
-        <Flex>
+        <FormControl>
+          <FormLabel>Valor da entrada</FormLabel>
+          <SelectableInput
+            name="orderPrice"
+            icon={FiDollarSign}
+            selectProps={{
+              options: priceOptions,
+              defaultValue: management.orderPrice.selected,
+            }}
+            inputProps={{
+              variant: 'number-format',
+              placeholder: '2,00',
+              fixedDecimalScale: true,
+              defaultValue: management.orderPrice.value,
+            }}
+            onChange={handleChange}
+          />
+        </FormControl>
+
+        <Scope path="martingale">
+          <Flex style={{ marginTop: 16 }}>
+            <FormControl
+              style={{
+                width: '47%',
+              }}
+            >
+              <FormLabel>Martingale</FormLabel>
+              <Switch
+                name="active"
+                showCheckedLabel
+                defaultChecked={isMartingaleChecked}
+                onChange={e => {
+                  setIsMartingaleChecked(e.target.checked);
+
+                  handleChange();
+                }}
+              />
+            </FormControl>
+
+            <FormControl
+              disabled={!isMartingaleChecked}
+              style={{
+                width: '47%',
+              }}
+            >
+              <FormLabel>Quantidade de martingale</FormLabel>
+              <Input
+                name="amount"
+                variant="number-format"
+                defaultValue={management.martingale.amount}
+                decimalScale={0}
+                allowNegative={false}
+                isAllowed={({ floatValue }) =>
+                  !floatValue || (floatValue >= 0 && floatValue <= 3)
+                }
+                onChange={handleChange}
+              />
+            </FormControl>
+          </Flex>
+        </Scope>
+
+        <Flex style={{ marginTop: 16 }}>
           <FormControl
             style={{
               width: '47%',
@@ -169,16 +246,16 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               name="stopGain"
               icon={FiDollarSign}
               selectProps={{
-                options: stopGainPriceOptions,
-                defaultValue: {
-                  value: 'real',
-                  label: 'R$',
-                },
+                options: priceOptions,
+                defaultValue: management.stopGain.selected,
               }}
               inputProps={{
+                variant: 'number-format',
                 placeholder: '20,00',
-                defaultValue: 20,
+                fixedDecimalScale: true,
+                defaultValue: management.stopGain.value,
               }}
+              onChange={handleChange}
             />
           </FormControl>
 
@@ -192,53 +269,17 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               name="stopLoss"
               icon={FiDollarSign}
               selectProps={{
-                options: stopLossPriceOptions,
-                defaultValue: {
-                  value: 'real',
-                  label: 'R$',
-                },
+                options: priceOptions,
+                defaultValue: management.stopLoss.selected,
               }}
               inputProps={{
+                variant: 'number-format',
                 placeholder: '10,00',
-                defaultValue: 10,
+                fixedDecimalScale: true,
+                defaultValue: management.stopLoss.value,
               }}
+              onChange={handleChange}
             />
-          </FormControl>
-        </Flex>
-
-        <Flex style={{ marginTop: 16 }}>
-          <FormControl
-            style={{
-              width: '100%',
-            }}
-          >
-            <FormLabel>Expirações</FormLabel>
-            <Select
-              name="expirations"
-              icon={FiClock}
-              options={expirationOptions}
-              isMulti
-            />
-          </FormControl>
-        </Flex>
-
-        <Flex style={{ marginTop: 16 }}>
-          <FormControl
-            style={{
-              width: '47%',
-            }}
-          >
-            <FormLabel>Payout mínimo</FormLabel>
-            <Input name="minimumPayout" defaultValue="70%" />
-          </FormControl>
-
-          <FormControl
-            style={{
-              width: '47%',
-            }}
-          >
-            <FormLabel>Payout máximo</FormLabel>
-            <Input name="maximumPayout" defaultValue="95%" />
           </FormControl>
         </Flex>
       </Form>
