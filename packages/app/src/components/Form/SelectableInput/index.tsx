@@ -26,6 +26,7 @@ interface ISelectableInputProps {
   defaultValue?: ISelectableInputValue;
   selectProps?: ReactSelectProps;
   inputProps?: InputHandlerProps;
+  onChange?(value: ISelectableInputValue): void;
 }
 
 const SelectableInput: React.FC<ISelectableInputProps> = ({
@@ -39,6 +40,7 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
     ...selectProps
   },
   inputProps: { defaultValue: inputDefaultValue, ...inputProps },
+  onChange,
 }) => {
   const selectRef = useRef<any>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,20 +95,38 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
 
   const handleChangeSelected = useCallback(
     (newValue: ISelectValue) => {
-      setValue(state => ({ ...state, selected: newValue }));
+      const newValueToSet: ISelectableInputValue = {
+        ...value,
+        selected: newValue,
+      };
+
+      setValue(newValueToSet);
 
       clearError();
+
+      if (onChange) {
+        onChange(newValueToSet);
+      }
     },
-    [clearError],
+    [clearError, onChange, value],
   );
 
   const handleChangeInputValue = useCallback(
     (newValue: string | number) => {
-      setValue(state => ({ ...state, value: newValue }));
+      const newValueToSet: ISelectableInputValue = {
+        ...value,
+        value: newValue,
+      };
+
+      setValue(newValueToSet);
 
       clearError();
+
+      if (onChange) {
+        onChange(newValueToSet);
+      }
     },
-    [clearError],
+    [clearError, onChange, value],
   );
 
   return (

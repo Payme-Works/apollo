@@ -48,6 +48,8 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     [data.result?.martingales, data.status],
   );
 
+  console.log(data.status);
+
   return (
     <Container status={data.status}>
       <div>
@@ -56,16 +58,16 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
         <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
         <Label width={theme.sizes[10]}>{formattedData.operation}</Label>
 
-        <InfoContainer width={theme.sizes[10]}>
-          {data.info && (
+        {data.info && (
+          <InfoContainer width={theme.sizes[10]}>
             <Tooltip text={data.info}>
               <FiAlertCircle
                 color={theme.colors.foreground['accent-2']}
                 size={20}
               />
             </Tooltip>
-          )}
-        </InfoContainer>
+          </InfoContainer>
+        )}
 
         {shouldShowMartingales &&
           [...Array(data.result?.martingales)].map((item, index) => (

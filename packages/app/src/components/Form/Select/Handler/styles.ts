@@ -169,8 +169,6 @@ export const Container = styled.span<ContainerProps>`
       position: absolute;
       left: ${theme.spaces[3]};
 
-      z-index: ${theme.zIndices.overSelect};
-
       color: ${theme.colors.foreground['accent-2']};
 
       margin-right: ${theme.spaces[2]};

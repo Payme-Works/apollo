@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 import { IconType } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
-import { Props as ReactSelectProps } from 'react-select';
 
 import { useField } from '@unform/core';
-import { Except } from 'type-fest';
+
+import { ISelectHandlerProps } from './Handler';
 
 import { Container } from './styles';
 
@@ -13,12 +13,10 @@ export interface ISelectValue {
   value: string;
 }
 
-interface ISelectProps extends Except<ReactSelectProps, 'theme'> {
+interface ISelectProps extends Omit<ISelectHandlerProps, 'theme'> {
   name: string;
   icon?: IconType;
   disabled?: boolean;
-  defaultValue?: ISelectValue;
-  isMulti?: boolean;
 }
 
 const Select: React.FC<ISelectProps> = ({
@@ -26,7 +24,7 @@ const Select: React.FC<ISelectProps> = ({
   icon,
   disabled = false,
   defaultValue,
-  isMulti = false,
+  onChange,
   ...rest
 }) => {
   const selectRef = useRef<any>(null);
@@ -68,18 +66,21 @@ const Select: React.FC<ISelectProps> = ({
   }, [disabled]);
 
   const handleChangeSelected = useCallback(
-    (newValue: ISelectValue) => {
+    (newValue: ISelectValue, action: any) => {
       setSelected(newValue);
 
       clearError();
+
+      if (onChange) {
+        onChange(newValue, action);
+      }
     },
-    [clearError],
+    [clearError, onChange],
   );
 
   return (
     <Container
       ref={selectRef}
-      isMulti={isMulti}
       isErrored={!!error}
       {...rest}
       icon={icon}

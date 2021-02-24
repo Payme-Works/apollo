@@ -266,12 +266,14 @@ const RobotProvider: React.FC = ({ children }) => {
             console.log(
               signal,
               `[${martingaleAmount}] Final result: ${
-                orderResult.status
+                orderResult.result
               } (R$ ${orderResult.profit.toFixed(2)})`,
               '\n',
             );
 
-            if (orderResult.status === 'win') {
+            console.log(orderResult);
+
+            if (orderResult.result === 'win') {
               updateSignal(signal.id, {
                 status: 'win',
                 result: {

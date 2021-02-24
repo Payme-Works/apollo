@@ -1,6 +1,6 @@
-import { Status } from '@/services/ares/order/WaitForOrderByIdService';
+import { Result } from '@/services/ares/order/WaitForOrderByIdService';
 
 export default interface IOrderResult {
-  status: Status;
+  result: Result;
   profit: number;
 }

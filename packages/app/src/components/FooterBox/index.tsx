@@ -5,7 +5,7 @@ import Button, { IButtonProps } from '@/components/Button';
 
 import { Container, Content, HeaderContainer, Footer } from './styles';
 
-export interface IFooterBoxProps {
+export interface IFooterBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description: string;
   footer: {
@@ -14,15 +14,14 @@ export interface IFooterBoxProps {
       text: string;
     } & IButtonProps;
   };
-  containerProps?: React.HTMLAttributes<HTMLDivElement>;
 }
 
 const FooterBox: React.FC<IFooterBoxProps> = ({
   title,
   description,
   footer,
-  containerProps,
   children,
+  ...rest
 }) => {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
 
   return (
     <Container
-      {...containerProps}
+      {...rest}
       isCollapsed={isCollapsed}
       headerContainerHeight={headerContainerHeight}
       contentHeight={contentHeight}

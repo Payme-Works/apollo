@@ -7,6 +7,7 @@ export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'solid' | 'outline';
   size?: 'sm' | 'md';
   loading?: boolean;
+  disableHover?: boolean;
 }
 
 const Button: React.FC<IButtonProps> = ({
@@ -14,6 +15,7 @@ const Button: React.FC<IButtonProps> = ({
   variant = 'solid',
   size = 'md',
   loading = false,
+  disableHover = false,
   children,
   ...rest
 }) => {
@@ -23,6 +25,7 @@ const Button: React.FC<IButtonProps> = ({
       type={type}
       variant={variant}
       size={size}
+      disableHover={disableHover}
       {...rest}
     >
       {loading ? (

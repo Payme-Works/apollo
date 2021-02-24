@@ -1,5 +1,5 @@
 import { Action } from '@/interfaces/signal/ISignal';
-import { Status } from '@/services/ares/order/WaitForOrderByIdService';
+import { Result } from '@/services/ares/order/WaitForOrderByIdService';
 
 interface IQuotes {
   open: number;
@@ -9,7 +9,7 @@ interface IQuotes {
 export default function getOrderResultByQuotes(
   action: Action,
   quotes: IQuotes,
-): Status {
+): Result {
   const { open, close } = quotes;
 
   if (close === open) {
