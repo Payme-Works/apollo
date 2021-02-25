@@ -32,6 +32,10 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
+  const [isRandomSkipSignalsChecked, setIsRandomSkipSignalsChecked] = useState(
+    filters.randomSkipSignals.active,
+  );
+
   const expirationOptions = useMemo(
     () => [
       {
@@ -94,7 +98,6 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               }),
             )
             .min(1, 'Mínimo de 1 expiração obrigatória'),
-          parallelOrders: Yup.boolean().required(),
           operationType: Yup.object()
             .shape({
               value: Yup.string()
@@ -111,6 +114,22 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               maximum: Yup.number().required('Payout máximo obrigatório'),
             })
             .required('Payout obrigatório'),
+          filterTrend: Yup.boolean().required(),
+          parallelOrders: Yup.boolean().required(),
+          randomSkipSignals: Yup.object().shape({
+            active: Yup.boolean().required(),
+            chancePercentage: Yup.number().when('randomSkipSignals.active', {
+              is: true,
+              then: Yup.number()
+                .positive()
+                .max(100, 'É permitido no máximo 100% de chance')
+                .transform((value, original) =>
+                  original === '' ? undefined : value,
+                )
+                .required('Porcentagem de chance obrigatória')
+                .label('_scope_'),
+            }),
+          }),
         });
 
         const transformedData = await schema.validate(data, {
@@ -174,39 +193,19 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           />
         </FormControl>
 
+        <FormControl style={{ marginTop: 16 }}>
+          <FormLabel>Tipo de operação</FormLabel>
+          <Select
+            name="operationType"
+            icon={FiBarChart2}
+            options={operationTypeOptions}
+            defaultValue={filters.operationType}
+            onChange={handleChange}
+          />
+        </FormControl>
+
         <Flex style={{ marginTop: 16 }}>
-          <FormControl
-            style={{
-              width: '47%',
-            }}
-          >
-            <FormLabel>Ordens em paralelo</FormLabel>
-            <Switch
-              name="parallelOrders"
-              showCheckedLabel
-              defaultChecked={filters.parallelOrders}
-              onChange={handleChange}
-            />
-          </FormControl>
-
-          <FormControl
-            style={{
-              width: '47%',
-            }}
-          >
-            <FormLabel>Tipo de operação</FormLabel>
-            <Select
-              name="operationType"
-              icon={FiBarChart2}
-              options={operationTypeOptions}
-              defaultValue={filters.operationType}
-              onChange={handleChange}
-            />
-          </FormControl>
-        </Flex>
-
-        <Scope path="payout">
-          <Flex style={{ marginTop: 16 }}>
+          <Scope path="payout">
             <FormControl
               style={{
                 width: '47%',
@@ -244,8 +243,72 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 onChange={handleChange}
               />
             </FormControl>
-          </Flex>
-        </Scope>
+          </Scope>
+        </Flex>
+
+        <Flex style={{ marginTop: 16 }}>
+          <FormControl style={{ width: '47%' }}>
+            <FormLabel>Filtrar tendência</FormLabel>
+            <Switch
+              name="filterTrend"
+              showCheckedLabel
+              defaultChecked={filters.filterTrend}
+              onChange={handleChange}
+            />
+          </FormControl>
+
+          <FormControl style={{ width: '47%' }}>
+            <FormLabel>Ordens em paralelo</FormLabel>
+            <Switch
+              name="parallelOrders"
+              showCheckedLabel
+              defaultChecked={filters.parallelOrders}
+              onChange={handleChange}
+            />
+          </FormControl>
+        </Flex>
+
+        <Flex style={{ marginTop: 16 }}>
+          <Scope path="randomSkipSignals">
+            <FormControl
+              style={{
+                width: '47%',
+              }}
+            >
+              <FormLabel>Pular sinais aleatóriamente</FormLabel>
+              <Switch
+                name="active"
+                showCheckedLabel
+                defaultChecked={isRandomSkipSignalsChecked}
+                onChange={e => {
+                  setIsRandomSkipSignalsChecked(e.target.checked);
+
+                  handleChange();
+                }}
+              />
+            </FormControl>
+
+            <FormControl
+              disabled={!isRandomSkipSignalsChecked}
+              style={{
+                width: '47%',
+              }}
+            >
+              <FormLabel>Porcentagem de chance</FormLabel>
+              <Input
+                name="chancePercentage"
+                variant="number-format"
+                suffix="%"
+                defaultValue={filters.randomSkipSignals.chancePercentage}
+                allowNegative={false}
+                isAllowed={({ floatValue }) =>
+                  !floatValue || (floatValue >= 0 && floatValue <= 100)
+                }
+                onChange={handleChange}
+              />
+            </FormControl>
+          </Scope>
+        </Flex>
       </Form>
     </FooterBox>
   );

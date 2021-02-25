@@ -77,6 +77,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 .required(),
             })
             .required('Valor da entrada obrigatório'),
+          recoverLostOrder: Yup.boolean().required(),
           martingale: Yup.object().shape({
             active: Yup.boolean().required(),
             amount: Yup.number().when('martingale.active', {
@@ -86,7 +87,6 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 .transform((value, original) =>
                   original === '' ? undefined : value,
                 )
-                .min(1, 'Valor zero não permitido, desative o martingale')
                 .max(3, 'É permitido no máximo 3 mãos de martingale')
                 .required('Mãos de martingale obrigatório (1 a 3)')
                 .label('_scope_'),
@@ -173,27 +173,47 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
       {...rest}
     >
       <Form ref={formRef} onSubmit={handleSave}>
-        <FormControl>
-          <FormLabel>Valor da entrada</FormLabel>
-          <SelectableInput
-            name="orderPrice"
-            icon={FiDollarSign}
-            selectProps={{
-              options: priceOptions,
-              defaultValue: management.orderPrice.selected,
+        <Flex>
+          <FormControl
+            style={{
+              width: '47%',
             }}
-            inputProps={{
-              variant: 'number-format',
-              placeholder: '2,00',
-              fixedDecimalScale: true,
-              defaultValue: management.orderPrice.value,
-            }}
-            onChange={handleChange}
-          />
-        </FormControl>
+          >
+            <FormLabel>Valor da entrada</FormLabel>
+            <SelectableInput
+              name="orderPrice"
+              icon={FiDollarSign}
+              selectProps={{
+                options: priceOptions,
+                defaultValue: management.orderPrice.selected,
+              }}
+              inputProps={{
+                variant: 'number-format',
+                placeholder: '2,00',
+                fixedDecimalScale: true,
+                defaultValue: management.orderPrice.value,
+              }}
+              onChange={handleChange}
+            />
+          </FormControl>
 
-        <Scope path="martingale">
-          <Flex style={{ marginTop: 16 }}>
+          <FormControl
+            style={{
+              width: '47%',
+            }}
+          >
+            <FormLabel>Recuperar ultimo loss</FormLabel>
+            <Switch
+              name="recoverLostOrder"
+              showCheckedLabel
+              defaultChecked={management.recoverLostOrder}
+              onChange={handleChange}
+            />
+          </FormControl>
+        </Flex>
+
+        <Flex style={{ marginTop: 16 }}>
+          <Scope path="martingale">
             <FormControl
               style={{
                 width: '47%',
@@ -231,8 +251,8 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 onChange={handleChange}
               />
             </FormControl>
-          </Flex>
-        </Scope>
+          </Scope>
+        </Flex>
 
         <Flex style={{ marginTop: 16 }}>
           <FormControl
