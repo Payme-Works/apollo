@@ -23,6 +23,7 @@ const schema = {
           },
           value: 2,
         },
+        recoverLostOrder: true,
         martingale: {
           active: true,
           amount: 2,
@@ -61,7 +62,6 @@ const schema = {
             label: 'H1',
           },
         ],
-        parallelOrders: false,
         operationType: {
           value: 'all',
           label: 'Todos',
@@ -69,6 +69,12 @@ const schema = {
         payout: {
           minimum: 70,
           maximum: 95,
+        },
+        filterTrend: true,
+        parallelOrders: false,
+        randomSkipSignals: {
+          active: true,
+          chancePercentage: 75,
         },
       },
       economicEvents: {
