@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, MutableRefObject } from 'react';
 
 import { store, schema } from '../store/config';
 
@@ -10,25 +10,30 @@ interface IUseConfig {
 
 export function useConfig<Key extends keyof Schema>(
   key: Key,
-): IUseConfig & Schema[Key]['default'] {
+): [MutableRefObject<Schema[Key]['default']>, IUseConfig] {
   const defaultValue = store.get(
     key,
     schema[key].default,
   ) as Schema[Key]['default'];
-  const [value, setValue] = useState<Schema[Key]['default']>(defaultValue);
+
+  const value = useRef<Schema[Key]['default']>(defaultValue);
 
   useEffect(() => {
     const unsubscribe = store.onDidChange(key, newValue => {
-      setValue(newValue as Schema[Key]['default']);
+      value.current = newValue as Schema[Key]['default'];
+
+      console.log((value.current as any).filters.randomSkipSignals);
     });
 
     return unsubscribe;
   }, [key]);
 
-  return {
-    ...value,
-    setConfig(configKey, newValue) {
-      store.set(configKey, newValue);
+  return [
+    value,
+    {
+      setConfig(configKey, newValue) {
+        store.set(configKey, newValue);
+      },
     },
-  };
+  ];
 }

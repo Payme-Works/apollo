@@ -26,7 +26,12 @@ interface IFiltersFormData {
 const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const formRef = useRef<FormHandles>(null);
 
-  const { economicEvents, setConfig } = useConfig('robot');
+  const [
+    {
+      current: { economicEvents },
+    },
+    { setConfig },
+  ] = useConfig('robot');
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -35,8 +40,6 @@ const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
   const handleSave = useCallback(
     async (data: IFiltersFormData) => {
-      console.log(data);
-
       try {
         setIsButtonLoading(true);
 
@@ -81,7 +84,6 @@ const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           abortEarly: false,
         });
 
-        console.log(transformedData);
         setConfig('robot.economicEvents', transformedData);
 
         setIsSaved(true);
@@ -98,7 +100,7 @@ const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
         console.error(err);
       } finally {
-        setTimeout(() => setIsButtonLoading(false), 1000);
+        setTimeout(() => setIsButtonLoading(false), 500);
       }
     },
     [setConfig],

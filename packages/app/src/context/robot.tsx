@@ -30,7 +30,7 @@ import { useMartingaleStrategy } from '@/services/ares/order/hooks/strategies/Ma
 import Cache from '@/services/cache';
 import koreApi from '@/services/kore/api';
 import checkActionInFavorToTrend from '@/utils/checkActionInFavorToTrend';
-import getActiveInfo from '@/utils/getActiveInfo';
+import getActiveInfo, { IGetActiveInfoResponse } from '@/utils/getActiveInfo';
 import getRandomInt from '@/utils/getRandomInt';
 
 interface IRecoverLostOrder {
@@ -48,17 +48,10 @@ interface RobotContext {
   stop(): void;
 }
 
-/* const NOT_AVAILABLE_SIGNAL_STATUS: Status[] = [
-  'expired',
-  'in_progress',
-  'win',
-  'loss',
-]; */
-
 const RobotContext = createContext<RobotContext | null>(null);
 
 const RobotProvider: React.FC = ({ children }) => {
-  const robotConfig = useConfig('robot');
+  const [robotConfig] = useConfig('robot');
 
   const {
     signals,
@@ -134,7 +127,9 @@ const RobotProvider: React.FC = ({ children }) => {
             return;
           }
 
-          const checkExpirationIsActive = robotConfig.filters.expirations.some(
+          console.log(robotConfig.current.filters.randomSkipSignals);
+
+          const checkExpirationIsActive = robotConfig.current.filters.expirations.some(
             expiration => expiration.value === signal.expiration,
           );
 
@@ -147,25 +142,24 @@ const RobotProvider: React.FC = ({ children }) => {
             return;
           }
 
-          const randomInt = getRandomInt(0, 100);
+          let activeInfo: IGetActiveInfoResponse;
 
-          if (
-            randomInt < robotConfig.filters.randomSkipSignals.chancePercentage
-          ) {
+          try {
+            activeInfo = await getActiveInfo(
+              signal.currency,
+              signal.expiration,
+            );
+          } catch {
             updateSignal(signal.id, {
               status: 'expired',
-              info: 'Sinal pulado aleatóriamente',
+              info: 'Erro inesperado ao buscar informações do ativo',
             });
 
             return;
           }
 
-          const activeInfo = await getActiveInfo(
-            signal.currency,
-            signal.expiration,
-          );
-
-          const configOperationType = robotConfig.filters.operationType.value;
+          const configOperationType =
+            robotConfig.current.filters.operationType.value;
 
           const availableInstrumentTypes: InstrumentType[] = [];
           let instrumentType: InstrumentType | undefined;
@@ -205,7 +199,7 @@ const RobotProvider: React.FC = ({ children }) => {
 
           const activeProfit = activeInfo[instrumentType].profit;
 
-          if (activeProfit < robotConfig.filters.payout.minimum) {
+          if (activeProfit < robotConfig.current.filters.payout.minimum) {
             updateSignal(signal.id, {
               status: 'expired',
               info: 'Payout do ativo menor do que o mínimo configurado',
@@ -214,7 +208,7 @@ const RobotProvider: React.FC = ({ children }) => {
             return;
           }
 
-          if (activeProfit > robotConfig.filters.payout.maximum) {
+          if (activeProfit > robotConfig.current.filters.payout.maximum) {
             updateSignal(signal.id, {
               status: 'expired',
               info: 'Payout do ativo maior do que o mínimo configurado',
@@ -223,7 +217,7 @@ const RobotProvider: React.FC = ({ children }) => {
             return;
           }
 
-          if (robotConfig.filters.filterTrend) {
+          if (robotConfig.current.filters.filterTrend) {
             const isActionInFavor = checkActionInFavorToTrend(
               signal.operation,
               activeInfo[instrumentType].trend,
@@ -239,7 +233,7 @@ const RobotProvider: React.FC = ({ children }) => {
             }
           }
 
-          if (robotConfig.economicEvents.filter) {
+          if (robotConfig.current.economicEvents.filter) {
             const { data: events } = await koreApi.get<IEvent[]>(
               '/economic-calendar/events',
             );
@@ -255,11 +249,11 @@ const RobotProvider: React.FC = ({ children }) => {
 
                 const dateLessFifteenMinutes = subMinutes(
                   parseISO(signal.date),
-                  robotConfig.economicEvents.minutes.before,
+                  robotConfig.current.economicEvents.minutes.before,
                 );
                 const datePlusFifteenMinutes = addMinutes(
                   parseISO(signal.date),
-                  robotConfig.economicEvents.minutes.after,
+                  robotConfig.current.economicEvents.minutes.after,
                 );
 
                 return isWithinInterval(dateParsed, {
@@ -271,11 +265,26 @@ const RobotProvider: React.FC = ({ children }) => {
             if (checkHasEvent) {
               updateSignal(signal.id, {
                 status: 'expired',
-                info: `Evento econômico em um intervalo de ${robotConfig.economicEvents.minutes.before}-${robotConfig.economicEvents.minutes.after}`,
+                info: `Evento econômico em um intervalo de ${robotConfig.current.economicEvents.minutes.before}-${robotConfig.current.economicEvents.minutes.after} minutos`,
               });
 
               return;
             }
+          }
+
+          const randomInt = getRandomInt(1, 100);
+
+          if (
+            robotConfig.current.filters.randomSkipSignals.active &&
+            randomInt <
+              robotConfig.current.filters.randomSkipSignals.chancePercentage
+          ) {
+            updateSignal(signal.id, {
+              status: 'expired',
+              info: 'Sinal pulado aleatóriamente',
+            });
+
+            return;
           }
 
           updateSignal(signal.id, {
@@ -287,7 +296,7 @@ const RobotProvider: React.FC = ({ children }) => {
           timeout = dateLessThreeSeconds.getTime() - Date.now();
 
           setTimeout(async () => {
-            let priceAmount = robotConfig.management.orderPrice.value;
+            let priceAmount = robotConfig.current.management.orderPrice.value;
 
             const differencePercentage = activeProfit / 100;
 
@@ -298,7 +307,7 @@ const RobotProvider: React.FC = ({ children }) => {
             console.log(signal, recoverLostOrder);
 
             if (
-              robotConfig.management.recoverLostOrder &&
+              robotConfig.current.management.recoverLostOrder &&
               recoverLostOrder &&
               recoverLostOrder.profit < 0
             ) {
@@ -310,7 +319,7 @@ const RobotProvider: React.FC = ({ children }) => {
 
               if (
                 profit - priceAmount <=
-                -robotConfig.management.stopLoss.value
+                -robotConfig.current.management.stopLoss.value
               ) {
                 priceAmount /= 1.5;
               }
@@ -357,19 +366,20 @@ const RobotProvider: React.FC = ({ children }) => {
             try {
               let maxMartingale = 0;
 
-              if (robotConfig.management.martingale.active) {
-                maxMartingale = robotConfig.management.martingale.amount;
+              if (robotConfig.current.management.martingale.active) {
+                maxMartingale =
+                  robotConfig.current.management.martingale.amount;
               }
 
               orderResult = await order.use(
                 useMartingaleStrategy(
                   maxMartingale,
                   activeProfit,
-                  robotConfig.management.orderPrice.value,
+                  robotConfig.current.management.orderPrice.value,
                   ({ martingale, result, next }) => {
                     if (
                       profit - next.price_amount <=
-                      -robotConfig.management.stopLoss.value
+                      -robotConfig.current.management.stopLoss.value
                     ) {
                       const nextPriceAmount = next.price_amount / 1.5;
 
@@ -445,7 +455,9 @@ const RobotProvider: React.FC = ({ children }) => {
             if (orderResult.profit < 0) {
               let recoverProfit = orderResult.profit;
 
-              if (priceAmount > robotConfig.management.orderPrice.value) {
+              if (
+                priceAmount > robotConfig.current.management.orderPrice.value
+              ) {
                 recoverProfit += priceAmount;
               }
 
@@ -473,7 +485,7 @@ const RobotProvider: React.FC = ({ children }) => {
       refreshProfile,
       setProfit,
       updateSignal,
-      robotConfig,
+      robotConfig.current,
     ],
   );
 
