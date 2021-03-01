@@ -4,7 +4,7 @@ import {
   findActiveByName,
 } from '@/services/ares/active/FindActiveByNameService';
 
-interface IResponse {
+export interface IGetActiveInfoResponse {
   binary: IFindActiveByNameResponse;
   digital: IFindActiveByNameResponse;
 }
@@ -12,7 +12,7 @@ interface IResponse {
 export default async function getActiveInfo(
   active: string,
   expiration: Expiration,
-): Promise<IResponse> {
+): Promise<IGetActiveInfoResponse> {
   const [binary, digital] = await Promise.all([
     findActiveByName({
       active,

@@ -26,7 +26,7 @@ const schema = {
         recoverLostOrder: true,
         martingale: {
           active: true,
-          amount: 2,
+          amount: 1,
         },
         stopGain: {
           selected: {
@@ -83,6 +83,18 @@ const schema = {
           before: 30,
           after: 30,
         },
+      },
+      application: {
+        timezone: {
+          value: 'America/Sao_Paulo',
+          label: 'Brasil, São Paulo',
+        },
+        theme: {
+          value: 'dark',
+          label: 'Escuro',
+        },
+        notifications: true,
+        updates: true,
       },
     },
   },

@@ -27,7 +27,12 @@ interface IFiltersFormData {
 const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const formRef = useRef<FormHandles>(null);
 
-  const { filters, setConfig } = useConfig('robot');
+  const [
+    {
+      current: { filters },
+    },
+    { setConfig },
+  ] = useConfig('robot');
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -38,6 +43,10 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
   const expirationOptions = useMemo(
     () => [
+      {
+        value: 'm1',
+        label: 'M1',
+      },
       {
         value: 'm5',
         label: 'M5',
@@ -78,8 +87,6 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
   const handleSave = useCallback(
     async (data: IFiltersFormData) => {
-      console.log(data);
-
       try {
         setIsButtonLoading(true);
 
@@ -136,7 +143,6 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           abortEarly: false,
         });
 
-        console.log(transformedData);
         setConfig('robot.filters', transformedData);
 
         setIsSaved(true);
@@ -153,7 +159,7 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
         console.error(err);
       } finally {
-        setTimeout(() => setIsButtonLoading(false), 1000);
+        setTimeout(() => setIsButtonLoading(false), 500);
       }
     },
     [expirationOptions, operationTypeOptions, setConfig],

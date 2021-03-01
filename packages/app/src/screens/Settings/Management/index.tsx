@@ -31,7 +31,12 @@ interface IManagementsFormData {
 const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const formRef = useRef<FormHandles>(null);
 
-  const { management, setConfig } = useConfig('robot');
+  const [
+    {
+      current: { management },
+    },
+    { setConfig },
+  ] = useConfig('robot');
 
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -52,8 +57,6 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
   const handleSave = useCallback(
     async (data: IManagementsFormData) => {
-      console.log(data);
-
       try {
         setIsButtonLoading(true);
 
@@ -128,7 +131,6 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           abortEarly: false,
         });
 
-        console.log(transformedData);
         setConfig('robot.management', transformedData);
 
         setIsSaved(true);
@@ -145,7 +147,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
         console.error(err);
       } finally {
-        setTimeout(() => setIsButtonLoading(false), 1000);
+        setTimeout(() => setIsButtonLoading(false), 500);
       }
     },
     [priceOptions, setConfig],

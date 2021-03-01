@@ -7,11 +7,14 @@ import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
 import Header from '@/components/Header';
+import { useConfig } from '@/hooks/useConfig';
 import { GlobalStyle, Window } from '@/styles/global';
 import darkTheme from '@/styles/themes/dark';
+import lightTheme from '@/styles/themes/light';
 import startAresPythonServer from '@/utils/ares/startAresPythonServer';
 
 import '../i18n';
+import { ISelectValue } from '@/components/Form/Select';
 
 const AppProvider = lazy(() => import('./context'));
 const Routes = lazy(() => import('./routes'));
@@ -19,6 +22,15 @@ const Routes = lazy(() => import('./routes'));
 Modal.setAppElement('#root');
 
 const App = () => {
+  const [
+    {
+      current: { application },
+    },
+  ] = useConfig('robot', value => {
+    setTheme(value.application.theme);
+  });
+
+  const [theme, setTheme] = useState<ISelectValue>(application.theme);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +41,7 @@ const App = () => {
 
   return (
     <RecoilRoot>
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={theme.value === 'dark' ? darkTheme : lightTheme}>
         <Router>
           <Window>
             <Header />

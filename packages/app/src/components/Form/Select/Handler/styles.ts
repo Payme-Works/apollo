@@ -145,6 +145,7 @@ export const Container = styled.span<ContainerProps>`
 
         > div[class*='MenuList'] > div[class*='option'] {
           background-color: ${theme.colors.background['accent-1']};
+          color: ${theme.colors.foreground.base};
 
           :hover {
             background-color: ${theme.colors.background['accent-2']};
