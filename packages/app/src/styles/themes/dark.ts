@@ -36,7 +36,7 @@ const darkTheme: DefaultTheme = {
       yellow: {
         base: '#FFD15A',
         'accent-1': '#FFD773',
-        'accent-2': '#95804D',
+        'accent-2': '#FFCD52',
       },
       orange: {
         base: '#F97153',

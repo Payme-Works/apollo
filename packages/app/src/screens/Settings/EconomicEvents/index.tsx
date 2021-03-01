@@ -15,7 +15,7 @@ import getValidationErrors from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
 
-interface IFiltersFormData {
+interface IEconomicEventsFormData {
   filter: boolean;
   minutes: {
     before: number;
@@ -39,7 +39,7 @@ const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const [isFilterChecked, setIsFilterChecked] = useState(economicEvents.filter);
 
   const handleSave = useCallback(
-    async (data: IFiltersFormData) => {
+    async (data: IEconomicEventsFormData) => {
       try {
         setIsButtonLoading(true);
 

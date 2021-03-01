@@ -67,7 +67,7 @@ const Profile: React.FC = () => {
         </Info>
 
         <Info color={profitLabelColor}>
-          <dt>Hoje</dt>
+          <dt>Lucro hoje</dt>
           <dd>
             {formattedProfit.main},
             <span id="decimals">{formattedProfit.decimals}</span>

@@ -127,8 +127,6 @@ const RobotProvider: React.FC = ({ children }) => {
             return;
           }
 
-          console.log(robotConfig.current.filters.randomSkipSignals);
-
           const checkExpirationIsActive = robotConfig.current.filters.expirations.some(
             expiration => expiration.value === signal.expiration,
           );
@@ -137,6 +135,19 @@ const RobotProvider: React.FC = ({ children }) => {
             updateSignal(signal.id, {
               status: 'expired',
               info: 'Expiração do sinal não listada nas configurações',
+            });
+
+            return;
+          }
+
+          const checkSomeSignalInProgress = signals.some(
+            item => item.status === 'in_progress',
+          );
+
+          if (checkSomeSignalInProgress) {
+            updateSignal(signal.id, {
+              status: 'expired',
+              info: 'Algum sinal já em progresso',
             });
 
             return;
@@ -194,7 +205,7 @@ const RobotProvider: React.FC = ({ children }) => {
           ) {
             instrumentType = 'digital';
           } else {
-            instrumentType = 'binary';
+            [instrumentType] = availableInstrumentTypes;
           }
 
           const activeProfit = activeInfo[instrumentType].profit;

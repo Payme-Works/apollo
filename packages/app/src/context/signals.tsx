@@ -6,8 +6,14 @@ import React, {
   useEffect,
 } from 'react';
 
-import { addMinutes, isBefore, startOfMinute, subSeconds } from 'date-fns';
-import { parseISO } from 'date-fns/esm';
+import {
+  addDays,
+  addMinutes,
+  isBefore,
+  startOfMinute,
+  subSeconds,
+  parseISO,
+} from 'date-fns';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 import { v4 as uuid } from 'uuid';
@@ -35,7 +41,7 @@ const SignalsProvider: React.FC = ({ children }) => {
       const debugSignals = String(process.env.DEBUG_SIGNALS) === 'true';
 
       if (!debugSignals) {
-        const now = new Date();
+        const now = addDays(Date.now(), 0);
 
         const date = {
           year: now.getFullYear(),
