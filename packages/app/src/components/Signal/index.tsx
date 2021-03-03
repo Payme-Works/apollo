@@ -8,10 +8,11 @@ import { v4 as uuid } from 'uuid';
 import galeImg from '@/assets/gale.png';
 import { useSignals } from '@/context/signals';
 import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
+import formatPrice from '@/utils/formatPrice';
 
 import Tooltip from '../Tooltip';
 
-import { Container, Label, GaleImage, InfoContainer } from './styles';
+import { Container, Label, GaleImage } from './styles';
 
 interface ISignalProps {
   data: ISignalWithStatus;
@@ -48,6 +49,10 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
     [data.result?.martingales, data.status],
   );
 
+  const formattedProfit = useMemo(() => formatPrice(data.result?.profit), [
+    data.result?.profit,
+  ]);
+
   return (
     <Container status={data.status}>
       <div>
@@ -57,51 +62,35 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
         <Label width={theme.sizes[10]}>{formattedData.operation}</Label>
 
         {data.info && (
-          <InfoContainer width={theme.sizes[10]}>
-            <Tooltip text={data.info}>
-              <FiAlertCircle
-                color={theme.colors.foreground['accent-2']}
-                size={20}
-              />
-            </Tooltip>
-          </InfoContainer>
+          <Tooltip text={data.info} style={{ marginLeft: theme.spaces[4] }}>
+            <FiAlertCircle
+              color={theme.colors.foreground['accent-2']}
+              size={theme.sizes[5]}
+              strokeWidth={1}
+            />
+          </Tooltip>
         )}
 
         {shouldShowMartingales &&
-          [...Array(data.result?.martingales)].map((item, index) => (
-            <GaleImage
-              key={uuid()}
-              id="gale"
-              src={galeImg}
-              alt={`Gale ${index + 1}`}
-            />
+          [...Array(data.result?.martingales)].map((_item, index) => (
+            <GaleImage key={uuid()} src={galeImg} alt={`Gale ${index + 1}`} />
           ))}
       </div>
 
-      {isAvailable && (
+      {isAvailable ? (
         <>
           {data.status === 'canceled' ? (
-            <span
-              id="action"
-              role="button"
-              tabIndex={0}
-              onKeyPress={onResume}
-              onClick={onResume}
-            >
+            <button type="button" onClick={onResume}>
               Retomar
-            </span>
+            </button>
           ) : (
-            <span
-              id="action"
-              role="button"
-              tabIndex={0}
-              onKeyPress={onCancel}
-              onClick={onCancel}
-            >
+            <button type="button" onClick={onCancel}>
               Cancelar
-            </span>
+            </button>
           )}
         </>
+      ) : (
+        <>{data.result?.profit && <span>{formattedProfit}</span>}</>
       )}
     </Container>
   );

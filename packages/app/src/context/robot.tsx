@@ -317,6 +317,8 @@ const RobotProvider: React.FC = ({ children }) => {
 
             console.log(signal, recoverLostOrder);
 
+            let recoveringLostOrder = false;
+
             if (
               robotConfig.current.management.recoverLostOrder &&
               recoverLostOrder &&
@@ -334,6 +336,8 @@ const RobotProvider: React.FC = ({ children }) => {
               ) {
                 priceAmount /= 1.5;
               }
+
+              recoveringLostOrder = true;
 
               console.log(
                 signal,
@@ -441,6 +445,12 @@ const RobotProvider: React.FC = ({ children }) => {
 
             console.log(orderResult);
 
+            let info;
+
+            if (recoveringLostOrder) {
+              info = 'Ordem de recuperação da derrota anterior';
+            }
+
             if (orderResult.result === 'win') {
               updateSignal(signal.id, {
                 status: 'win',
@@ -448,6 +458,7 @@ const RobotProvider: React.FC = ({ children }) => {
                   martingales: martingaleAmount,
                   profit: orderResult.profit,
                 },
+                info,
               });
             } else {
               updateSignal(signal.id, {
@@ -456,6 +467,7 @@ const RobotProvider: React.FC = ({ children }) => {
                   martingales: martingaleAmount,
                   profit: orderResult.profit,
                 },
+                info,
               });
             }
 
