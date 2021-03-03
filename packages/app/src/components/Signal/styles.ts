@@ -57,30 +57,26 @@ export const Container = styled.div<IContainerProps>`
 
     transition: all 0.2s;
 
+    & + ${Container} {
+      margin-top: ${theme.spaces[4]};
+    }
+
     &:hover {
       color: var(--color-hover);
       border-color: var(--border-color-hover);
 
-      > #action {
+      > div > ${GaleImage} {
+        opacity: var(--gale-image-opacity-hover);
+      }
+
+      > button {
         color: ${theme.transparencies[3](theme.colors.foreground['accent-1'])};
       }
-
-      > div {
-        > img#gale {
-          opacity: var(--gale-image-opacity-hover);
-        }
-      }
-    }
-
-    & + ${Container} {
-      margin-top: ${theme.spaces[4]};
     }
 
     > div {
       display: flex;
       align-items: center;
-
-      width: 100%;
 
       > img#gale {
         transition: all 0.2s;
@@ -89,8 +85,9 @@ export const Container = styled.div<IContainerProps>`
       }
     }
 
-    > #action {
-      cursor: pointer;
+    > button {
+      background: none;
+      border: 0;
 
       color: ${theme.transparencies[5](theme.colors.foreground['accent-1'])};
       font-size: ${theme.fonts.sizes.sm};
@@ -113,16 +110,6 @@ export const Label = styled.span<ILabelProps>`
 
   & + span {
     margin-left: ${props => props.theme.spaces[1]};
-  }
-`;
-
-export const InfoContainer = styled.div<ILabelProps>`
-  width: ${props => props.width};
-
-  margin-left: 16px;
-
-  svg {
-    stroke-width: 1;
   }
 `;
 
