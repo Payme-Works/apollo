@@ -4,6 +4,7 @@ import React, {
   useContext,
   useCallback,
   useEffect,
+  useMemo,
 } from 'react';
 
 import {
@@ -13,11 +14,17 @@ import {
   startOfMinute,
   subSeconds,
   parseISO,
+  format,
+  isToday,
+  isAfter,
+  startOfDay,
 } from 'date-fns';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 import { v4 as uuid } from 'uuid';
 
+import useWebSocket from '@/hooks/useWebSocket';
+import ISignal from '@/interfaces/signal/ISignal';
 import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
 import { getSignalsFromDate } from '@/services/kore/signal/GetSignalsFromDateService';
 
@@ -35,35 +42,97 @@ const SignalsContext = createContext<SignalsContext | null>(null);
 
 const SignalsProvider: React.FC = ({ children }) => {
   const [signals, setSignals] = useState<ISignalWithStatus[]>([]);
+  const [dateForSignals, setDateForSignals] = useState<Date>(
+    startOfDay(Date.now()),
+  );
+
+  const formattedDate = useMemo(() => format(dateForSignals, 'yyyy-M-d'), [
+    dateForSignals,
+  ]);
+
+  useWebSocket(`signals:premium:${formattedDate}`, socket => {
+    socket.on('new', (newSignals: ISignal[]) => {
+      const mapNewSignals = newSignals.map<ISignalWithStatus>(signal => ({
+        ...signal,
+        status: 'waiting',
+      }));
+
+      if (isToday(dateForSignals)) {
+        setSignals(state => [...state, ...mapNewSignals]);
+      } else {
+        setSignals(mapNewSignals);
+      }
+    });
+
+    socket.on('update', (newSignal: ISignal) => {
+      setSignals(state => {
+        const newSignals = [...state];
+
+        const signalIndex = newSignals.findIndex(
+          signal => signal.id === newSignal.id,
+        );
+
+        newSignals[signalIndex] = {
+          ...assign(newSignals[signalIndex], newSignal),
+        };
+
+        return newSignals;
+      });
+    });
+  });
 
   useEffect(() => {
     async function loadSignals() {
       const debugSignals = String(process.env.DEBUG_SIGNALS) === 'true';
 
-      if (!debugSignals) {
-        const now = addDays(Date.now(), 0);
-
-        const date = {
-          year: now.getFullYear(),
-          month: now.getMonth() + 1,
-          day: now.getDate(),
+      async function getSignals(date: Date): Promise<ISignal[]> {
+        const data = {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
         };
 
         const [m5, m15, m30, h1] = await Promise.all([
-          getSignalsFromDate({ ...date, expiration: 'm5' }),
-          getSignalsFromDate({ ...date, expiration: 'm15' }),
-          getSignalsFromDate({ ...date, expiration: 'm30' }),
-          getSignalsFromDate({ ...date, expiration: 'h1' }),
+          getSignalsFromDate({ ...data, expiration: 'm5' }),
+          getSignalsFromDate({ ...data, expiration: 'm15' }),
+          getSignalsFromDate({ ...data, expiration: 'm30' }),
+          getSignalsFromDate({ ...data, expiration: 'h1' }),
         ]);
 
         const joinSignals = [...m5, ...m15, ...m30, ...h1];
 
-        const newSignals = joinSignals.map<ISignalWithStatus>(signal => ({
-          ...signal,
-          status: 'waiting',
-        }));
+        return joinSignals;
+      }
 
-        setSignals(newSignals);
+      if (!debugSignals) {
+        let date = startOfDay(Date.now());
+
+        let signalsFromDate = await getSignals(date);
+
+        const checkHasRemainingSignalsForToday = signalsFromDate.some(signal =>
+          isAfter(parseISO(signal.date), Date.now()),
+        );
+
+        if (!checkHasRemainingSignalsForToday) {
+          const tomorrow = addDays(date, 1);
+
+          const signalsFromTomorrow = await getSignals(tomorrow);
+
+          if (signalsFromTomorrow.length > 0) {
+            date = tomorrow;
+            signalsFromDate = signalsFromTomorrow;
+          }
+        }
+
+        const mapNewSignals = signalsFromDate.map<ISignalWithStatus>(
+          signal => ({
+            ...signal,
+            status: 'waiting',
+          }),
+        );
+
+        setSignals(mapNewSignals);
+        setDateForSignals(date);
       } else {
         setSignals([
           {

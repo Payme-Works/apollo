@@ -11,7 +11,7 @@ interface IUseConfig {
 export function useConfig<Key extends keyof Schema>(
   key: Key,
   onChange: (value: Schema[Key]['default']) => void,
-): [MutableRefObject<Schema[Key]['default']>, IUseConfig<Key>] {
+): [MutableRefObject<Schema[Key]['default']>, IUseConfig] {
   const defaultValue = store.get(
     key,
     schema[key].default,

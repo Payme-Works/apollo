@@ -144,7 +144,10 @@ const RobotProvider: React.FC = ({ children }) => {
             item => item.status === 'in_progress',
           );
 
-          if (checkSomeSignalInProgress) {
+          if (
+            !robotConfig.current.filters.parallelOrders &&
+            checkSomeSignalInProgress
+          ) {
             updateSignal(signal.id, {
               status: 'expired',
               info: 'Algum sinal já em progresso',

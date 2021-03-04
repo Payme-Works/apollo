@@ -5,10 +5,8 @@ export default function formatPrice(value?: number): string {
     valueToFormat = value;
   }
 
-  const formatted = Intl.NumberFormat('pt-BR', {
+  return Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(valueToFormat);
-
-  return formatted.replace('-R$ ', 'R$ -');
 }

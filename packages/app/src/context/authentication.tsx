@@ -6,8 +6,14 @@ import React, {
   useMemo,
 } from 'react';
 
+import { v4 as uuid } from 'uuid';
+
+interface IUser {
+  id: string;
+}
+
 interface AuthenticationContext {
-  user?: any;
+  user?: IUser;
   isLoggingIn: boolean;
   isLoggedIn: boolean;
   logIn(): Promise<void>;
@@ -17,7 +23,7 @@ interface AuthenticationContext {
 const AuthenticationContext = createContext<AuthenticationContext | null>(null);
 
 const AuthenticationProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<IUser>();
   const [isLoggingIn, setLoggingIn] = useState<any>();
 
   const isLoggedIn = useMemo(() => !!user, [user]);
@@ -25,8 +31,12 @@ const AuthenticationProvider: React.FC = ({ children }) => {
   const logIn = useCallback(async () => {
     setLoggingIn(true);
 
+    const newUser: IUser = {
+      id: uuid(),
+    };
+
     setTimeout(() => {
-      setUser({});
+      setUser(newUser);
       setLoggingIn(false);
     });
   }, []);
