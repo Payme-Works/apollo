@@ -114,24 +114,21 @@ const SignalsProvider: React.FC = ({ children }) => {
         );
 
         if (!checkHasRemainingSignalsForToday) {
-          const tomorrow = addDays(date, 1);
+          date = addDays(date, 1);
 
-          const signalsFromTomorrow = await getSignals(tomorrow);
+          const signalsFromTomorrow = await getSignals(date);
 
           if (signalsFromTomorrow.length > 0) {
-            date = tomorrow;
             signalsFromDate = signalsFromTomorrow;
           }
         }
 
-        const mapNewSignals = signalsFromDate.map<ISignalWithStatus>(
-          signal => ({
-            ...signal,
-            status: 'waiting',
-          }),
-        );
+        const newSignals = signalsFromDate.map<ISignalWithStatus>(signal => ({
+          ...signal,
+          status: 'waiting',
+        }));
 
-        setSignals(mapNewSignals);
+        setSignals(newSignals);
         setDateForSignals(date);
       } else {
         setSignals([

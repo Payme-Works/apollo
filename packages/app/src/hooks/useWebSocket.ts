@@ -8,14 +8,14 @@ const useWebSocket = (
   room?: string,
   onConnect?: (socket: SocketIOClient.Socket) => void,
 ): MutableRefObject<SocketIOClient.Socket> => {
-  const socket = useRef<SocketIOClient.Socket>(fakeConnection());
-  const lastRoom = useRef<string>(null);
+  const socketRef = useRef<SocketIOClient.Socket>(fakeConnection());
+  const lastRoomRef = useRef<string>(null);
 
   const { user } = useAuthentication();
 
   useEffect(() => {
     const disconnect = () => {
-      socket.current.disconnect();
+      socketRef.current.disconnect();
     };
 
     if (!user) {
@@ -26,8 +26,8 @@ const useWebSocket = (
       user_id: user.id,
     });
 
-    if (lastRoom.current) {
-      newSocket.io.emit('leave', lastRoom.current);
+    if (lastRoomRef.current) {
+      newSocket.io.emit('leave', lastRoomRef.current);
     }
 
     newSocket.emit('join', room);
@@ -40,13 +40,13 @@ const useWebSocket = (
       `Successfully connected to websocket, joined to channel: '${room}'.`,
     );
 
-    socket.current = newSocket;
-    lastRoom.current = room;
+    socketRef.current = newSocket;
+    lastRoomRef.current = room;
 
     return disconnect;
   }, [onConnect, room, user]);
 
-  return socket;
+  return socketRef;
 };
 
 export default useWebSocket;
