@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { compareAsc, isAfter } from 'date-fns';
-import { parseISO } from 'date-fns/esm';
+import { compareDesc, parseISO } from 'date-fns/esm';
 
 import Signal from '@/components/Signal';
 import { useSignals } from '@/context/signals';
@@ -37,20 +37,20 @@ const SignalsList: React.FC = () => {
   const sortedSignals = useMemo(() => {
     const list: ISignalWithStatus[] = [];
 
-    const sorted = signals.sort((a, b) =>
-      compareAsc(parseISO(a.date), parseISO(b.date)),
+    list.push(
+      ...signals
+        .sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date)))
+        .filter(
+          signal =>
+            isSignalAvailable(signal) ||
+            (hasSignalResult(signal) && signal.status !== 'expired'),
+        ),
     );
 
     list.push(
-      ...sorted.filter(
-        signal =>
-          isSignalAvailable(signal) ||
-          (hasSignalResult(signal) && signal.status !== 'expired'),
-      ),
-    );
-
-    list.push(
-      ...sorted.filter(signal => !list.some(item => item.id === signal.id)),
+      ...signals
+        .sort((a, b) => compareDesc(parseISO(a.date), parseISO(b.date)))
+        .filter(signal => !list.some(item => item.id === signal.id)),
     );
 
     return list;

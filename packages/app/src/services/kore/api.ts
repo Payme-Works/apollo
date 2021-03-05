@@ -4,7 +4,7 @@ import os from 'os';
 import getTimeZone from '@/utils/getTimeZone';
 
 const koreApi = axios.create({
-  baseURL: 'https://api.paymetrade.com',
+  baseURL: String(process.env.KORE_API_URL),
 });
 
 koreApi.defaults.headers['X-Apollo-Electron'] = os.userInfo().username;
