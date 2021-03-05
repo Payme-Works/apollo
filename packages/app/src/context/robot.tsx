@@ -13,6 +13,7 @@ import {
   parseISO,
   subMinutes,
   subSeconds,
+  isEqual,
 } from 'date-fns';
 
 import { useBrokerAuthentication } from '@/context/broker-authentication';
@@ -151,6 +152,21 @@ const RobotProvider: React.FC = ({ children }) => {
             updateSignal(signal.id, {
               status: 'expired',
               info: 'Algum sinal já em progresso',
+            });
+
+            return;
+          }
+
+          const checkSomeSignalWithSameDateAndExpiration = signals.some(
+            item =>
+              isEqual(parseISO(item.date), parseISO(signal.date)) &&
+              item.expiration === signal.expiration,
+          );
+
+          if (checkSomeSignalWithSameDateAndExpiration) {
+            updateSignal(signal.id, {
+              status: 'expired',
+              info: 'Dois sinais com mesmo horário e expiração',
             });
 
             return;
