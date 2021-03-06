@@ -159,6 +159,7 @@ const RobotProvider: React.FC = ({ children }) => {
 
           const checkSomeSignalWithSameDateAndExpiration = signals.some(
             item =>
+              item.id !== signal.id &&
               isEqual(parseISO(item.date), parseISO(signal.date)) &&
               item.expiration === signal.expiration,
           );
