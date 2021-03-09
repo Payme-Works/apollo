@@ -39,8 +39,11 @@ interface IRecoverLostOrder {
 }
 
 interface ITask {
-  signal_id: string;
-  task: NodeJS.Timeout;
+  signalId: string;
+  tasks: {
+    init: NodeJS.Timeout;
+    createOrder?: NodeJS.Timeout;
+  };
 }
 
 interface RobotContext {
@@ -64,10 +67,9 @@ const RobotProvider: React.FC = ({ children }) => {
   const { refreshProfile, profit, setProfit } = useBrokerAuthentication();
 
   const checkerTasksRef = useRef<NodeJS.Timeout[]>([]);
+  const tasksRef = useRef<ITask[]>([]);
 
   const [isRunning, setIsRunning] = useState(false);
-
-  const [tasks, setTasks] = useState<ITask[]>([]);
 
   useEffect(() => {
     if (checkerTasksRef.current.length > 0) {
@@ -106,6 +108,30 @@ const RobotProvider: React.FC = ({ children }) => {
     updateSignal,
   ]);
 
+  const stop = useCallback(() => {
+    tasksRef.current.forEach(task => {
+      const signal = signals.find(
+        findSignal => findSignal.id === task.signalId,
+      );
+
+      if (signal.status === 'waiting' || signal.status === 'canceled') {
+        clearTimeout(task.tasks.init);
+
+        if (task.tasks.createOrder) {
+          clearTimeout(task.tasks.createOrder);
+        }
+
+        const newTasks = tasksRef.current.filter(
+          item => item.signalId === task.signalId,
+        );
+
+        tasksRef.current = newTasks;
+      }
+    });
+
+    setIsRunning(false);
+  }, [signals]);
+
   const createTask = useCallback(
     (signal: ISignalWithStatus) => {
       const availableDate = getSignalAvailableDate(signal);
@@ -116,407 +142,429 @@ const RobotProvider: React.FC = ({ children }) => {
         return;
       }
 
+      let createOrderTask: NodeJS.Timeout;
+
       const task: ITask = {
-        signal_id: signal.id,
-        task: setTimeout(async () => {
-          if (signal.status === 'canceled') {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Sinal cancelado',
-            });
-
-            return;
-          }
-
-          const checkExpirationIsActive = robotConfig.current.filters.expirations.some(
-            expiration => expiration.value === signal.expiration,
-          );
-
-          if (!checkExpirationIsActive) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Expiração do sinal não listada nas configurações',
-            });
-
-            return;
-          }
-
-          const checkSomeSignalInProgress = signals.some(
-            item => item.status === 'in_progress',
-          );
-
-          if (
-            !robotConfig.current.filters.parallelOrders &&
-            checkSomeSignalInProgress
-          ) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Algum sinal já em progresso',
-            });
-
-            return;
-          }
-
-          const checkSomeSignalWithSameDateAndExpiration = signals.some(
-            item =>
-              item.id !== signal.id &&
-              isEqual(parseISO(item.date), parseISO(signal.date)) &&
-              item.expiration === signal.expiration,
-          );
-
-          if (checkSomeSignalWithSameDateAndExpiration) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Dois sinais com mesmo horário e expiração',
-            });
-
-            return;
-          }
-
-          let activeInfo: IGetActiveInfoResponse;
-
-          try {
-            activeInfo = await getActiveInfo(
-              signal.currency,
-              signal.expiration,
-            );
-          } catch {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Erro inesperado ao buscar informações do ativo',
-            });
-
-            return;
-          }
-
-          const configOperationType =
-            robotConfig.current.filters.operationType.value;
-
-          const availableInstrumentTypes: InstrumentType[] = [];
-          let instrumentType: InstrumentType | undefined;
-
-          if (
-            activeInfo.binary.open &&
-            (configOperationType === 'all' || configOperationType === 'binary')
-          ) {
-            availableInstrumentTypes.push('binary');
-          }
-
-          if (
-            activeInfo.digital.open &&
-            (configOperationType === 'all' || configOperationType === 'digital')
-          ) {
-            availableInstrumentTypes.push('digital');
-          }
-
-          if (availableInstrumentTypes.length === 0) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Ativo fechado',
-            });
-
-            return;
-          }
-
-          if (
-            activeInfo.digital.profit > activeInfo.binary.profit &&
-            availableInstrumentTypes.includes('digital') &&
-            availableInstrumentTypes.includes('binary')
-          ) {
-            instrumentType = 'digital';
-          } else {
-            [instrumentType] = availableInstrumentTypes;
-          }
-
-          const activeProfit = activeInfo[instrumentType].profit;
-
-          if (activeProfit < robotConfig.current.filters.payout.minimum) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Payout do ativo menor do que o mínimo configurado',
-            });
-
-            return;
-          }
-
-          if (activeProfit > robotConfig.current.filters.payout.maximum) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Payout do ativo maior do que o mínimo configurado',
-            });
-
-            return;
-          }
-
-          if (robotConfig.current.filters.filterTrend) {
-            const isActionInFavor = checkActionInFavorToTrend(
-              signal.operation,
-              activeInfo[instrumentType].trend,
-            );
-
-            if (!isActionInFavor) {
+        signalId: signal.id,
+        tasks: {
+          init: setTimeout(async () => {
+            if (signal.status === 'canceled') {
               updateSignal(signal.id, {
                 status: 'expired',
-                info: 'Sinal contra tendência do ativo',
+                info: 'Sinal cancelado',
               });
 
               return;
             }
-          }
 
-          if (robotConfig.current.economicEvents.filter) {
-            const { data: events } = await koreApi.get<IEvent[]>(
-              '/economic-calendar/events',
+            const checkExpirationIsActive = robotConfig.current.filters.expirations.some(
+              expiration => expiration.value === signal.expiration,
             );
 
-            const checkHasEvent = events
-              .filter(event =>
-                signal.currency
-                  .toLowerCase()
-                  .includes(event.economy.toLowerCase()),
-              )
-              .some(event => {
-                const dateParsed = parseISO(event.date);
-
-                const dateLessFifteenMinutes = subMinutes(
-                  parseISO(signal.date),
-                  robotConfig.current.economicEvents.minutes.before,
-                );
-                const datePlusFifteenMinutes = addMinutes(
-                  parseISO(signal.date),
-                  robotConfig.current.economicEvents.minutes.after,
-                );
-
-                return isWithinInterval(dateParsed, {
-                  start: dateLessFifteenMinutes,
-                  end: datePlusFifteenMinutes,
-                });
-              });
-
-            if (checkHasEvent) {
+            if (!checkExpirationIsActive) {
               updateSignal(signal.id, {
                 status: 'expired',
-                info: `Evento econômico em um intervalo de ${robotConfig.current.economicEvents.minutes.before}-${robotConfig.current.economicEvents.minutes.after} minutos`,
+                info: 'Expiração do sinal não listada nas configurações',
               });
 
               return;
             }
-          }
 
-          const randomInt = getRandomInt(1, 100);
-
-          if (
-            robotConfig.current.filters.randomSkipSignals.active &&
-            randomInt <
-              robotConfig.current.filters.randomSkipSignals.chancePercentage
-          ) {
-            updateSignal(signal.id, {
-              status: 'expired',
-              info: 'Sinal pulado aleatóriamente',
-            });
-
-            return;
-          }
-
-          updateSignal(signal.id, {
-            status: 'in_progress',
-          });
-
-          const dateLessThreeSeconds = subSeconds(parseISO(signal.date), 3);
-
-          timeout = dateLessThreeSeconds.getTime() - Date.now();
-
-          setTimeout(async () => {
-            let priceAmount = robotConfig.current.management.orderPrice.value;
-
-            const differencePercentage = activeProfit / 100;
-
-            let recoverLostOrder = Cache.get<IRecoverLostOrder>(
-              'recover-lost-order',
+            const checkSomeSignalInProgress = signals.some(
+              item => item.status === 'in_progress',
             );
-
-            console.log(signal, recoverLostOrder);
-
-            let recoveringLostOrder = false;
 
             if (
-              robotConfig.current.management.recoverLostOrder &&
-              recoverLostOrder &&
-              recoverLostOrder.profit < 0
+              !robotConfig.current.filters.parallelOrders &&
+              checkSomeSignalInProgress
             ) {
-              const positiveLastProfit = recoverLostOrder.profit * -1;
-
-              priceAmount = Number(
-                positiveLastProfit / differencePercentage + priceAmount,
-              );
-
-              if (
-                profit - priceAmount <=
-                -robotConfig.current.management.stopLoss.value
-              ) {
-                priceAmount /= 1.5;
-              }
-
-              recoveringLostOrder = true;
-
-              console.log(
-                signal,
-                `Duplicating order price, because previous order was lost: ${priceAmount}`,
-              );
-
-              Cache.set('recover-lost-order', null);
-            }
-
-            const data: IOrder = {
-              type: instrumentType,
-              active: signal.currency,
-              price_amount: priceAmount,
-              action: signal.operation,
-              expiration: signal.expiration,
-            };
-
-            let order: ICreateOrderResponse;
-
-            try {
-              order = await createOrder(data);
-            } catch (err) {
               updateSignal(signal.id, {
                 status: 'expired',
-                info: 'Erro inesperado ao criar ordem',
+                info: 'Algum sinal já em progresso',
               });
-
-              console.error(err);
 
               return;
             }
 
-            refreshProfile();
+            const checkSomeSignalWithSameDateAndExpiration = signals.some(
+              item =>
+                item.id !== signal.id &&
+                isEqual(parseISO(item.date), parseISO(signal.date)) &&
+                item.expiration === signal.expiration,
+            );
 
-            console.log(signal, data, order.order_id);
+            if (checkSomeSignalWithSameDateAndExpiration) {
+              updateSignal(signal.id, {
+                status: 'expired',
+                info: 'Dois sinais com mesmo horário e expiração',
+              });
 
-            let martingaleAmount = 0;
+              return;
+            }
 
-            let orderResult: IOrderResult;
+            let activeInfo: IGetActiveInfoResponse;
 
             try {
-              let maxMartingale = 0;
+              activeInfo = await getActiveInfo(
+                signal.currency,
+                signal.expiration,
+              );
+            } catch {
+              updateSignal(signal.id, {
+                status: 'expired',
+                info: 'Erro inesperado ao buscar informações do ativo',
+              });
 
-              if (robotConfig.current.management.martingale.active) {
-                maxMartingale =
-                  robotConfig.current.management.martingale.amount;
+              return;
+            }
+
+            const configOperationType =
+              robotConfig.current.filters.operationType.value;
+
+            const availableInstrumentTypes: InstrumentType[] = [];
+            let instrumentType: InstrumentType | undefined;
+
+            if (
+              activeInfo.binary.open &&
+              (configOperationType === 'all' ||
+                configOperationType === 'binary')
+            ) {
+              availableInstrumentTypes.push('binary');
+            }
+
+            if (
+              activeInfo.digital.open &&
+              (configOperationType === 'all' ||
+                configOperationType === 'digital')
+            ) {
+              availableInstrumentTypes.push('digital');
+            }
+
+            if (availableInstrumentTypes.length === 0) {
+              updateSignal(signal.id, {
+                status: 'expired',
+                info: 'Ativo fechado',
+              });
+
+              return;
+            }
+
+            if (
+              activeInfo.digital.profit > activeInfo.binary.profit &&
+              availableInstrumentTypes.includes('digital') &&
+              availableInstrumentTypes.includes('binary')
+            ) {
+              instrumentType = 'digital';
+            } else {
+              [instrumentType] = availableInstrumentTypes;
+            }
+
+            const activeProfit = activeInfo[instrumentType].profit;
+
+            if (activeProfit < robotConfig.current.filters.payout.minimum) {
+              updateSignal(signal.id, {
+                status: 'expired',
+                info: `Payout do ativo menor do que o mínimo configurado (${activeProfit} < ${robotConfig.current.filters.payout.minimum})`,
+              });
+
+              return;
+            }
+
+            if (activeProfit > robotConfig.current.filters.payout.maximum) {
+              updateSignal(signal.id, {
+                status: 'expired',
+                info: `Payout do ativo maior do que o mínimo configurado (${activeProfit} > ${robotConfig.current.filters.payout.maximum})`,
+              });
+
+              return;
+            }
+
+            if (robotConfig.current.filters.filterTrend) {
+              const isActionInFavor = checkActionInFavorToTrend(
+                signal.operation,
+                activeInfo[instrumentType].trend,
+              );
+
+              if (!isActionInFavor) {
+                updateSignal(signal.id, {
+                  status: 'expired',
+                  info: 'Sinal contra tendência do ativo',
+                });
+
+                return;
+              }
+            }
+
+            if (robotConfig.current.economicEvents.filter) {
+              const { data: events } = await koreApi.get<IEvent[]>(
+                '/economic-calendar/events',
+              );
+
+              const checkHasEvent = events
+                .filter(event =>
+                  signal.currency
+                    .toLowerCase()
+                    .includes(event.economy.toLowerCase()),
+                )
+                .some(event => {
+                  const dateParsed = parseISO(event.date);
+
+                  const dateLessFifteenMinutes = subMinutes(
+                    parseISO(signal.date),
+                    robotConfig.current.economicEvents.minutes.before,
+                  );
+                  const datePlusFifteenMinutes = addMinutes(
+                    parseISO(signal.date),
+                    robotConfig.current.economicEvents.minutes.after,
+                  );
+
+                  return isWithinInterval(dateParsed, {
+                    start: dateLessFifteenMinutes,
+                    end: datePlusFifteenMinutes,
+                  });
+                });
+
+              if (checkHasEvent) {
+                updateSignal(signal.id, {
+                  status: 'expired',
+                  info: `Evento econômico em um intervalo de ${robotConfig.current.economicEvents.minutes.before}-${robotConfig.current.economicEvents.minutes.after} minutos`,
+                });
+
+                return;
+              }
+            }
+
+            const randomInt = getRandomInt(1, 100);
+
+            if (
+              robotConfig.current.filters.randomSkipSignals.active &&
+              randomInt <
+                robotConfig.current.filters.randomSkipSignals.chancePercentage
+            ) {
+              updateSignal(signal.id, {
+                status: 'expired',
+                info: 'Sinal pulado aleatóriamente',
+              });
+
+              return;
+            }
+
+            updateSignal(signal.id, {
+              status: 'in_progress',
+            });
+
+            const dateLessThreeSeconds = subSeconds(parseISO(signal.date), 3);
+
+            timeout = dateLessThreeSeconds.getTime() - Date.now();
+
+            createOrderTask = setTimeout(async () => {
+              let priceAmount = robotConfig.current.management.orderPrice.value;
+
+              const differencePercentage = activeProfit / 100;
+
+              let recoverLostOrder = Cache.get<IRecoverLostOrder>(
+                'recover-lost-order',
+              );
+
+              console.log(signal, recoverLostOrder);
+
+              let recoveringLostOrder = false;
+
+              if (
+                robotConfig.current.management.recoverLostOrder &&
+                recoverLostOrder &&
+                recoverLostOrder.profit < 0
+              ) {
+                const positiveLastProfit = recoverLostOrder.profit * -1;
+
+                priceAmount = Number(
+                  positiveLastProfit / differencePercentage + priceAmount,
+                );
+
+                if (
+                  profit - priceAmount <=
+                  -robotConfig.current.management.stopLoss.value
+                ) {
+                  priceAmount /= 1.5;
+                }
+
+                recoveringLostOrder = true;
+
+                console.log(
+                  signal,
+                  `Duplicating order price, because previous order was lost: ${priceAmount}`,
+                );
+
+                Cache.set('recover-lost-order', null);
               }
 
-              orderResult = await order.use(
-                useMartingaleStrategy(
-                  maxMartingale,
-                  activeProfit,
-                  robotConfig.current.management.orderPrice.value,
-                  ({ martingale, result, next }) => {
-                    if (
-                      profit - next.price_amount <=
-                      -robotConfig.current.management.stopLoss.value
-                    ) {
-                      const nextPriceAmount = next.price_amount / 1.5;
+              const data: IOrder = {
+                type: instrumentType,
+                active: signal.currency,
+                price_amount: priceAmount,
+                action: signal.operation,
+                expiration: signal.expiration,
+              };
 
-                      next.setPriceAmount(nextPriceAmount);
+              let order: ICreateOrderResponse;
+
+              try {
+                order = await createOrder(data);
+              } catch (err) {
+                updateSignal(signal.id, {
+                  status: 'expired',
+                  info: 'Erro inesperado ao criar ordem',
+                });
+
+                console.error(err);
+
+                return;
+              }
+
+              refreshProfile();
+
+              console.log(signal, data, order.order_id);
+
+              let martingaleAmount = 0;
+
+              let orderResult: IOrderResult;
+
+              try {
+                let maxMartingale = 0;
+
+                if (robotConfig.current.management.martingale.active) {
+                  maxMartingale =
+                    robotConfig.current.management.martingale.amount;
+                }
+
+                orderResult = await order.use(
+                  useMartingaleStrategy(
+                    maxMartingale,
+                    activeProfit,
+                    robotConfig.current.management.orderPrice.value,
+                    ({ martingale, result, next }) => {
+                      if (
+                        profit - next.price_amount <=
+                        -robotConfig.current.management.stopLoss.value
+                      ) {
+                        const nextPriceAmount = next.price_amount / 1.5;
+
+                        next.setPriceAmount(nextPriceAmount);
+
+                        console.log(
+                          signal,
+                          `[${martingale}] Changing next order price amount to: R$ ${nextPriceAmount}`,
+                        );
+                      }
+
+                      martingaleAmount = martingale + 1;
+
+                      if (martingale === 0) {
+                        console.log(
+                          signal,
+                          `[${martingale}] Result: ${result}`,
+                        );
+
+                        return;
+                      }
 
                       console.log(
                         signal,
-                        `[${martingale}] Changing next order price amount to: R$ ${nextPriceAmount}`,
+                        `[${martingale}] Martingale result: ${result}`,
                       );
-                    }
+                    },
+                    () => {
+                      refreshProfile();
+                    },
+                  ),
+                );
+              } catch (err) {
+                updateSignal(signal.id, {
+                  status: 'expired',
+                  info: 'Erro inesperado ao criar ordem do martingale',
+                });
 
-                    martingaleAmount = martingale + 1;
+                console.error(err);
 
-                    if (martingale === 0) {
-                      console.log(signal, `[${martingale}] Result: ${result}`);
-
-                      return;
-                    }
-
-                    console.log(
-                      signal,
-                      `[${martingale}] Martingale result: ${result}`,
-                    );
-                  },
-                  () => {
-                    refreshProfile();
-                  },
-                ),
-              );
-            } catch (err) {
-              updateSignal(signal.id, {
-                status: 'expired',
-                info: 'Erro inesperado ao criar ordem do martingale',
-              });
-
-              console.error(err);
-
-              return;
-            }
-
-            console.log(
-              signal,
-              `[${martingaleAmount}] Final result: ${
-                orderResult.result
-              } (R$ ${orderResult.profit.toFixed(2)})`,
-              '\n',
-            );
-
-            console.log(orderResult);
-
-            let info;
-
-            if (recoveringLostOrder) {
-              info = 'Ordem de recuperação da derrota anterior';
-            }
-
-            if (orderResult.result === 'win') {
-              updateSignal(signal.id, {
-                status: 'win',
-                result: {
-                  martingales: martingaleAmount,
-                  profit: orderResult.profit,
-                },
-                info,
-              });
-            } else {
-              updateSignal(signal.id, {
-                status: 'loss',
-                result: {
-                  martingales: martingaleAmount,
-                  profit: orderResult.profit,
-                },
-                info,
-              });
-            }
-
-            recoverLostOrder = Cache.get<IRecoverLostOrder>(
-              'recover-lost-order',
-            );
-
-            if (orderResult.profit < 0) {
-              let recoverProfit = orderResult.profit;
-
-              if (
-                priceAmount > robotConfig.current.management.orderPrice.value
-              ) {
-                recoverProfit += priceAmount;
+                return;
               }
 
-              Cache.set<IRecoverLostOrder>('recover-lost-order', {
-                profit: recoverProfit,
+              console.log(
+                signal,
+                `[${martingaleAmount}] Final result: ${
+                  orderResult.result
+                } (R$ ${orderResult.profit.toFixed(2)})`,
+                '\n',
+              );
+
+              console.log(orderResult);
+
+              setProfit(state => {
+                const newProfit = state + orderResult.profit;
+
+                if (
+                  newProfit <= -robotConfig.current.management.stopLoss.value ||
+                  newProfit >= robotConfig.current.management.stopGain.value
+                ) {
+                  stop();
+                  console.log('stop');
+                }
+
+                return newProfit;
               });
-            }
 
-            setProfit(state => state + orderResult.profit);
+              let info: string;
 
-            await refreshProfile();
-          }, timeout);
-        }, timeout),
+              if (recoveringLostOrder) {
+                info = 'Ordem de recuperação da derrota anterior';
+              }
+
+              if (orderResult.result === 'win') {
+                updateSignal(signal.id, {
+                  status: 'win',
+                  result: {
+                    martingales: martingaleAmount,
+                    profit: orderResult.profit,
+                  },
+                  info,
+                });
+              } else {
+                updateSignal(signal.id, {
+                  status: 'loss',
+                  result: {
+                    martingales: martingaleAmount,
+                    profit: orderResult.profit,
+                  },
+                  info,
+                });
+              }
+
+              recoverLostOrder = Cache.get<IRecoverLostOrder>(
+                'recover-lost-order',
+              );
+
+              if (orderResult.profit < 0) {
+                let recoverProfit = orderResult.profit;
+
+                if (
+                  priceAmount > robotConfig.current.management.orderPrice.value
+                ) {
+                  recoverProfit += priceAmount;
+                }
+
+                Cache.set<IRecoverLostOrder>('recover-lost-order', {
+                  profit: recoverProfit,
+                });
+              }
+
+              await refreshProfile();
+            }, timeout);
+          }, timeout),
+          createOrder: createOrderTask,
+        },
       };
 
-      setTasks(state => [...state, task]);
+      tasksRef.current = [...tasksRef.current, task];
 
       updateSignal(signal.id, {
         status: 'waiting',
@@ -524,11 +572,13 @@ const RobotProvider: React.FC = ({ children }) => {
     },
     [
       getSignalAvailableDate,
-      profit,
-      refreshProfile,
-      setProfit,
       updateSignal,
-      robotConfig.current,
+      robotConfig,
+      signals,
+      refreshProfile,
+      profit,
+      setProfit,
+      stop,
     ],
   );
 
@@ -537,25 +587,6 @@ const RobotProvider: React.FC = ({ children }) => {
 
     setIsRunning(true);
   }, [createTask, signals]);
-
-  const stop = useCallback(() => {
-    signals.forEach(signal => {
-      const findTask = tasks.find(task => task.signal_id === signal.id);
-
-      if (
-        findTask &&
-        (signal.status === 'waiting' || signal.status === 'canceled')
-      ) {
-        clearTimeout(findTask.task);
-
-        const newTasks = tasks.filter(task => task.signal_id === signal.id);
-
-        setTasks(newTasks);
-      }
-    });
-
-    setIsRunning(false);
-  }, [signals, tasks]);
 
   return (
     <RobotContext.Provider

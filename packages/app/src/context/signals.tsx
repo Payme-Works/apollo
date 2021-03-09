@@ -180,6 +180,30 @@ const SignalsProvider: React.FC = ({ children }) => {
             operation: 'put',
             status: 'waiting',
           },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 6)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 7)).toISOString(),
+            expiration: 'm1',
+            operation: 'call',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            currency: 'EUR/USD',
+            date: startOfMinute(addMinutes(Date.now(), 8)).toISOString(),
+            expiration: 'm1',
+            operation: 'put',
+            status: 'waiting',
+          },
         ]);
       }
     }
