@@ -34,9 +34,12 @@ export type InputHandlerProps =
 const InputHandler: React.ForwardRefRenderFunction<
   HTMLInputElement,
   InputHandlerProps
-> = ({ variant = 'native', onChangeValue, onFocus, onBlur, ...rest }, ref) => {
+> = (
+  { variant = 'native', onChangeValue, onFocus, onBlur, defaultValue, ...rest },
+  ref,
+) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [currencyValue, setCurrencyValue] = useState(2);
+  const [currencyValue, setCurrencyValue] = useState(defaultValue);
 
   const handleInputFocus = useCallback(
     (event: any) => {
@@ -78,7 +81,6 @@ const InputHandler: React.ForwardRefRenderFunction<
           thousandSeparator="."
           value={currencyValue}
           onChangeEvent={(_event, _makedValue, floatValue) => {
-            console.log(ref);
             setCurrencyValue(floatValue);
 
             if (currencyValue) {
@@ -96,6 +98,7 @@ const InputHandler: React.ForwardRefRenderFunction<
           thousandSeparator="."
           allowedDecimalSeparators={[',', '.']}
           decimalScale={2}
+          defaultValue={Number(defaultValue)}
           {...(rest as NumberFormatProps)}
           getInputRef={(numberFormatInputRef: HTMLInputElement) => {
             (ref as any).current = numberFormatInputRef;
@@ -114,10 +117,12 @@ const InputHandler: React.ForwardRefRenderFunction<
         onChange={event => onChangeValue(event.target.value as never)}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
+        defaultValue={defaultValue}
       />
     );
   }, [
     currencyValue,
+    defaultValue,
     handleInputBlur,
     handleInputFocus,
     onChangeValue,

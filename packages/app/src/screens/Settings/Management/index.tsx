@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { FiDollarSign } from 'react-icons/fi';
 
 import { FormHandles, Scope } from '@unform/core';
@@ -44,6 +50,10 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
   const [isMartingaleChecked, setIsMartingaleChecked] = useState(
     management.martingale.active,
   );
+
+  useEffect(() => {
+    console.log(management.martingale.amount);
+  }, [management.martingale.amount]);
 
   const priceOptions = useMemo(
     () => [
@@ -131,6 +141,8 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         const transformedData = await schema.validate(data, {
           abortEarly: false,
         });
+
+        console.log(transformedData);
 
         setConfig('robot.management', transformedData);
 
