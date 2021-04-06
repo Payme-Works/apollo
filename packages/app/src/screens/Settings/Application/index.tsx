@@ -114,7 +114,7 @@ const Application: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         setTimeout(() => setIsButtonLoading(false), 500);
       }
     },
-    [setConfig],
+    [setConfig, themeOptions, timezoneOptions],
   );
 
   const handleChange = useCallback(() => {
