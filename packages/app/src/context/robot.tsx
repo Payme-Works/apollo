@@ -296,38 +296,47 @@ const RobotProvider: React.FC = ({ children }) => {
             }
 
             if (robotConfig.current.economicEvents.filter) {
-              const { data: events } = await koreApi.get<IEvent[]>(
-                '/economic-calendar/events',
-              );
+              try {
+                const { data: events } = await koreApi.get<IEvent[]>(
+                  '/economic-calendar/events',
+                );
 
-              const checkHasEvent = events
-                .filter(event =>
-                  signal.currency
-                    .toLowerCase()
-                    .includes(event.economy.toLowerCase()),
-                )
-                .some(event => {
-                  const dateParsed = parseISO(event.date);
+                const checkHasEvent = events
+                  .filter(event =>
+                    signal.currency
+                      .toLowerCase()
+                      .includes(event.economy.toLowerCase()),
+                  )
+                  .some(event => {
+                    const dateParsed = parseISO(event.date);
 
-                  const dateLessFifteenMinutes = subMinutes(
-                    parseISO(signal.date),
-                    robotConfig.current.economicEvents.minutes.before,
-                  );
-                  const datePlusFifteenMinutes = addMinutes(
-                    parseISO(signal.date),
-                    robotConfig.current.economicEvents.minutes.after,
-                  );
+                    const dateLessFifteenMinutes = subMinutes(
+                      parseISO(signal.date),
+                      robotConfig.current.economicEvents.minutes.before,
+                    );
+                    const datePlusFifteenMinutes = addMinutes(
+                      parseISO(signal.date),
+                      robotConfig.current.economicEvents.minutes.after,
+                    );
 
-                  return isWithinInterval(dateParsed, {
-                    start: dateLessFifteenMinutes,
-                    end: datePlusFifteenMinutes,
+                    return isWithinInterval(dateParsed, {
+                      start: dateLessFifteenMinutes,
+                      end: datePlusFifteenMinutes,
+                    });
                   });
-                });
 
-              if (checkHasEvent) {
+                if (checkHasEvent) {
+                  updateSignal(signal.id, {
+                    status: 'expired',
+                    info: `Evento econômico em um intervalo de ${robotConfig.current.economicEvents.minutes.before}-${robotConfig.current.economicEvents.minutes.after} minutos`,
+                  });
+
+                  return;
+                }
+              } catch {
                 updateSignal(signal.id, {
                   status: 'expired',
-                  info: `Evento econômico em um intervalo de ${robotConfig.current.economicEvents.minutes.before}-${robotConfig.current.economicEvents.minutes.after} minutos`,
+                  info: 'Erro inesperado ao buscar calendário de eventos',
                 });
 
                 return;
@@ -385,7 +394,7 @@ const RobotProvider: React.FC = ({ children }) => {
                   profit - priceAmount <=
                   -robotConfig.current.management.stopLoss.value
                 ) {
-                  priceAmount /= 1.5;
+                  priceAmount /= 1.2;
                 }
 
                 recoveringLostOrder = true;
@@ -447,7 +456,7 @@ const RobotProvider: React.FC = ({ children }) => {
                         profit - next.price_amount <=
                         -robotConfig.current.management.stopLoss.value
                       ) {
-                        const nextPriceAmount = next.price_amount / 1.5;
+                        const nextPriceAmount = next.price_amount / 1.2;
 
                         next.setPriceAmount(nextPriceAmount);
 

@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { FiDollarSign } from 'react-icons/fi';
 
 import { FormHandles, Scope } from '@unform/core';
@@ -45,6 +51,10 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
     management.martingale.active,
   );
 
+  useEffect(() => {
+    console.log(management.martingale.amount);
+  }, [management.martingale.amount]);
+
   const priceOptions = useMemo(
     () => [
       {
@@ -57,6 +67,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
 
   const handleSave = useCallback(
     async (data: IManagementsFormData) => {
+      console.log(data);
       try {
         setIsButtonLoading(true);
 
@@ -131,6 +142,8 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           abortEarly: false,
         });
 
+        console.log(transformedData);
+
         setConfig('robot.management', transformedData);
 
         setIsSaved(true);
@@ -190,9 +203,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 defaultValue: management.orderPrice.selected,
               }}
               inputProps={{
-                variant: 'number-format',
-                placeholder: '2,00',
-                fixedDecimalScale: true,
+                variant: 'currency',
                 defaultValue: management.orderPrice.value,
               }}
               onChange={handleChange}
@@ -271,9 +282,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 defaultValue: management.stopGain.selected,
               }}
               inputProps={{
-                variant: 'number-format',
-                placeholder: '20,00',
-                fixedDecimalScale: true,
+                variant: 'currency',
                 defaultValue: management.stopGain.value,
               }}
               onChange={handleChange}
@@ -294,9 +303,7 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
                 defaultValue: management.stopLoss.selected,
               }}
               inputProps={{
-                variant: 'number-format',
-                placeholder: '10,00',
-                fixedDecimalScale: true,
+                variant: 'currency',
                 defaultValue: management.stopLoss.value,
               }}
               onChange={handleChange}
