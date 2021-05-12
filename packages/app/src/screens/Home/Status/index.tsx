@@ -8,31 +8,22 @@ import { Container, Content } from './styles';
 
 const Status: React.FC = () => {
   const [error, setError] = useState<string>();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const { isRunning, start, stop } = useRobot();
+  const { isRunning, isLoading, start, stop } = useRobot();
 
   const handleStart = useCallback(() => {
     try {
-      setIsLoading(true);
-
-      setTimeout(() => start(), 500);
+      start();
     } catch {
       setError('Ocorreu um erro ao tentar iniciar o robô.');
-    } finally {
-      setTimeout(() => setIsLoading(false), 500);
     }
   }, [start]);
 
   const handleStop = useCallback(() => {
     try {
-      setIsLoading(true);
-
-      setTimeout(() => stop(), 500);
+      stop();
     } catch {
       setError('Ocorreu um erro ao tentar parar o robô.');
-    } finally {
-      setTimeout(() => setIsLoading(false), 500);
     }
   }, [stop]);
 

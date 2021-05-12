@@ -48,6 +48,7 @@ interface ITask {
 
 interface RobotContext {
   isRunning: boolean;
+  isLoading: boolean;
   start(): void;
   stop(): void;
 }
@@ -70,6 +71,7 @@ const RobotProvider: React.FC = ({ children }) => {
   const tasksRef = useRef<ITask[]>([]);
 
   const [isRunning, setIsRunning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (checkerTasksRef.current.length > 0) {
@@ -109,27 +111,32 @@ const RobotProvider: React.FC = ({ children }) => {
   ]);
 
   const stop = useCallback(() => {
-    tasksRef.current.forEach(task => {
-      const signal = signals.find(
-        findSignal => findSignal.id === task.signalId,
-      );
+    setIsLoading(true);
 
-      if (signal.status === 'waiting' || signal.status === 'canceled') {
-        clearTimeout(task.tasks.init);
-
-        if (task.tasks.createOrder) {
-          clearTimeout(task.tasks.createOrder);
-        }
-
-        const newTasks = tasksRef.current.filter(
-          item => item.signalId === task.signalId,
+    setTimeout(() => {
+      tasksRef.current.forEach(task => {
+        const signal = signals.find(
+          findSignal => findSignal.id === task.signalId,
         );
 
-        tasksRef.current = newTasks;
-      }
-    });
+        if (signal.status === 'waiting' || signal.status === 'canceled') {
+          clearTimeout(task.tasks.init);
 
-    setIsRunning(false);
+          if (task.tasks.createOrder) {
+            clearTimeout(task.tasks.createOrder);
+          }
+
+          const newTasks = tasksRef.current.filter(
+            item => item.signalId === task.signalId,
+          );
+
+          tasksRef.current = newTasks;
+        }
+      });
+
+      setIsLoading(false);
+      setIsRunning(false);
+    }, 500);
   }, [signals]);
 
   const createTask = useCallback(
@@ -592,15 +599,21 @@ const RobotProvider: React.FC = ({ children }) => {
   );
 
   const start = useCallback(() => {
-    signals.forEach(signal => createTask(signal));
+    setIsLoading(true);
 
-    setIsRunning(true);
+    setTimeout(() => {
+      signals.forEach(signal => createTask(signal));
+
+      setIsLoading(false);
+      setIsRunning(true);
+    }, 500);
   }, [createTask, signals]);
 
   return (
     <RobotContext.Provider
       value={{
         isRunning,
+        isLoading,
         start,
         stop,
       }}
