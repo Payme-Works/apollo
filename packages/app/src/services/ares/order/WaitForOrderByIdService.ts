@@ -15,6 +15,8 @@ export async function waitForOrderById(
       `/orders/wait/${orderId}`,
     );
 
+    console.log(`/orders/wait/${orderId}: `, JSON.stringify(response.data));
+
     return response.data;
   } catch (err) {
     throw new Error('Order was not found.');

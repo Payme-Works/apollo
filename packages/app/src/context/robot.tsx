@@ -180,7 +180,7 @@ const RobotProvider: React.FC = ({ children }) => {
             ) {
               updateSignal(signal.id, {
                 status: 'expired',
-                info: 'Algum sinal já em progresso',
+                info: 'Algum sinal já em andamento',
               });
 
               return;
@@ -358,15 +358,15 @@ const RobotProvider: React.FC = ({ children }) => {
               return;
             }
 
-            updateSignal(signal.id, {
-              status: 'in_progress',
-            });
-
             const dateLessThreeSeconds = subSeconds(parseISO(signal.date), 3);
 
             timeout = dateLessThreeSeconds.getTime() - Date.now();
 
             createOrderTask = setTimeout(async () => {
+              updateSignal(signal.id, {
+                status: 'in_progress',
+              });
+
               let priceAmount = robotConfig.current.management.orderPrice.value;
 
               const differencePercentage = activeProfit / 100;

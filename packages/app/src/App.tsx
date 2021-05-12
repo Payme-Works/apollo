@@ -6,6 +6,7 @@ import { HashRouter as Router } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
+import { ISelectValue } from '@/components/Form/Select';
 import Header from '@/components/Header';
 import { useConfig } from '@/hooks/useConfig';
 import { GlobalStyle, Window } from '@/styles/global';
@@ -14,7 +15,6 @@ import lightTheme from '@/styles/themes/light';
 import startAresPythonServer from '@/utils/ares/startAresPythonServer';
 
 import '../i18n';
-import { ISelectValue } from '@/components/Form/Select';
 
 const AppProvider = lazy(() => import('./context'));
 const Routes = lazy(() => import('./routes'));
