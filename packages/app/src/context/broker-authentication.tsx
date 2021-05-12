@@ -37,7 +37,9 @@ const BrokerAuthenticationProvider: React.FC = ({ children }) => {
     const loggedInProfile = await doLogIn({
       email: String(process.env.IQ_OPTION_ACCOUNT_EMAIL),
       password: String(process.env.IQ_OPTION_ACCOUNT_PASSWORD),
-      balance: 'practice',
+      balance: String(process.env.IQ_OPTION_ACCOUNT_BALANCE_MODE) as
+        | 'real'
+        | 'practice',
     });
 
     setProfile(loggedInProfile);
