@@ -393,16 +393,8 @@ const RobotProvider: React.FC = ({ children }) => {
               ) {
                 const positiveLastProfit = recoverLostOrder.profit * -1;
 
-                priceAmount = Number(
-                  positiveLastProfit / differencePercentage + priceAmount,
-                );
-
-                if (
-                  profit - priceAmount <=
-                  -robotConfig.current.management.stopLoss.value
-                ) {
-                  priceAmount /= 1.2;
-                }
+                priceAmount =
+                  (positiveLastProfit / differencePercentage + priceAmount) / 2;
 
                 recoveringLostOrder = true;
 
@@ -459,7 +451,16 @@ const RobotProvider: React.FC = ({ children }) => {
                     activeProfit,
                     robotConfig.current.management.orderPrice.value,
                     ({ martingale, result, next }) => {
-                      if (
+                      if (recoveringLostOrder) {
+                        const nextPriceAmount = next.price_amount / 2;
+
+                        next.setPriceAmount(nextPriceAmount);
+
+                        console.log(
+                          signal,
+                          `[${martingale}] Changing next order price amount to: R$ ${nextPriceAmount}`,
+                        );
+                      } else if (
                         profit - next.price_amount <=
                         -robotConfig.current.management.stopLoss.value
                       ) {
@@ -559,7 +560,7 @@ const RobotProvider: React.FC = ({ children }) => {
                 'recover-lost-order',
               );
 
-              if (orderResult.profit < 0) {
+              if (orderResult.result === 'loose' && orderResult.profit < 0) {
                 let recoverProfit = orderResult.profit;
 
                 if (
