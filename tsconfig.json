@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2021",
     "module": "commonjs",
     "lib": [
-      "es6"
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
+    "jsx": "react",
     "sourceMap": true,
-    "allowJs": true,
     "removeComments": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -24,10 +26,18 @@
     "typeRoots": [
       "node_modules/@types",
       "src/@types"
-    ]
+    ],
+    "outDir": "./dist",
+    "baseUrl": "src",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
   },
   "include": [
-    "packages/**/*"
+    "src",
+    "electron"
   ],
   "exclude": [
     "node_modules"
