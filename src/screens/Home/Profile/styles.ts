@@ -66,8 +66,12 @@ export const Info = styled.dl<IInfoProps>`
       color: ${props.color};
       font-size: ${theme.fonts.sizes['3xl']};
 
-      > #decimals {
+      #decimals {
         font-size: ${theme.fonts.sizes['2xl']};
+      }
+
+      .react-loading-skeleton {
+        margin: 7px 0 5px;
       }
     }
 

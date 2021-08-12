@@ -39,7 +39,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <SkeletonTheme
           color={theme.colors.background['accent-1']}
-          highlightColor={theme.colors.background['accent-3']}
+          highlightColor={theme.colors.background['accent-4']}
         >
           <Router>
             <Window>

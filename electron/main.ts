@@ -110,20 +110,18 @@ async function createMenu() {
   ];
 
   const menu = Menu.buildFromTemplate(template);
+
   Menu.setApplicationMenu(menu);
 }
 
 app.disableHardwareAcceleration();
 
 app.on('ready', () => {
-  setTimeout(
-    async () => {
-      createWindow();
-      autoUpdater.checkForUpdatesAndNotify();
-      createMenu();
-    },
-    process.platform === 'linux' ? 500 : 0,
-  );
+  createWindow();
+
+  autoUpdater.checkForUpdatesAndNotify();
+
+  createMenu();
 });
 
 app.on('window-all-closed', () => {

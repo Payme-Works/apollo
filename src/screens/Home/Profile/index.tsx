@@ -84,23 +84,15 @@ export function Profile() {
           <dd>
             {/* R$ ••••••• */}
 
-            {/* {profile ? (
+            {profile ? (
               <>
                 {`${formattedBalance.main},`}
 
                 <span id="decimals">{formattedBalance.decimals}</span>
               </>
             ) : (
-              <>
-                <Skeleton height={32} width={48} />
-              </>
-            )} */}
-
-            {`${formattedBalance.main},`}
-
-            <span id="decimals">{formattedBalance.decimals}</span>
-
-            {/* <Skeleton height={32} width={48} /> */}
+              <Skeleton height={22} width={132} />
+            )}
           </dd>
         </Info>
 
