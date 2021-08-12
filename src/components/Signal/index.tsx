@@ -1,17 +1,15 @@
 import React, { useContext, useMemo } from 'react';
 
-import { FiAlertCircle } from 'react-icons/fi';
-
 import { format, parseISO } from 'date-fns';
+import { FiAlertCircle } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import galeImg from '@/assets/gale.png';
-import { useSignals } from '@/context/signals';
-import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
-import formatPrice from '@/utils/formatPrice';
-
-import Tooltip from '../Tooltip';
+import { Tooltip } from '@/components/Tooltip';
+import { useSignals } from '@/context/SignalsContext';
+import { ISignalWithStatus } from '@/interfaces/signal/ISignalWithStatus';
+import { formatPrice } from '@/utils/formatPrice';
 
 import { Container, Label, GaleImage } from './styles';
 
@@ -21,7 +19,7 @@ interface ISignalProps {
   onResume(): void;
 }
 
-const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
+export function Signal({ data, onCancel, onResume }: ISignalProps) {
   const theme = useContext(ThemeContext);
 
   const { isSignalAvailable, hasSignalResult } = useSignals();
@@ -99,6 +97,6 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
       )}
     </Container>
   );
-};
+}
 
 export default Signal;

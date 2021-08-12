@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, memo } from 'react';
-
-import { FiX, FiMinus, FiSquare, FiChevronLeft } from 'react-icons/fi';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { useCallback, useMemo } from 'react';
 
 import { remote } from 'electron';
 import os from 'os';
+import { FiX, FiMinus, FiSquare, FiChevronLeft } from 'react-icons/fi';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import { useConfig } from '../../hooks/useConfig';
 
@@ -16,7 +15,7 @@ import {
   GoBackButton,
 } from './styles';
 
-const Header: React.FC = () => {
+export function Header() {
   const location = useLocation();
   const history = useHistory();
 
@@ -107,6 +106,4 @@ const Header: React.FC = () => {
       )}
     </Container>
   );
-};
-
-export default memo(Header);
+}

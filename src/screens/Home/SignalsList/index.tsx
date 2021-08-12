@@ -1,15 +1,14 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { compareAsc, isAfter } from 'date-fns';
-import { compareDesc, parseISO } from 'date-fns/esm';
+import { compareAsc, isAfter, compareDesc, parseISO } from 'date-fns';
 
-import Signal from '@/components/Signal';
-import { useSignals } from '@/context/signals';
-import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
+import { Signal } from '@/components/Signal';
+import { useSignals } from '@/context/SignalsContext';
+import { ISignalWithStatus } from '@/interfaces/signal/ISignalWithStatus';
 
 import { Container } from './styles';
 
-const SignalsList: React.FC = () => {
+export function SignalsList() {
   const { signals, updateSignal, isSignalAvailable, hasSignalResult } =
     useSignals();
 
@@ -64,6 +63,4 @@ const SignalsList: React.FC = () => {
       ))}
     </Container>
   );
-};
-
-export default SignalsList;
+}

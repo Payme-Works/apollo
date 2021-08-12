@@ -1,13 +1,12 @@
-import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 
+import { useField } from '@unform/core';
 import { IconType } from 'react-icons';
 import { FiAlertCircle, FiEye, FiEyeOff } from 'react-icons/fi';
 
-import { useField } from '@unform/core';
+import { Tooltip } from '@/components/Tooltip';
 
-import Tooltip from '@/components/Tooltip';
-
-import InputHandler, { InputHandlerProps } from './Handler';
+import { InputHandler, InputHandlerProps } from './Handler';
 
 import { Container } from './styles';
 
@@ -16,7 +15,7 @@ type InputProps = {
   icon?: IconType;
 } & InputHandlerProps;
 
-const Input: React.FC<InputProps> = ({
+export function Input({
   name,
   icon: Icon,
   variant,
@@ -25,7 +24,7 @@ const Input: React.FC<InputProps> = ({
   disabled = false,
   onChange,
   ...rest
-}) => {
+}: InputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -142,6 +141,4 @@ const Input: React.FC<InputProps> = ({
       )}
     </Container>
   );
-};
-
-export default memo(Input);
+}

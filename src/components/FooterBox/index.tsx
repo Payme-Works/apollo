@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { FiChevronUp } from 'react-icons/fi';
 
-import Button, { IButtonProps } from '@/components/Button';
+import { Button, ButtonProps } from '@/components/Button';
 
 import { Container, Content, HeaderContainer, Footer } from './styles';
 
@@ -13,17 +13,17 @@ export interface IFooterBoxProps extends React.HTMLAttributes<HTMLDivElement> {
     hint: string;
     button: {
       text: string;
-    } & IButtonProps;
+    } & ButtonProps;
   };
 }
 
-const FooterBox: React.FC<IFooterBoxProps> = ({
+export function FooterBox({
   title,
   description,
   footer,
   children,
   ...rest
-}) => {
+}: IFooterBoxProps) {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
@@ -77,6 +77,4 @@ const FooterBox: React.FC<IFooterBoxProps> = ({
       )}
     </Container>
   );
-};
-
-export default FooterBox;
+}

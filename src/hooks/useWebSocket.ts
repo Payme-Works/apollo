@@ -1,17 +1,17 @@
 import { useEffect, useRef, MutableRefObject } from 'react';
 
-import { useAuthentication } from '@/context/authentication';
+import { useAuth } from '@/context/AuthContext';
 
 import ws, { fakeConnection } from '../services/websocket';
 
-const useWebSocket = (
+export function useWebSocket(
   room?: string,
   onConnect?: (socket: SocketIOClient.Socket) => void,
-): MutableRefObject<SocketIOClient.Socket> => {
+): MutableRefObject<SocketIOClient.Socket> {
   const socketRef = useRef<SocketIOClient.Socket>(fakeConnection());
   const lastRoomRef = useRef<string>(null);
 
-  const { user } = useAuthentication();
+  const { user } = useAuth();
 
   useEffect(() => {
     const disconnect = () => {
@@ -47,6 +47,4 @@ const useWebSocket = (
   }, [onConnect, room, user]);
 
   return socketRef;
-};
-
-export default useWebSocket;
+}

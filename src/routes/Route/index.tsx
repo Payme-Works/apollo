@@ -2,21 +2,21 @@ import React from 'react';
 
 import { Redirect, Route as RouteDOM, RouteProps } from 'react-router-dom';
 
-import { useAuthentication } from '@/context/authentication';
+import { useAuth } from '@/context/AuthContext';
 
-import MountTransition from '../MountTransition';
+import { MountTransition } from '../MountTransition';
 
 interface IRouteProps extends RouteProps {
   component: React.ComponentType;
   isPrivate?: boolean;
 }
 
-const Route: React.FC<IRouteProps> = ({
+export function Route({
   component: Component,
   isPrivate = false,
   ...rest
-}) => {
-  const { isLoggedIn } = useAuthentication();
+}: IRouteProps) {
+  const { isLoggedIn } = useAuth();
 
   return (
     <RouteDOM
@@ -41,6 +41,6 @@ const Route: React.FC<IRouteProps> = ({
       }}
     />
   );
-};
+}
 
 export default Route;

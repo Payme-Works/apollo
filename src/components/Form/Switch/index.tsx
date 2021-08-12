@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useField } from '@unform/core';
 
@@ -11,14 +11,14 @@ interface ISwitchProps
   showCheckedLabel?: boolean;
 }
 
-const Switch: React.FC<ISwitchProps> = ({
+export function Switch({
   name,
   size = 'md',
   showCheckedLabel = false,
   defaultChecked,
   onChange,
   ...rest
-}) => {
+}: ISwitchProps) {
   const switchRef = useRef<HTMLInputElement>(null);
 
   const { fieldName, registerField } = useField(name);
@@ -79,6 +79,4 @@ const Switch: React.FC<ISwitchProps> = ({
       )}
     </Container>
   );
-};
-
-export default memo(Switch);
+}

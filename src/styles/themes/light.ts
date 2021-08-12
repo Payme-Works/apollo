@@ -2,7 +2,7 @@ import { DefaultTheme } from 'styled-components';
 
 import defaultTheme from './default';
 
-const lightTheme: DefaultTheme = {
+export const lightTheme: DefaultTheme = {
   ...defaultTheme,
   colors: {
     background: {
@@ -47,5 +47,3 @@ const lightTheme: DefaultTheme = {
     },
   },
 };
-
-export default lightTheme;

@@ -1,0 +1,1 @@
+{"version":3,"file":"Response.d.ts","sourceRoot":"","sources":["../../../../../lib/websocket/events/Response.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,iBAAiB,EAAE,cAAc,EAAE,MAAM,aAAa,CAAA;AAE/D,8BAAsB,QAAQ,CAAC,OAAO,GAAG,GAAG,CAC1C,YAAW,iBAAiB,CAAC,OAAO,CAAC;IACrC,aAAoB,IAAI,IAAI,MAAM,CAAA;IAErB,IAAI,CAAC,KAAK,EAAE,cAAc,CAAC,OAAO,CAAC,GAAG,OAAO,CAAC,OAAO,CAAC;CAGpE"}

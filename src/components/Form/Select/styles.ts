@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-import SelectHandler from './Handler';
+import { SelectHandler } from './Handler';
 
 interface IContainerProps {
   isErrored: boolean;

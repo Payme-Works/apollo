@@ -9,7 +9,7 @@ interface ITooltipProps extends React.HTMLAttributes<HTMLDivElement> {
   text: string;
 }
 
-const Tooltip: React.FC<ITooltipProps> = ({ text, children, ...rest }) => {
+export function Tooltip({ text, children, ...rest }: ITooltipProps) {
   return (
     <Tippy
       arrow
@@ -25,5 +25,4 @@ const Tooltip: React.FC<ITooltipProps> = ({ text, children, ...rest }) => {
       <Content {...rest}>{children}</Content>
     </Tippy>
   );
-};
-export default Tooltip;
+}

@@ -1,23 +1,21 @@
 import React from 'react';
 
-import { AuthenticationProvider } from './authentication';
-import { BrokerAuthenticationProvider } from './broker-authentication';
-import { RobotProvider } from './robot';
-import { SignalsProvider } from './signals';
-import { ToastProvider } from './toast';
+import { AuthContextProvider } from './AuthContext';
+import { HemesContextProvider } from './HemesContext';
+import { RobotContextProvider } from './RobotContext';
+import { SignalsContextProvider } from './SignalsContext';
+import { ToastContextProvider } from './ToastContext';
 
-const AppProvider: React.FC = ({ children }) => {
+export function AppProvider({ children }) {
   return (
-    <ToastProvider>
-      <AuthenticationProvider>
-        <BrokerAuthenticationProvider>
-          <SignalsProvider>
-            <RobotProvider>{children}</RobotProvider>
-          </SignalsProvider>
-        </BrokerAuthenticationProvider>
-      </AuthenticationProvider>
-    </ToastProvider>
+    <ToastContextProvider>
+      <AuthContextProvider>
+        <HemesContextProvider>
+          <SignalsContextProvider>
+            <RobotContextProvider>{children}</RobotContextProvider>
+          </SignalsContextProvider>
+        </HemesContextProvider>
+      </AuthContextProvider>
+    </ToastContextProvider>
   );
-};
-
-export default AppProvider;
+}

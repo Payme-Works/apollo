@@ -6,11 +6,11 @@ interface IFormControl extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
 }
 
-const FormControl: React.FC<IFormControl> = ({
+export function FormControl({
   disabled = false,
   children,
   ...rest
-}) => {
+}: IFormControl) {
   const childrenWithProps = useMemo(
     () =>
       React.Children.map(children, child => {
@@ -28,6 +28,4 @@ const FormControl: React.FC<IFormControl> = ({
       {childrenWithProps}
     </Container>
   );
-};
-
-export default FormControl;
+}

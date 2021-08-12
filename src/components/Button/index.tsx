@@ -1,17 +1,17 @@
-import React, { ButtonHTMLAttributes, memo } from 'react';
+import React, { ButtonHTMLAttributes } from 'react';
 
 import { FiLoader } from 'react-icons/fi';
 
 import { Container, Loading } from './styles';
 
-export interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'solid' | 'outline';
   size?: 'sm' | 'md';
   loading?: boolean;
   disableHover?: boolean;
 }
 
-const Button: React.FC<IButtonProps> = ({
+export function Button({
   type = 'button',
   variant = 'solid',
   size = 'md',
@@ -19,7 +19,7 @@ const Button: React.FC<IButtonProps> = ({
   disableHover = false,
   children,
   ...rest
-}) => {
+}: ButtonProps) {
   return (
     <Container
       disabled={loading}
@@ -38,6 +38,4 @@ const Button: React.FC<IButtonProps> = ({
       )}
     </Container>
   );
-};
-
-export default memo(Button);
+}

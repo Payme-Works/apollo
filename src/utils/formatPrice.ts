@@ -1,4 +1,4 @@
-export default function formatPrice(value?: number): string {
+export function formatPrice(value?: number): string {
   let valueToFormat = 0;
 
   if (value !== undefined) {

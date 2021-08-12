@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
-
-import { IconType } from 'react-icons';
-import { FiAlertCircle } from 'react-icons/fi';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 
 import { useField } from '@unform/core';
+import { IconType } from 'react-icons';
+import { FiAlertCircle } from 'react-icons/fi';
 
 import { ISelectHandlerProps } from './Handler';
 
@@ -20,7 +19,7 @@ interface ISelectProps extends ISelectHandlerProps {
   disabled?: boolean;
 }
 
-const Select: React.FC<ISelectProps> = ({
+export function Select({
   name,
   icon,
   disabled = false,
@@ -28,7 +27,7 @@ const Select: React.FC<ISelectProps> = ({
   onChange,
   theme: _theme,
   ...rest
-}) => {
+}: ISelectProps) {
   const selectRef = useRef<any>(null);
 
   const {
@@ -99,6 +98,4 @@ const Select: React.FC<ISelectProps> = ({
       )}
     </Container>
   );
-};
-
-export default memo(Select);
+}

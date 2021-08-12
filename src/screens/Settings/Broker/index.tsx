@@ -1,26 +1,25 @@
 import React, { useCallback, useRef } from 'react';
 
-import { FiAirplay, FiLock, FiUser } from 'react-icons/fi';
-
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import { FiAirplay, FiLock, FiUser } from 'react-icons/fi';
 
-import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
-import FormControl from '@/components/Form/FormControl';
-import FormLabel from '@/components/Form/FormLabel';
-import Input from '@/components/Form/Input';
-import Select, { ISelectValue } from '@/components/Form/Select';
-import { useAuthentication } from '@/context/authentication';
+import { FooterBox, IFooterBoxProps } from '@/components/FooterBox';
+import { FormControl } from '@/components/Form/FormControl';
+import { FormLabel } from '@/components/Form/FormLabel';
+import { Input } from '@/components/Form/Input';
+import { Select, ISelectValue } from '@/components/Form/Select';
+import { useAuth } from '@/context/AuthContext';
 
 interface IBrokerFormData {
   broker: ISelectValue;
   email: string;
 }
 
-const Broker: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
+export function Broker({ ...rest }: Partial<IFooterBoxProps>) {
   const formRef = useRef<FormHandles>(null);
 
-  const { logOut } = useAuthentication();
+  const { logOut } = useAuth();
 
   const handleSignInBroker = useCallback(
     (data: IBrokerFormData) => {
@@ -93,6 +92,4 @@ const Broker: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
       </Form>
     </FooterBox>
   );
-};
-
-export default Broker;
+}

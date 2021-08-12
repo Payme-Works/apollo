@@ -1,4 +1,4 @@
-import ISignal from './ISignal';
+import { ISignal } from './ISignal';
 
 export type Status =
   | 'waiting'
@@ -8,7 +8,7 @@ export type Status =
   | 'win'
   | 'loss';
 
-export default interface ISignalWithStatus extends ISignal {
+export interface ISignalWithStatus extends ISignal {
   status: Status;
   info?: string;
   result?: {

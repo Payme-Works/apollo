@@ -103,15 +103,14 @@
       {
         "newlinesBetween": "always",
         "groups": [
-          "/^react$/", // "react" module always at the first line
-          "/^react/",
+          "/^react$/",
           "module",
           "/^@config$/",
           "/^@\//",
           "parent",
           "sibling",
           "index",
-          "/^./styles$/" // "./styles" import always at last line
+          "/^./styles$/"
         ],
         "alphabetize": {
           "order": "asc",

@@ -1,17 +1,17 @@
 import React, { useState, useCallback, useRef, useEffect, memo } from 'react';
 
+import { useField } from '@unform/core';
 import { IconType } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
 import { Props as ReactSelectProps } from 'react-select';
 
-import { useField } from '@unform/core';
-
-import InputHandler, {
+import {
+  InputHandler,
   InputHandlerProps,
 } from '@/components/Form/Input/Handler';
 import { ISelectValue } from '@/components/Form/Select';
-import SelectHandler from '@/components/Form/Select/Handler';
-import Tooltip from '@/components/Tooltip';
+import { SelectHandler } from '@/components/Form/Select/Handler';
+import { Tooltip } from '@/components/Tooltip';
 
 import { Container } from './styles';
 
@@ -30,7 +30,7 @@ interface ISelectableInputProps {
   onChange?(value: ISelectableInputValue): void;
 }
 
-const SelectableInput: React.FC<ISelectableInputProps> = ({
+export function SelectableInput({
   name,
   icon,
   disabled = false,
@@ -42,7 +42,7 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
   },
   inputProps: { defaultValue: inputDefaultValue, ...inputProps },
   onChange,
-}) => {
+}: ISelectableInputProps) {
   const selectRef = useRef<any>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -160,6 +160,6 @@ const SelectableInput: React.FC<ISelectableInputProps> = ({
       )}
     </Container>
   );
-};
+}
 
 export default memo(SelectableInput);
