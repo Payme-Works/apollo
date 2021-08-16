@@ -19,7 +19,7 @@ import { Flex } from './styles';
 interface IFiltersFormData {
   expirations: ISelectValue[];
   parallelOrders: boolean;
-  operationType: ISelectValue;
+  instrumentType: ISelectValue;
   maximumPayments: string;
   minimumPayments: string;
 }
@@ -67,7 +67,7 @@ export function Filters({ ...rest }: Partial<IFooterBoxProps>) {
     [],
   );
 
-  const operationTypeOptions = useMemo(
+  const instrumentTypeOptions = useMemo(
     () => [
       {
         value: 'all',
@@ -105,13 +105,13 @@ export function Filters({ ...rest }: Partial<IFooterBoxProps>) {
               }),
             )
             .min(1, 'Mínimo de 1 expiração obrigatória'),
-          operationType: Yup.object()
+          instrumentType: Yup.object()
             .shape({
               value: Yup.string()
-                .oneOf(operationTypeOptions.map(item => item.value))
+                .oneOf(instrumentTypeOptions.map(item => item.value))
                 .required(),
               label: Yup.string()
-                .oneOf(operationTypeOptions.map(item => item.label))
+                .oneOf(instrumentTypeOptions.map(item => item.label))
                 .required(),
             })
             .required('Tipo de operação obrigatório'),
@@ -162,7 +162,7 @@ export function Filters({ ...rest }: Partial<IFooterBoxProps>) {
         setTimeout(() => setIsButtonLoading(false), 500);
       }
     },
-    [expirationOptions, operationTypeOptions, setConfig],
+    [expirationOptions, instrumentTypeOptions, setConfig],
   );
 
   const handleChange = useCallback(() => {
@@ -204,11 +204,11 @@ export function Filters({ ...rest }: Partial<IFooterBoxProps>) {
           <FormLabel>Tipo de operação</FormLabel>
 
           <Select
-            defaultValue={filters.operationType}
+            defaultValue={filters.instrumentType}
             icon={FiBarChart2}
-            name="operationType"
+            name="instrumentType"
             onChange={handleChange}
-            options={operationTypeOptions}
+            options={instrumentTypeOptions}
           />
         </FormControl>
 

@@ -10,7 +10,7 @@ const ACTIONS_TRENDS: IActionTrends = {
   PUT: 'down',
 };
 
-export default function checkActionInFavorToTrend(
+export function checkActionInFavorToTrend(
   action: Action,
   trend: Trend,
 ): boolean {

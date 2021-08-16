@@ -1,4 +1,4 @@
-export default interface IEvent {
+export interface EconomicCalendarEvent {
   id: string;
   economy: string;
   impact: number;

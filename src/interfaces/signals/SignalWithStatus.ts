@@ -1,4 +1,4 @@
-import { ISignal } from './ISignal';
+import { Signal } from './Signal';
 
 export type Status =
   | 'waiting'
@@ -8,7 +8,7 @@ export type Status =
   | 'win'
   | 'loss';
 
-export interface ISignalWithStatus extends ISignal {
+export interface SignalWithStatus extends Signal {
   status: Status;
   info?: string;
   result?: {

@@ -24,18 +24,18 @@ import { PartialDeep } from 'type-fest';
 import { v4 as uuid } from 'uuid';
 
 import { useWebSocket } from '@/hooks/useWebSocket';
-import { ISignal } from '@/interfaces/signal/ISignal';
-import { ISignalWithStatus } from '@/interfaces/signal/ISignalWithStatus';
-import { getSignalsFromDate } from '@/services/kore/signal/GetSignalsFromDateService';
+import { Signal } from '@/interfaces/signals/Signal';
+import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
+import { getSignalsFromDate } from '@/services/kore/signals/GetSignalsFromDateService';
 
-type IUpdateSignalData = PartialDeep<Omit<ISignalWithStatus, 'id'>>;
+type UpdateSignalData = PartialDeep<Omit<SignalWithStatus, 'id'>>;
 
 interface SignalsContextData {
-  signals: ISignalWithStatus[];
-  updateSignal(signalId: string, data: IUpdateSignalData): void;
-  getSignalAvailableDate(signal: ISignalWithStatus): Date;
-  isSignalAvailable(signal: ISignalWithStatus): boolean;
-  hasSignalResult(signal: ISignalWithStatus): boolean;
+  signals: SignalWithStatus[];
+  updateSignal(signalId: string, data: UpdateSignalData): void;
+  getSignalAvailableDate(signal: SignalWithStatus): Date;
+  isSignalAvailable(signal: SignalWithStatus): boolean;
+  hasSignalResult(signal: SignalWithStatus): boolean;
 }
 
 const DEBUG_SIGNALS = String(process.env.DEBUG_SIGNALS) === 'true';
@@ -45,7 +45,7 @@ const SignalsContext = createContext<SignalsContextData>(
 );
 
 export function SignalsContextProvider({ children }) {
-  const [signals, setSignals] = useState<ISignalWithStatus[]>([]);
+  const [signals, setSignals] = useState<SignalWithStatus[]>([]);
   const [dateForSignals, setDateForSignals] = useState<Date>(
     startOfDay(Date.now()),
   );
@@ -57,8 +57,8 @@ export function SignalsContextProvider({ children }) {
 
   if (!DEBUG_SIGNALS) {
     useWebSocket(`signals:premium:${formattedDate}`, socket => {
-      socket.on('new', (newSignals: ISignal[]) => {
-        const mapNewSignals = newSignals.map<ISignalWithStatus>(signal => ({
+      socket.on('new', (newSignals: Signal[]) => {
+        const mapNewSignals = newSignals.map<SignalWithStatus>(signal => ({
           ...signal,
           status: 'waiting',
         }));
@@ -70,7 +70,7 @@ export function SignalsContextProvider({ children }) {
         }
       });
 
-      socket.on('update', (newSignal: ISignal) => {
+      socket.on('update', (newSignal: Signal) => {
         setSignals(state => {
           const newSignals = [...state];
 
@@ -90,7 +90,7 @@ export function SignalsContextProvider({ children }) {
 
   useEffect(() => {
     async function loadSignals() {
-      async function getSignals(date: Date): Promise<ISignal[]> {
+      async function getSignals(date: Date): Promise<Signal[]> {
         const data = {
           year: date.getFullYear(),
           month: date.getMonth() + 1,
@@ -128,7 +128,7 @@ export function SignalsContextProvider({ children }) {
           }
         }
 
-        const newSignals = signalsFromDate.map<ISignalWithStatus>(signal => ({
+        const newSignals = signalsFromDate.map<SignalWithStatus>(signal => ({
           ...signal,
           status: 'waiting',
         }));
@@ -139,74 +139,74 @@ export function SignalsContextProvider({ children }) {
         setSignals([
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 1)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD-OTC',
+            active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 3)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 4)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 5)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 6)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 7)).toISOString(),
             expiration: 'm1',
-            operation: 'call',
+            direction: 'call',
             status: 'waiting',
           },
           {
             id: uuid(),
-            currency: 'EUR/USD',
+            active: 'EURUSD',
             date: startOfMinute(addMinutes(Date.now(), 8)).toISOString(),
             expiration: 'm1',
-            operation: 'put',
+            direction: 'put',
             status: 'waiting',
           },
         ]);
@@ -217,7 +217,7 @@ export function SignalsContextProvider({ children }) {
   }, []);
 
   const updateSignal = useCallback(
-    (signalId: string, data: IUpdateSignalData) => {
+    (signalId: string, data: UpdateSignalData) => {
       const newSignals = [...signals];
 
       const signalIndex = newSignals.findIndex(
@@ -232,18 +232,18 @@ export function SignalsContextProvider({ children }) {
   );
 
   const getSignalAvailableDate = useCallback(
-    (signal: ISignalWithStatus): Date => subSeconds(parseISO(signal.date), 30),
+    (signal: SignalWithStatus): Date => subSeconds(parseISO(signal.date), 30),
     [],
   );
 
   const isSignalAvailable = useCallback(
-    (signal: ISignalWithStatus): boolean =>
+    (signal: SignalWithStatus): boolean =>
       isBefore(Date.now(), subSeconds(parseISO(signal.date), 30)),
     [],
   );
 
   const hasSignalResult = useCallback(
-    (signal: ISignalWithStatus) =>
+    (signal: SignalWithStatus) =>
       signal.status !== 'waiting' && signal.status !== 'canceled',
     [],
   );

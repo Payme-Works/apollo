@@ -1,4 +1,4 @@
-import { Active, DigitalOptionExpirationPeriod, OrderDirection } from '../../../../types';
+import { Active, DigitalOptionExpirationPeriod, PositionDirection } from '../../../../types';
 import { Request } from '../../Request';
 interface PlaceDigitalOptionRequestMessage {
     name: 'digital-options.place-digital-option';
@@ -12,7 +12,7 @@ interface PlaceDigitalOptionRequestMessage {
 interface PlaceDigitalOptionRequestArgs {
     user_balance_id: number;
     active: Active;
-    direction: OrderDirection;
+    direction: PositionDirection;
     expiration_period: DigitalOptionExpirationPeriod;
     price: number;
 }

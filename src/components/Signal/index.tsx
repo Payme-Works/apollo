@@ -8,13 +8,13 @@ import { v4 as uuid } from 'uuid';
 import galeImg from '@/assets/gale.png';
 import { Tooltip } from '@/components/Tooltip';
 import { useSignals } from '@/context/SignalsContext';
-import { ISignalWithStatus } from '@/interfaces/signal/ISignalWithStatus';
+import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
 import { formatPrice } from '@/utils/formatPrice';
 
 import { Container, Label, GaleImage } from './styles';
 
 interface ISignalProps {
-  data: ISignalWithStatus;
+  data: SignalWithStatus;
   onCancel(): void;
   onResume(): void;
 }
@@ -27,9 +27,9 @@ export function Signal({ data, onCancel, onResume }: ISignalProps) {
   const formattedData = useMemo(() => {
     return {
       date: format(parseISO(data.date), 'HH:mm'),
-      currency: data.currency.toUpperCase(),
+      currency: data.active.toUpperCase(),
       expiration: data.expiration.toUpperCase(),
-      operation: data.operation.toUpperCase(),
+      operation: data.direction.toUpperCase(),
     };
   }, [data]);
 
@@ -39,8 +39,8 @@ export function Signal({ data, onCancel, onResume }: ISignalProps) {
   );
 
   const activeLabelWidth = useMemo(
-    () => (data.currency.includes('OTC') ? theme.sizes[32] : theme.sizes[20]),
-    [data.currency, theme.sizes],
+    () => (data.active.includes('OTC') ? theme.sizes[32] : theme.sizes[20]),
+    [data.active, theme.sizes],
   );
 
   const shouldShowMartingales = useMemo(

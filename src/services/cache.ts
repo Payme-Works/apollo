@@ -4,7 +4,7 @@ interface IStore {
 
 const STORE: IStore = {};
 
-const Cache = {
+export const Cache = {
   get<T = any>(key: string): T | undefined {
     return STORE[key];
   },
@@ -12,5 +12,3 @@ const Cache = {
     STORE[key] = value;
   },
 };
-
-export default Cache;

@@ -1,4 +1,4 @@
-import { Active, ExpirationPeriod, OrderDirection } from '../../../../types';
+import { Active, ExpirationPeriod, PositionDirection } from '../../../../types';
 import { Request } from '../../Request';
 interface OpenOptionRequestMessage {
     name: 'binary-options.open-option';
@@ -7,7 +7,7 @@ interface OpenOptionRequestMessage {
         user_balance_id: number;
         active_id: number;
         option_type_id: number;
-        direction: OrderDirection;
+        direction: PositionDirection;
         expired: number;
         price: number;
     };
@@ -15,7 +15,7 @@ interface OpenOptionRequestMessage {
 interface OpenOptionRequestArgs {
     user_balance_id: number;
     active: Active;
-    direction: OrderDirection;
+    direction: PositionDirection;
     expiration_period: ExpirationPeriod;
     price: number;
 }

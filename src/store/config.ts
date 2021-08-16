@@ -62,7 +62,7 @@ export const schema = {
             label: 'H1',
           },
         ],
-        operationType: {
+        instrumentType: {
           value: 'all',
           label: 'Todos',
         },
