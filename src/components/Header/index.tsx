@@ -49,15 +49,15 @@ export function Header() {
     }
   }, []);
 
-  const { useMacOSWindowActionButtons } = useConfig('window');
+  const [windowConfig] = useConfig('window');
 
   const shouldUseMacOSWindowActions = useMemo(() => {
     return (
-      useMacOSWindowActionButtons ||
+      windowConfig.current.useMacOSWindowActionButtons ||
       os.platform() === 'darwin' ||
       os.platform() === 'linux'
     );
-  }, [useMacOSWindowActionButtons]);
+  }, [windowConfig]);
 
   const shouldShowGoBackButton = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -91,6 +91,12 @@ export function Header() {
         </WindowActions>
       ) : (
         <WindowActions position="right">
+          {shouldShowGoBackButton && (
+            <GoBackButton onClick={() => history.goBack()}>
+              <FiChevronLeft />
+            </GoBackButton>
+          )}
+
           <DefaultActionButton onClick={handleMinimize}>
             <FiMinus />
           </DefaultActionButton>

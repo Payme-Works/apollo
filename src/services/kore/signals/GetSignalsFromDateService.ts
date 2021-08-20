@@ -1,4 +1,4 @@
-import { Signal, Expiration } from '@/interfaces/signal/ISignal';
+import { KoreSignal, Expiration, Signal } from '@/interfaces/signals/Signal';
 import { koreApi } from '@/services/kore/api';
 
 export type Direction = 'up' | 'down';
@@ -16,7 +16,7 @@ export async function getSignalsFromDate({
   day,
   expiration,
 }: GetSignalsFromDateRequest): Promise<Signal[]> {
-  const response = await koreApi.get<Signal[]>(`/signals/day`, {
+  const response = await koreApi.get<KoreSignal[]>(`/signals/day`, {
     params: {
       year,
       month,
@@ -25,5 +25,13 @@ export async function getSignalsFromDate({
     },
   });
 
-  return response.data;
+  const mapSignals = response.data.map<Signal>(signal => ({
+    id: signal.id,
+    active: signal.currency.replace('/', '') as any,
+    date: signal.date,
+    direction: signal.operation,
+    expiration: signal.expiration,
+  }));
+
+  return mapSignals;
 }

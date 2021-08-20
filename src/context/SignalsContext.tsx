@@ -24,7 +24,7 @@ import { PartialDeep } from 'type-fest';
 import { v4 as uuid } from 'uuid';
 
 import { useWebSocket } from '@/hooks/useWebSocket';
-import { Signal } from '@/interfaces/signals/Signal';
+import { KoreSignal, Signal } from '@/interfaces/signals/Signal';
 import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
 import { getSignalsFromDate } from '@/services/kore/signals/GetSignalsFromDateService';
 
@@ -57,9 +57,13 @@ export function SignalsContextProvider({ children }) {
 
   if (!DEBUG_SIGNALS) {
     useWebSocket(`signals:premium:${formattedDate}`, socket => {
-      socket.on('new', (newSignals: Signal[]) => {
+      socket.on('new', (newSignals: KoreSignal[]) => {
         const mapNewSignals = newSignals.map<SignalWithStatus>(signal => ({
-          ...signal,
+          id: signal.id,
+          active: signal.currency.replace('/', '') as any,
+          date: signal.date,
+          direction: signal.operation,
+          expiration: signal.expiration,
           status: 'waiting',
         }));
 
@@ -70,7 +74,7 @@ export function SignalsContextProvider({ children }) {
         }
       });
 
-      socket.on('update', (newSignal: Signal) => {
+      socket.on('update', (newSignal: KoreSignal) => {
         setSignals(state => {
           const newSignals = [...state];
 
@@ -79,7 +83,13 @@ export function SignalsContextProvider({ children }) {
           );
 
           newSignals[signalIndex] = {
-            ...assign(newSignals[signalIndex], newSignal),
+            ...assign(newSignals[signalIndex], {
+              id: newSignal.id,
+              active: newSignal.currency.replace('/', '') as any,
+              date: newSignal.date,
+              direction: newSignal.operation,
+              expiration: newSignal.expiration,
+            }),
           };
 
           return newSignals;
@@ -97,14 +107,15 @@ export function SignalsContextProvider({ children }) {
           day: date.getDate(),
         };
 
-        const [m5, m15, m30, h1] = await Promise.all([
+        const [m1, m5, m15, m30, h1] = await Promise.all([
+          getSignalsFromDate({ ...data, expiration: 'm1' }),
           getSignalsFromDate({ ...data, expiration: 'm5' }),
           getSignalsFromDate({ ...data, expiration: 'm15' }),
           getSignalsFromDate({ ...data, expiration: 'm30' }),
           getSignalsFromDate({ ...data, expiration: 'h1' }),
         ]);
 
-        const joinSignals = [...m5, ...m15, ...m30, ...h1];
+        const joinSignals = [...m1, ...m5, ...m15, ...m30, ...h1];
 
         return joinSignals;
       }
