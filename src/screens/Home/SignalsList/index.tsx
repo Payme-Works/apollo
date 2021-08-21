@@ -4,7 +4,7 @@ import { compareAsc, isAfter, compareDesc, parseISO } from 'date-fns';
 
 import { Signal } from '@/components/Signal';
 import { useSignals } from '@/context/SignalsContext';
-import { ISignalWithStatus } from '@/interfaces/signal/ISignalWithStatus';
+import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
 
 import { Container } from './styles';
 
@@ -13,7 +13,7 @@ export function SignalsList() {
     useSignals();
 
   const handleToggleSignalStatus = useCallback(
-    (signal: ISignalWithStatus, status: 'canceled' | 'waiting') => {
+    (signal: SignalWithStatus, status: 'canceled' | 'waiting') => {
       if (signal.status !== 'waiting' && signal.status !== 'canceled') {
         return;
       }
@@ -30,7 +30,7 @@ export function SignalsList() {
   );
 
   const sortedSignals = useMemo(() => {
-    const list: ISignalWithStatus[] = [];
+    const list: SignalWithStatus[] = [];
 
     list.push(
       ...signals

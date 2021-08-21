@@ -19,6 +19,7 @@ import {
 } from 'date-fns';
 
 import { useHemes } from '@/context/HemesContext';
+import { useProfile } from '@/context/ProfileContext';
 import { useSignals } from '@/context/SignalsContext';
 import { SignalTaskError } from '@/errors/SignalTaskError';
 import { useConfig } from '@/hooks/useConfig';
@@ -74,7 +75,8 @@ export function RobotContextProvider({ children }) {
     isSignalAvailable,
     hasSignalResult,
   } = useSignals();
-  const { hemes, profit, setProfit } = useHemes();
+  const { profit, setProfit } = useProfile();
+  const { hemes, refreshProfile } = useHemes();
 
   const checkerTasksRef = useRef<NodeJS.Timeout[]>([]);
   const tasksRef = useRef<ITask[]>([]);
@@ -169,14 +171,14 @@ export function RobotContextProvider({ children }) {
             instrumentType = 'turbo-option';
           }
 
-          const [binary, digital] = await Promise.all([
+          const [binary, digital] = await Promise.allSettled([
             hemes.isActiveEnabled(active, instrumentType, expiration),
             hemes.isActiveEnabled(active, 'digital-option'),
           ]);
 
           return {
-            binary,
-            digital,
+            binary: binary.status === 'fulfilled' ? binary.value : false,
+            digital: digital.status === 'fulfilled' ? digital.value : false,
           };
         } catch (error) {
           throw new SignalTaskError({
@@ -198,14 +200,14 @@ export function RobotContextProvider({ children }) {
             instrumentType = 'turbo-option';
           }
 
-          const [binary, digital] = await Promise.all([
+          const [binary, digital] = await Promise.allSettled([
             hemes.getActiveProfit(active, instrumentType, expiration),
             hemes.getActiveProfit(active, 'digital-option'),
           ]);
 
           return {
-            binary,
-            digital,
+            binary: binary.status === 'fulfilled' ? binary.value : 0,
+            digital: digital.status === 'fulfilled' ? digital.value : 0,
           };
         } catch (error) {
           throw new SignalTaskError({
@@ -495,13 +497,13 @@ export function RobotContextProvider({ children }) {
                   Cache.set('recover-lost-order', null);
                 }
 
-                const signalsWithResult = signals.filter(
-                  item => item.status === 'win' || item.status === 'loss',
-                );
+                // const signalsWithResult = signals.filter(
+                //   item => item.status === 'win' || item.status === 'loss',
+                // );
 
-                if (signalsWithResult.length === 1 /* TODO: add to config */) {
-                  priceAmount /= 1.5;
-                }
+                // if (signalsWithResult.length === 1 /* TODO: add to config */) {
+                //   priceAmount /= 1.5;
+                // }
 
                 let openPositionResponse: OpenPositionResponse;
 
@@ -521,7 +523,7 @@ export function RobotContextProvider({ children }) {
                   });
                 }
 
-                // TODO refreshProfile();
+                refreshProfile();
 
                 let martingaleAmount = 0;
 
@@ -561,7 +563,7 @@ export function RobotContextProvider({ children }) {
                           profit - next.price <=
                           -robotConfig.current.management.stopLoss.value
                         ) {
-                          nextPrice /= 1.5;
+                          nextPrice /= 1.25;
 
                           console.log(
                             signal,
@@ -595,7 +597,7 @@ export function RobotContextProvider({ children }) {
                         );
                       },
                       () => {
-                        // TODO refreshProfile();
+                        refreshProfile();
                       },
                     ),
                   );
@@ -682,7 +684,7 @@ export function RobotContextProvider({ children }) {
                   });
                 }
 
-                // TODO await refreshProfile();
+                refreshProfile();
               }, createOrderTimeout);
             } catch (error) {
               if (error instanceof SignalTaskError) {
@@ -713,9 +715,10 @@ export function RobotContextProvider({ children }) {
     [
       getSignalAvailableDate,
       updateSignal,
+      hemes,
       robotConfig,
       signals,
-      hemes,
+      refreshProfile,
       setProfit,
       profit,
       stop,

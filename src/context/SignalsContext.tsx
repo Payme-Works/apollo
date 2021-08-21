@@ -150,7 +150,7 @@ export function SignalsContextProvider({ children }) {
         setSignals([
           {
             id: uuid(),
-            active: 'EURUSD',
+            active: 'USDJPY-OTC',
             date: startOfMinute(addMinutes(Date.now(), 1)).toISOString(),
             expiration: 'm1',
             direction: 'put',
@@ -166,15 +166,7 @@ export function SignalsContextProvider({ children }) {
           },
           {
             id: uuid(),
-            active: 'EURUSD',
-            date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
-            expiration: 'm1',
-            direction: 'put',
-            status: 'waiting',
-          },
-          {
-            id: uuid(),
-            active: 'EURUSD',
+            active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 3)).toISOString(),
             expiration: 'm1',
             direction: 'put',
@@ -182,7 +174,7 @@ export function SignalsContextProvider({ children }) {
           },
           {
             id: uuid(),
-            active: 'EURUSD',
+            active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 4)).toISOString(),
             expiration: 'm1',
             direction: 'put',
@@ -190,7 +182,7 @@ export function SignalsContextProvider({ children }) {
           },
           {
             id: uuid(),
-            active: 'EURUSD',
+            active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 5)).toISOString(),
             expiration: 'm1',
             direction: 'put',
@@ -198,7 +190,7 @@ export function SignalsContextProvider({ children }) {
           },
           {
             id: uuid(),
-            active: 'EURUSD',
+            active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 6)).toISOString(),
             expiration: 'm1',
             direction: 'put',
@@ -206,16 +198,24 @@ export function SignalsContextProvider({ children }) {
           },
           {
             id: uuid(),
-            active: 'EURUSD',
+            active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 7)).toISOString(),
+            expiration: 'm1',
+            direction: 'put',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            active: 'EURUSD-OTC',
+            date: startOfMinute(addMinutes(Date.now(), 8)).toISOString(),
             expiration: 'm1',
             direction: 'call',
             status: 'waiting',
           },
           {
             id: uuid(),
-            active: 'EURUSD',
-            date: startOfMinute(addMinutes(Date.now(), 8)).toISOString(),
+            active: 'EURUSD-OTC',
+            date: startOfMinute(addMinutes(Date.now(), 9)).toISOString(),
             expiration: 'm1',
             direction: 'put',
             status: 'waiting',

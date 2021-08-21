@@ -1,51 +1,32 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 
-import { Profile as IqOptionProfile } from '@hemes/iqoption';
 import { FiSettings } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import { useHistory } from 'react-router-dom';
 import { ThemeContext } from 'styled-components';
 
 import { Avatar } from '@/components/Avatar';
-import { useHemes } from '@/context/HemesContext';
+import { useProfile } from '@/context/ProfileContext';
 import { formatPrice } from '@/utils/formatPrice';
 
 import { Container, Flex, Info } from './styles';
 
 export function Profile() {
-  const [profile, setProfile] = useState<IqOptionProfile>();
-
-  const { hemes, isHemesLoggedIn, profit } = useHemes();
+  const { isProfileLoading, balanceMode, balance, profit } = useProfile();
 
   const theme = useContext(ThemeContext);
 
   const history = useHistory();
 
-  useEffect(() => {
-    async function loadProfile() {
-      if (!isHemesLoggedIn) {
-        return;
-      }
-
-      const newProfile = await hemes.getProfile();
-
-      console.log('Profile:', newProfile);
-
-      setProfile(newProfile);
-    }
-
-    loadProfile();
-  }, [hemes, isHemesLoggedIn]);
-
   const formattedBalance = useMemo(() => {
-    const formatted = formatPrice(profile?.balance);
+    const formatted = formatPrice(balance);
     const split = formatted.split(',');
 
     return {
       main: split[0],
       decimals: split[1],
     };
-  }, [profile?.balance]);
+  }, [balance]);
 
   const formattedProfit = useMemo(() => {
     const formatted = formatPrice(profit);
@@ -59,10 +40,14 @@ export function Profile() {
 
   const balanceLabelColor = useMemo(
     () =>
-      profile?.balance_type === 1
+      balanceMode === 'real'
         ? theme.colors.foreground.base
         : theme.colors.palette.orange.base,
-    [profile, theme],
+    [
+      balanceMode,
+      theme.colors.foreground.base,
+      theme.colors.palette.orange.base,
+    ],
   );
 
   const profitLabelColor = useMemo(
@@ -84,7 +69,7 @@ export function Profile() {
           <dd>
             {/* R$ ••••••• */}
 
-            {profile ? (
+            {!isProfileLoading ? (
               <>
                 {`${formattedBalance.main},`}
 

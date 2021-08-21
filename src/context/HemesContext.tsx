@@ -8,31 +8,52 @@ import React, {
 
 import { Hemes } from '@hemes/core';
 import {
+  BalanceMode,
   BaseIQOptionAccount,
   BaseIQOptionProvider,
   IQOptionProvider,
 } from '@hemes/iqoption';
 
+import { useProfile } from '@/context/ProfileContext';
+
 interface HemesContextData {
   hemes?: BaseIQOptionAccount;
-  profit: number;
   isHemesLoggedIn: boolean;
   isHemesLoggingIn: boolean;
   logInHemes(): Promise<void>;
-  setProfit: React.Dispatch<React.SetStateAction<number>>;
+  refreshProfile(): Promise<void>;
 }
 
 const HemesContext = createContext<HemesContextData>({} as HemesContextData);
 
 export function HemesContextProvider({ children }) {
   const [hemes, setHemes] = useState<BaseIQOptionAccount>();
-  const [profit, setProfit] = useState<number>(0);
   const [isHemesLoggingIn, setHemesIsLoggingIn] = useState(false);
+
+  const { setProfileIsLoading, setBalanceMode, setBalance } = useProfile();
 
   const isHemesLoggedIn = useMemo(() => !!hemes, [hemes]);
 
+  const refreshProfile = useCallback(
+    async (hemesAccount: BaseIQOptionAccount = hemes) => {
+      setProfileIsLoading(true);
+
+      try {
+        const profile = await hemesAccount.getProfile();
+
+        setBalanceMode(profile.balance_type === 1 ? 'real' : 'practice');
+        setBalance(profile.balance);
+      } finally {
+        setProfileIsLoading(false);
+      }
+    },
+    [hemes, setBalance, setBalanceMode, setProfileIsLoading],
+  );
+
   const logInHemes = useCallback(async () => {
     setHemesIsLoggingIn(true);
+
+    setProfileIsLoading(true);
 
     try {
       const provider = new Hemes(
@@ -47,28 +68,29 @@ export function HemesContextProvider({ children }) {
       });
 
       await newHemes.setBalanceMode(
-        String(process.env.IQ_OPTION_ACCOUNT_BALANCE_MODE) as any,
+        String(process.env.IQ_OPTION_ACCOUNT_BALANCE_MODE) as BalanceMode,
       );
 
       console.log('Hemes:', newHemes);
 
       setHemes(newHemes);
+
+      refreshProfile(newHemes);
     } catch (error) {
       console.log(error);
     } finally {
       setHemesIsLoggingIn(false);
     }
-  }, []);
+  }, [refreshProfile, setProfileIsLoading]);
 
   return (
     <HemesContext.Provider
       value={{
         hemes,
-        profit,
         isHemesLoggedIn,
         isHemesLoggingIn,
         logInHemes,
-        setProfit,
+        refreshProfile,
       }}
     >
       {children}

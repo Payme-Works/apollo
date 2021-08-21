@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ProfileContextProvider } from '@/context/ProfileContext';
+
 import { AuthContextProvider } from './AuthContext';
 import { HemesContextProvider } from './HemesContext';
 import { RobotContextProvider } from './RobotContext';
@@ -10,11 +12,13 @@ export function AppProvider({ children }) {
   return (
     <ToastContextProvider>
       <AuthContextProvider>
-        <HemesContextProvider>
-          <SignalsContextProvider>
-            <RobotContextProvider>{children}</RobotContextProvider>
-          </SignalsContextProvider>
-        </HemesContextProvider>
+        <ProfileContextProvider>
+          <HemesContextProvider>
+            <SignalsContextProvider>
+              <RobotContextProvider>{children}</RobotContextProvider>
+            </SignalsContextProvider>
+          </HemesContextProvider>
+        </ProfileContextProvider>
       </AuthContextProvider>
     </ToastContextProvider>
   );
