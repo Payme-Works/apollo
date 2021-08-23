@@ -45,11 +45,11 @@ export function useMartingaleStrategy(
       try {
         const [position] = open_position.response;
 
-        const positionExpirationa = Number(
+        const positionExpiration = Number(
           position.raw_event.expiration_time ||
             position.raw_event.instrument_expiration,
         );
-        const positionExpirationDate = getFixedTimestamp(positionExpirationa);
+        const positionExpirationDate = getFixedTimestamp(positionExpiration);
 
         const beforeExpiration = subSeconds(positionExpirationDate, 1);
 

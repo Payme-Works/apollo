@@ -19,6 +19,7 @@ import {
   isAfter,
   startOfDay,
 } from 'date-fns';
+import { setMinutes } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 import { v4 as uuid } from 'uuid';
@@ -151,8 +152,8 @@ export function SignalsContextProvider({ children }) {
           {
             id: uuid(),
             active: 'USDJPY-OTC',
-            date: startOfMinute(addMinutes(Date.now(), 1)).toISOString(),
-            expiration: 'm1',
+            date: startOfMinute(setMinutes(Date.now(), 25)).toISOString(),
+            expiration: 'm5',
             direction: 'put',
             status: 'waiting',
           },

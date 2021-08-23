@@ -47,7 +47,7 @@ export interface Position {
         currency: string;
         leverage: number;
         create_at: number;
-        order_ids: number[];
+        order_ids?: number[];
         update_at: number;
         buy_amount: number;
         commission: number;
