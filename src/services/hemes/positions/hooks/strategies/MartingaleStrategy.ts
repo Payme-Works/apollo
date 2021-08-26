@@ -75,7 +75,7 @@ export function useMartingaleStrategy(
           ) {
             result = getPositionResult(
               position.instrument_type,
-              position.raw_event.instrument_dir,
+              position.raw_event.instrument_dir || position.raw_event.direction,
               {
                 open: positionState.open_price,
                 close: positionState.current_price,
@@ -84,6 +84,7 @@ export function useMartingaleStrategy(
           } else {
             closedPosition = await hemes.getPosition(position_id, {
               status: 'closed',
+              timeout: 10000,
             });
 
             result = getPositionResult(
@@ -130,6 +131,7 @@ export function useMartingaleStrategy(
               if (!closedPosition) {
                 closedPosition = await hemes.getPosition(position_id, {
                   status: 'closed',
+                  timeout: 10000,
                 });
               }
 
@@ -163,6 +165,7 @@ export function useMartingaleStrategy(
             if (!closedPosition) {
               closedPosition = await hemes.getPosition(position_id, {
                 status: 'closed',
+                timeout: 10000,
               });
             }
 
@@ -186,6 +189,7 @@ export function useMartingaleStrategy(
             if (!closedPosition) {
               closedPosition = await hemes.getPosition(position_id, {
                 status: 'closed',
+                timeout: 10000,
               });
 
               result = getPositionResult(

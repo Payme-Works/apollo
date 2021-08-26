@@ -3,13 +3,11 @@
   "packages": {
     "@hemes/core": {
       "signature": "0050f6e3eaaf0af9314b2133becc1708",
-      "file": true,
-      "replaced": "^0.0.1-next.3"
+      "file": true
     },
     "@hemes/iqoption": {
-      "signature": "79071090b2b0e22c43be563223613637",
-      "file": true,
-      "replaced": "^0.0.1-next.3"
+      "signature": "410fd9a462e7837d9e966f5a404dc343",
+      "file": true
     }
   }
 }

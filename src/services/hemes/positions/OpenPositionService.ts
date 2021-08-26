@@ -63,6 +63,8 @@ export async function openPosition(
 
     return [position, useHook];
   } catch (err) {
+    console.error(err);
+
     throw new Error('Occurred an unexpected error while opening position');
   }
 }

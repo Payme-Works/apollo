@@ -14,7 +14,6 @@ import {
   parseISO,
   subMinutes,
   subSeconds,
-  isEqual,
   Interval,
 } from 'date-fns';
 
@@ -293,7 +292,7 @@ export function RobotContextProvider({ children }) {
                 return;
               }
 
-              const checkSomeSignalWithSameDateAndExpiration = signals.some(
+              /* const checkSomeSignalWithSameDateAndExpiration = signals.some(
                 item =>
                   item.id !== signal.id &&
                   isEqual(parseISO(item.date), parseISO(signal.date)) &&
@@ -307,7 +306,7 @@ export function RobotContextProvider({ children }) {
                 });
 
                 return;
-              }
+              } */
 
               const activeEnabledByInstrumentType =
                 await getActiveEnabledByInstrumentType(
@@ -452,239 +451,255 @@ export function RobotContextProvider({ children }) {
                 dateLessThreeSeconds.getTime() - Date.now();
 
               openPositionTask = setTimeout(async () => {
-                updateSignal(signal.id, {
-                  status: 'in_progress',
-                });
+                try {
+                  updateSignal(signal.id, {
+                    status: 'in_progress',
+                  });
 
-                let priceAmount =
-                  robotConfig.current.management.orderPrice.value;
+                  let priceAmount =
+                    robotConfig.current.management.orderPrice.value;
 
-                const differencePercentage = activeProfit / 100;
+                  const differencePercentage = activeProfit / 100;
 
-                let recoverLostOrder =
-                  Cache.get<IRecoverLostOrder>('recover-lost-order');
+                  let recoverLostOrder =
+                    Cache.get<IRecoverLostOrder>('recover-lost-order');
 
-                console.log(signal, recoverLostOrder);
+                  console.log(signal, recoverLostOrder);
 
-                let recoveringLostOrder = false;
-
-                if (
-                  robotConfig.current.management.recoverLostOrder &&
-                  recoverLostOrder &&
-                  recoverLostOrder.profit < 0
-                ) {
-                  const positiveLastProfit = recoverLostOrder.profit * -1;
-
-                  let recoveringPriceAmount =
-                    positiveLastProfit / differencePercentage + priceAmount;
+                  let recoveringLostOrder = false;
 
                   if (
-                    profit - priceAmount <=
-                    -robotConfig.current.management.stopLoss.value
+                    robotConfig.current.management.recoverLostOrder &&
+                    recoverLostOrder &&
+                    recoverLostOrder.profit < 0
                   ) {
-                    recoveringPriceAmount /= 1.25;
+                    const positiveLastProfit = recoverLostOrder.profit * -1;
+
+                    let recoveringPriceAmount =
+                      positiveLastProfit / differencePercentage + priceAmount;
+
+                    if (
+                      profit - priceAmount <=
+                      -robotConfig.current.management.stopLoss.value
+                    ) {
+                      recoveringPriceAmount /= 1.25;
+                    }
+
+                    priceAmount = recoveringPriceAmount;
+
+                    recoveringLostOrder = true;
+
+                    console.log(
+                      signal,
+                      `Duplicating order price, because previous order was lost: ${priceAmount}`,
+                    );
+
+                    Cache.set('recover-lost-order', null);
                   }
 
-                  priceAmount = recoveringPriceAmount;
+                  // const signalsWithResult = signals.filter(
+                  //   item => item.status === 'win' || item.status === 'loss',
+                  // );
 
-                  recoveringLostOrder = true;
+                  // if (signalsWithResult.length === 1 /* TODO: add to config */) {
+                  //   priceAmount /= 1.5;
+                  // }
 
-                  console.log(
-                    signal,
-                    `Duplicating order price, because previous order was lost: ${priceAmount}`,
-                  );
+                  let openPositionResponse: OpenPositionResponse;
 
-                  Cache.set('recover-lost-order', null);
-                }
-
-                // const signalsWithResult = signals.filter(
-                //   item => item.status === 'win' || item.status === 'loss',
-                // );
-
-                // if (signalsWithResult.length === 1 /* TODO: add to config */) {
-                //   priceAmount /= 1.5;
-                // }
-
-                let openPositionResponse: OpenPositionResponse;
-
-                try {
-                  openPositionResponse = await openPosition(hemes, {
-                    instrument_type: instrumentType,
-                    active: signal.active,
-                    price: priceAmount,
-                    direction: signal.direction,
-                    expiration_period: signal.expiration,
-                  });
-                } catch (err) {
-                  throw new SignalTaskError({
-                    signal,
-                    status: 'expired',
-                    info: 'Erro inesperado ao abrir posição',
-                  });
-                }
-
-                refreshProfile();
-
-                let martingaleAmount = 0;
-
-                let closedPosition: ClosedPosition;
-
-                try {
-                  let maxMartingale = 0;
-
-                  if (robotConfig.current.management.martingale.active) {
-                    maxMartingale =
-                      robotConfig.current.management.martingale.amount;
-                  }
-
-                  const [position, usePositionHook] = openPositionResponse;
-
-                  console.log(
-                    signal,
-                    {
-                      instrumentType,
+                  try {
+                    openPositionResponse = await openPosition(hemes, {
+                      instrument_type: instrumentType,
                       active: signal.active,
-                      priceAmount,
+                      price: priceAmount,
                       direction: signal.direction,
-                      expiration: signal.expiration,
-                    },
-                    position.id,
-                  );
+                      expiration_period: signal.expiration,
+                    });
+                  } catch (err) {
+                    throw new SignalTaskError({
+                      signal,
+                      status: 'expired',
+                      info: 'Erro inesperado ao abrir posição',
+                    });
+                  }
 
-                  closedPosition = await usePositionHook(
-                    useMartingaleStrategy(
-                      maxMartingale,
-                      activeProfit,
-                      robotConfig.current.management.orderPrice.value,
-                      ({ martingale, result, next }) => {
-                        let nextPrice = next.price;
+                  refreshProfile();
 
-                        if (
-                          profit - next.price <=
-                          -robotConfig.current.management.stopLoss.value
-                        ) {
-                          nextPrice /= 1.25;
+                  let martingaleAmount = 0;
 
-                          console.log(
-                            signal,
-                            `[${martingale}] Changing next position price to: R$ ${nextPrice}`,
-                          );
-                        }
+                  let closedPosition: ClosedPosition;
 
-                        /* if (
+                  try {
+                    let maxMartingale = 0;
+
+                    if (robotConfig.current.management.martingale.active) {
+                      maxMartingale =
+                        robotConfig.current.management.martingale.amount;
+                    }
+
+                    const [position, usePositionHook] = openPositionResponse;
+
+                    console.log(
+                      signal,
+                      {
+                        instrumentType,
+                        active: signal.active,
+                        priceAmount,
+                        direction: signal.direction,
+                        expiration: signal.expiration,
+                      },
+                      position.id,
+                    );
+
+                    closedPosition = await usePositionHook(
+                      useMartingaleStrategy(
+                        maxMartingale,
+                        activeProfit,
+                        robotConfig.current.management.orderPrice.value,
+                        ({ martingale, result, next }) => {
+                          let nextPrice = next.price;
+
+                          if (
+                            profit - next.price <=
+                            -robotConfig.current.management.stopLoss.value
+                          ) {
+                            nextPrice /= 1.25;
+
+                            console.log(
+                              signal,
+                              `[${martingale}] Changing next position price to: R$ ${nextPrice}`,
+                            );
+                          }
+
+                          /* if (
                           signalsWithResult.length ===
                           1 TODO: add to config and analyse if makes sense
                         ) {
                           priceAmount /= 1.5;
                         } */
 
-                        next.setPrice(nextPrice);
+                          next.setPrice(nextPrice);
 
-                        martingaleAmount = martingale + 1;
+                          martingaleAmount = martingale + 1;
 
-                        if (martingale === 0) {
+                          if (martingale === 0) {
+                            console.log(
+                              signal,
+                              `[${martingale}] Result: ${result}`,
+                            );
+
+                            return;
+                          }
+
                           console.log(
                             signal,
-                            `[${martingale}] Result: ${result}`,
+                            `[${martingale}] Martingale result: ${result}`,
                           );
+                        },
+                        () => {
+                          refreshProfile();
+                        },
+                      ),
+                    );
+                  } catch (err) {
+                    updateSignal(signal.id, {
+                      status: 'expired',
+                      info: 'Erro inesperado ao criar ordem do martingale',
+                    });
 
-                          return;
-                        }
+                    console.error(err);
 
-                        console.log(
-                          signal,
-                          `[${martingale}] Martingale result: ${result}`,
-                        );
-                      },
-                      () => {
-                        refreshProfile();
-                      },
-                    ),
+                    return;
+                  }
+
+                  console.log(
+                    signal,
+                    `[${martingaleAmount}] Final result: ${
+                      closedPosition.result
+                    } (R$ ${closedPosition.profit.toFixed(2)})`,
+                    '\n',
                   );
-                } catch (err) {
+
+                  console.log(closedPosition);
+
+                  setProfit(state => {
+                    const newProfit = state + closedPosition.profit;
+
+                    if (
+                      newProfit <=
+                        -robotConfig.current.management.stopLoss.value ||
+                      newProfit >= robotConfig.current.management.stopGain.value
+                    ) {
+                      stop();
+                      console.log('stop');
+                    }
+
+                    return newProfit;
+                  });
+
+                  let info: string;
+
+                  if (recoveringLostOrder) {
+                    info = 'Ordem de recuperação da derrota anterior';
+                  }
+
+                  if (closedPosition.result === 'win') {
+                    updateSignal(signal.id, {
+                      status: 'win',
+                      result: {
+                        martingales: martingaleAmount,
+                        profit: closedPosition.profit,
+                      },
+                      info,
+                    });
+                  } else {
+                    updateSignal(signal.id, {
+                      status: 'loss',
+                      result: {
+                        martingales: martingaleAmount,
+                        profit: closedPosition.profit,
+                      },
+                      info,
+                    });
+                  }
+
+                  recoverLostOrder =
+                    Cache.get<IRecoverLostOrder>('recover-lost-order');
+
+                  if (
+                    closedPosition.result === 'loss' &&
+                    closedPosition.profit < 0
+                  ) {
+                    let recoverProfit = closedPosition.profit;
+
+                    if (
+                      priceAmount >
+                      robotConfig.current.management.orderPrice.value
+                    ) {
+                      recoverProfit += priceAmount;
+                    }
+
+                    Cache.set<IRecoverLostOrder>('recover-lost-order', {
+                      profit: recoverProfit,
+                    });
+                  }
+
+                  refreshProfile();
+                } catch (error) {
+                  if (error instanceof SignalTaskError) {
+                    updateSignal(signal.id, {
+                      status: error.status,
+                      info: error.info,
+                    });
+
+                    return;
+                  }
+
                   updateSignal(signal.id, {
                     status: 'expired',
-                    info: 'Erro inesperado ao criar ordem do martingale',
-                  });
-
-                  console.error(err);
-
-                  return;
-                }
-
-                console.log(
-                  signal,
-                  `[${martingaleAmount}] Final result: ${
-                    closedPosition.result
-                  } (R$ ${closedPosition.profit.toFixed(2)})`,
-                  '\n',
-                );
-
-                console.log(closedPosition);
-
-                setProfit(state => {
-                  const newProfit = state + closedPosition.profit;
-
-                  if (
-                    newProfit <=
-                      -robotConfig.current.management.stopLoss.value ||
-                    newProfit >= robotConfig.current.management.stopGain.value
-                  ) {
-                    stop();
-                    console.log('stop');
-                  }
-
-                  return newProfit;
-                });
-
-                let info: string;
-
-                if (recoveringLostOrder) {
-                  info = 'Ordem de recuperação da derrota anterior';
-                }
-
-                if (closedPosition.result === 'win') {
-                  updateSignal(signal.id, {
-                    status: 'win',
-                    result: {
-                      martingales: martingaleAmount,
-                      profit: closedPosition.profit,
-                    },
-                    info,
-                  });
-                } else {
-                  updateSignal(signal.id, {
-                    status: 'loss',
-                    result: {
-                      martingales: martingaleAmount,
-                      profit: closedPosition.profit,
-                    },
-                    info,
+                    info: 'Desculpe, ocorreu um erro inesperado',
                   });
                 }
-
-                recoverLostOrder =
-                  Cache.get<IRecoverLostOrder>('recover-lost-order');
-
-                if (
-                  closedPosition.result === 'loss' &&
-                  closedPosition.profit < 0
-                ) {
-                  let recoverProfit = closedPosition.profit;
-
-                  if (
-                    priceAmount >
-                    robotConfig.current.management.orderPrice.value
-                  ) {
-                    recoverProfit += priceAmount;
-                  }
-
-                  Cache.set<IRecoverLostOrder>('recover-lost-order', {
-                    profit: recoverProfit,
-                  });
-                }
-
-                refreshProfile();
               }, createOrderTimeout);
             } catch (error) {
               if (error instanceof SignalTaskError) {

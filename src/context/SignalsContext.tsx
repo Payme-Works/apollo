@@ -9,7 +9,6 @@ import React, {
 
 import {
   addDays,
-  addMinutes,
   isBefore,
   startOfMinute,
   subSeconds,
@@ -151,13 +150,29 @@ export function SignalsContextProvider({ children }) {
         setSignals([
           {
             id: uuid(),
-            active: 'USDJPY-OTC',
-            date: startOfMinute(setMinutes(Date.now(), 25)).toISOString(),
+            active: 'EURUSD-OTC',
+            date: startOfMinute(setMinutes(Date.now(), 15)).toISOString(),
             expiration: 'm5',
-            direction: 'put',
+            direction: 'call',
             status: 'waiting',
           },
           {
+            id: uuid(),
+            active: 'EURUSD-OTC',
+            date: startOfMinute(setMinutes(Date.now(), 35)).toISOString(),
+            expiration: 'm5',
+            direction: 'call',
+            status: 'waiting',
+          },
+          {
+            id: uuid(),
+            active: 'EURUSD-OTC',
+            date: startOfMinute(setMinutes(Date.now(), 55)).toISOString(),
+            expiration: 'm5',
+            direction: 'call',
+            status: 'waiting',
+          },
+          /* {
             id: uuid(),
             active: 'EURUSD-OTC',
             date: startOfMinute(addMinutes(Date.now(), 2)).toISOString(),
@@ -220,7 +235,7 @@ export function SignalsContextProvider({ children }) {
             expiration: 'm1',
             direction: 'put',
             status: 'waiting',
-          },
+          }, */
         ]);
       }
     }
@@ -244,13 +259,13 @@ export function SignalsContextProvider({ children }) {
   );
 
   const getSignalAvailableDate = useCallback(
-    (signal: SignalWithStatus): Date => subSeconds(parseISO(signal.date), 30),
+    (signal: SignalWithStatus): Date => subSeconds(parseISO(signal.date), 40),
     [],
   );
 
   const isSignalAvailable = useCallback(
     (signal: SignalWithStatus): boolean =>
-      isBefore(Date.now(), subSeconds(parseISO(signal.date), 30)),
+      isBefore(Date.now(), subSeconds(parseISO(signal.date), 40)),
     [],
   );
 
