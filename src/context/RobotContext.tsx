@@ -445,7 +445,7 @@ export function RobotContextProvider({ children }) {
                 });
               }
 
-              const dateLessThreeSeconds = subSeconds(parseISO(signal.date), 3);
+              const dateLessThreeSeconds = subSeconds(parseISO(signal.date), 2);
 
               const createOrderTimeout =
                 dateLessThreeSeconds.getTime() - Date.now();
@@ -556,7 +556,7 @@ export function RobotContextProvider({ children }) {
                         maxMartingale,
                         activeProfit,
                         robotConfig.current.management.orderPrice.value,
-                        ({ martingale, result, next }) => {
+                        ({ martingales, result, next }) => {
                           let nextPrice = next.price;
 
                           if (
@@ -567,7 +567,7 @@ export function RobotContextProvider({ children }) {
 
                             console.log(
                               signal,
-                              `[${martingale}] Changing next position price to: R$ ${nextPrice}`,
+                              `[${martingales}] Changing next position price to: R$ ${nextPrice}`,
                             );
                           }
 
@@ -580,12 +580,12 @@ export function RobotContextProvider({ children }) {
 
                           next.setPrice(nextPrice);
 
-                          martingaleAmount = martingale + 1;
+                          martingaleAmount = martingales + 1;
 
-                          if (martingale === 0) {
+                          if (martingales === 0) {
                             console.log(
                               signal,
-                              `[${martingale}] Result: ${result}`,
+                              `[${martingales}] Result: ${result}`,
                             );
 
                             return;
@@ -593,10 +593,18 @@ export function RobotContextProvider({ children }) {
 
                           console.log(
                             signal,
-                            `[${martingale}] Martingale result: ${result}`,
+                            `[${martingales}] Martingale result: ${result}`,
                           );
                         },
-                        () => {
+                        ({ martingales }) => {
+                          console.log('update martingale', martingales);
+
+                          updateSignal(signal.id, {
+                            result: {
+                              martingales,
+                            },
+                          });
+
                           refreshProfile();
                         },
                       ),
@@ -686,6 +694,8 @@ export function RobotContextProvider({ children }) {
 
                   refreshProfile();
                 } catch (error) {
+                  console.error(new Date().toISOString());
+
                   if (error instanceof SignalTaskError) {
                     updateSignal(signal.id, {
                       status: error.status,
@@ -702,6 +712,8 @@ export function RobotContextProvider({ children }) {
                 }
               }, createOrderTimeout);
             } catch (error) {
+              console.log('ERROR', new Date().toISOString());
+
               if (error instanceof SignalTaskError) {
                 updateSignal(signal.id, {
                   status: error.status,

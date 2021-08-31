@@ -44,8 +44,8 @@ export function Signal({ data, onCancel, onResume }: ISignalProps) {
   );
 
   const shouldShowMartingales = useMemo(
-    () => data.status === 'win' && data.result?.martingales > 0,
-    [data.result?.martingales, data.status],
+    () => data.status !== 'loss' && data.result?.martingales > 0,
+    [data.result, data.status],
   );
 
   const formattedProfit = useMemo(

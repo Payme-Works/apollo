@@ -15,7 +15,7 @@ import {
 import { UsePositionHook } from '../UsePositionHook';
 
 interface OnLossAndOpenNextMartingalePositionPayload {
-  martingale: number;
+  martingales: number;
   profit: number;
   result: PositionResult;
   next: {
@@ -26,6 +26,7 @@ interface OnLossAndOpenNextMartingalePositionPayload {
 }
 
 interface OpenMartingalePositionPayload {
+  martingales: number;
   open_position_response: OpenPositionResponse;
 }
 
@@ -112,7 +113,7 @@ export function useMartingaleStrategy(
 
             if (onLossAndOpenNextMartingalePosition) {
               onLossAndOpenNextMartingalePosition({
-                martingale: _current,
+                martingales: _current,
                 profit: -lastPositionPrice,
                 result,
                 next: {
@@ -158,6 +159,7 @@ export function useMartingaleStrategy(
 
             if (onOpenMartingalePosition) {
               onOpenMartingalePosition({
+                martingales: _current + 1,
                 open_position_response: openMartingalePositionResponse,
               });
             }
@@ -172,7 +174,7 @@ export function useMartingaleStrategy(
             const [, useMartingalePositionHook] =
               openMartingalePositionResponse;
 
-            const martingaleResult = useMartingalePositionHook(
+            const martingaleResult = await useMartingalePositionHook(
               useMartingaleStrategy(
                 max,
                 payout,

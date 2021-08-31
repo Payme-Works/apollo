@@ -18,6 +18,7 @@ export interface Option {
     robot_id: null;
     request_id: string;
     client_platform_id: number;
+    message?: 'Asset is currently unavailable. Please try again in a few minutes.';
 }
 export declare class OptionResponse extends Response<Option> {
     get name(): string;
