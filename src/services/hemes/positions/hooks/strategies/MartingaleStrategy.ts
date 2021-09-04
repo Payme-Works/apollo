@@ -1,6 +1,6 @@
 import {
   getFixedTimestamp,
-  getPositionResult,
+  getCandleResult,
   Position,
   PositionResult,
 } from '@hemes/iqoption';
@@ -74,7 +74,7 @@ export function useMartingaleStrategy(
             open_position.data.expiration_period !== 'm1' &&
             priceDifference > 0.0001
           ) {
-            result = getPositionResult(
+            result = getCandleResult(
               position.instrument_type,
               position.raw_event.instrument_dir || position.raw_event.direction,
               {
@@ -88,7 +88,7 @@ export function useMartingaleStrategy(
               timeout: 10000,
             });
 
-            result = getPositionResult(
+            result = getCandleResult(
               closedPosition.instrument_type,
               closedPosition.raw_event.instrument_dir ||
                 closedPosition.raw_event.direction,
@@ -194,7 +194,7 @@ export function useMartingaleStrategy(
                 timeout: 10000,
               });
 
-              result = getPositionResult(
+              result = getCandleResult(
                 closedPosition.instrument_type,
                 closedPosition.raw_event.instrument_dir ||
                   closedPosition.raw_event.direction,

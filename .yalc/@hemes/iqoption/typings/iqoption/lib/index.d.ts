@@ -13,7 +13,7 @@ export * from './utils/getActiveId';
 export * from './utils/getExpirationPeriodTime';
 export * from './utils/getExpirationDate';
 export * from './utils/getFixedTimestamp';
-export * from './utils/getPositionResult';
+export * from './utils/getCandleResult';
 /**
  * Types
  */

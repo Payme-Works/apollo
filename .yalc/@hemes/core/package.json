@@ -1,6 +1,6 @@
 {
   "name": "@hemes/core",
-  "version": "0.0.1-next.3",
+  "version": "0.0.1-next.4",
   "description": "Hemes core package",
   "author": "André Victor <andrevcv1@gmail.com>",
   "homepage": "https://github.com/PaymeTrade/hemes#readme",
@@ -30,5 +30,5 @@
     "access": "public"
   },
   "gitHead": "fa2e0d0514775388df64a3e5df0e0d95e810e0c3",
-  "yalcSig": "0050f6e3eaaf0af9314b2133becc1708"
+  "yalcSig": "3d53c1adc406549c790786f64d5f2b6a"
 }
