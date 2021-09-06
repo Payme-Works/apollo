@@ -1,32 +1,32 @@
 import React, { useContext, useMemo } from 'react';
 
 import { FiSettings } from 'react-icons/fi';
+import Skeleton from 'react-loading-skeleton';
 import { useHistory } from 'react-router-dom';
-
 import { ThemeContext } from 'styled-components';
 
-import Avatar from '@/components/Avatar';
-import { useBrokerAuthentication } from '@/context/broker-authentication';
-import formatPrice from '@/utils/formatPrice';
+import { Avatar } from '@/components/Avatar';
+import { useProfile } from '@/context/ProfileContext';
+import { formatPrice } from '@/utils/formatPrice';
 
 import { Container, Flex, Info } from './styles';
 
-const Profile: React.FC = () => {
-  const history = useHistory();
+export function Profile() {
+  const { isProfileLoading, balanceMode, balance, profit } = useProfile();
 
   const theme = useContext(ThemeContext);
 
-  const { profile, profit } = useBrokerAuthentication();
+  const history = useHistory();
 
-  const _formattedBalance = useMemo(() => {
-    const formatted = formatPrice(profile?.balance);
+  const formattedBalance = useMemo(() => {
+    const formatted = formatPrice(balance);
     const split = formatted.split(',');
 
     return {
       main: split[0],
       decimals: split[1],
     };
-  }, [profile]);
+  }, [balance]);
 
   const formattedProfit = useMemo(() => {
     const formatted = formatPrice(profit);
@@ -38,12 +38,16 @@ const Profile: React.FC = () => {
     };
   }, [profit]);
 
-  const _balanceLabelColor = useMemo(
+  const balanceLabelColor = useMemo(
     () =>
-      profile?.balance_active === 'real'
+      balanceMode === 'real'
         ? theme.colors.foreground.base
         : theme.colors.palette.orange.base,
-    [profile, theme],
+    [
+      balanceMode,
+      theme.colors.foreground.base,
+      theme.colors.palette.orange.base,
+    ],
   );
 
   const profitLabelColor = useMemo(
@@ -59,13 +63,21 @@ const Profile: React.FC = () => {
       <Flex>
         <Avatar />
 
-        <Info color={theme.colors.foreground.base /* balanceLabelColor */}>
+        <Info color={/* theme.colors.foreground.base */ balanceLabelColor}>
           <dt>Seu saldo</dt>
 
           <dd>
-            R$ •••••••
-            {/* {formattedBalance.main},
-            <span id="decimals">{formattedBalance.decimals}</span> */}
+            {/* R$ ••••••• */}
+
+            {!isProfileLoading ? (
+              <>
+                {`${formattedBalance.main},`}
+
+                <span id="decimals">{formattedBalance.decimals}</span>
+              </>
+            ) : (
+              <Skeleton height={22} width={132} />
+            )}
           </dd>
         </Info>
 
@@ -91,6 +103,4 @@ const Profile: React.FC = () => {
       />
     </Container>
   );
-};
-
-export default Profile;
+}

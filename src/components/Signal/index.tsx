@@ -1,27 +1,25 @@
 import React, { useContext, useMemo } from 'react';
 
-import { FiAlertCircle } from 'react-icons/fi';
-
 import { format, parseISO } from 'date-fns';
+import { FiAlertCircle } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
 import galeImg from '@/assets/gale.png';
-import { useSignals } from '@/context/signals';
-import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
-import formatPrice from '@/utils/formatPrice';
-
-import Tooltip from '../Tooltip';
+import { Tooltip } from '@/components/Tooltip';
+import { useSignals } from '@/context/SignalsContext';
+import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
+import { formatPrice } from '@/utils/formatPrice';
 
 import { Container, Label, GaleImage } from './styles';
 
 interface ISignalProps {
-  data: ISignalWithStatus;
+  data: SignalWithStatus;
   onCancel(): void;
   onResume(): void;
 }
 
-const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
+export function Signal({ data, onCancel, onResume }: ISignalProps) {
   const theme = useContext(ThemeContext);
 
   const { isSignalAvailable, hasSignalResult } = useSignals();
@@ -29,9 +27,9 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
   const formattedData = useMemo(() => {
     return {
       date: format(parseISO(data.date), 'HH:mm'),
-      currency: data.currency.toUpperCase(),
+      currency: data.active.toUpperCase(),
       expiration: data.expiration.toUpperCase(),
-      operation: data.operation.toUpperCase(),
+      operation: data.direction.toUpperCase(),
     };
   }, [data]);
 
@@ -41,13 +39,13 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
   );
 
   const activeLabelWidth = useMemo(
-    () => (data.currency.includes('OTC') ? theme.sizes[32] : theme.sizes[20]),
-    [data.currency, theme.sizes],
+    () => (data.active.includes('OTC') ? theme.sizes[32] : theme.sizes[20]),
+    [data.active, theme.sizes],
   );
 
   const shouldShowMartingales = useMemo(
-    () => data.status === 'win' && data.result?.martingales > 0,
-    [data.result?.martingales, data.status],
+    () => data.status !== 'loss' && data.result?.martingales > 0,
+    [data.result, data.status],
   );
 
   const formattedProfit = useMemo(
@@ -99,6 +97,6 @@ const Signal: React.FC<ISignalProps> = ({ data, onCancel, onResume }) => {
       )}
     </Container>
   );
-};
+}
 
 export default Signal;

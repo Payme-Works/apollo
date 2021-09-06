@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
 
-import Badge from '@/components/Badge';
-import Button from '@/components/Button';
-import { useRobot } from '@/context/robot';
+import { Badge } from '@/components/Badge';
+import { Button } from '@/components/Button';
+import { useRobot } from '@/context/RobotContext';
 
 import { Container, Content } from './styles';
 
-const Status: React.FC = () => {
+export function Status() {
   const [error, setError] = useState<string>();
 
   const { isRunning, isLoading, start, stop } = useRobot();
@@ -61,6 +61,4 @@ const Status: React.FC = () => {
       </Content>
     </Container>
   );
-};
-
-export default Status;
+}

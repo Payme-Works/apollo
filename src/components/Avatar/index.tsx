@@ -4,12 +4,10 @@ import { FaUserAlt } from 'react-icons/fa';
 
 import { Container } from './styles';
 
-const Avatar: React.FC = () => {
+export function Avatar() {
   return (
     <Container>
       <FaUserAlt />
     </Container>
   );
-};
-
-export default Avatar;
+}

@@ -1,22 +1,18 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactNode, useContext, useState } from 'react';
 
 import { FiX } from 'react-icons/fi';
 import { useTransition } from 'react-spring';
-
 import { ThemeContext } from 'styled-components';
 
 import { Container } from './styles';
 
-interface IBadgeProps {
+interface BadgeProps {
   closeable?: boolean;
   onClose(): void;
+  children: ReactNode;
 }
 
-const Badge: React.FC<IBadgeProps> = ({
-  children,
-  closeable = false,
-  onClose,
-}) => {
+export function Badge({ children, closeable = false, onClose }: BadgeProps) {
   const theme = useContext(ThemeContext);
 
   const [isOpen, setIsOpen] = useState(true);
@@ -57,6 +53,4 @@ const Badge: React.FC<IBadgeProps> = ({
       ))}
     </>
   );
-};
-
-export default Badge;
+}

@@ -32,111 +32,117 @@ export type InputHandlerProps =
   | NumberFormatInputHandleProps
   | CurrencyInputHandleProps;
 
-const InputHandler: React.ForwardRefRenderFunction<
-  HTMLInputElement,
-  InputHandlerProps
-> = (
-  { variant = 'native', onChangeValue, onFocus, onBlur, defaultValue, ...rest },
-  ref,
-) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [currencyValue, setCurrencyValue] = useState(defaultValue);
-
-  const handleInputFocus = useCallback(
-    (event: any) => {
-      setIsFocused(true);
-
-      if (onFocus) {
-        onFocus(event);
-      }
+export const InputHandler = forwardRef<HTMLInputElement, InputHandlerProps>(
+  (
+    {
+      variant = 'native',
+      onChangeValue,
+      onFocus,
+      onBlur,
+      defaultValue,
+      ...rest
     },
-    [onFocus],
-  );
+    ref,
+  ) => {
+    const [isFocused, setIsFocused] = useState(false);
+    const [currencyValue, setCurrencyValue] = useState(defaultValue);
 
-  const handleInputBlur = useCallback(
-    (event: any) => {
-      setIsFocused(false);
+    const handleInputFocus = useCallback(
+      (event: any) => {
+        setIsFocused(true);
 
-      if (onBlur) {
-        onBlur(event);
+        if (onFocus) {
+          onFocus(event);
+        }
+      },
+      [onFocus],
+    );
+
+    const handleInputBlur = useCallback(
+      (event: any) => {
+        setIsFocused(false);
+
+        if (onBlur) {
+          onBlur(event);
+        }
+      },
+      [onBlur],
+    );
+
+    useEffect(() => {
+      const refAsAny = ref as any;
+
+      if (variant === 'currency' && refAsAny.current) {
+        refAsAny.current.theInput.onfocus = handleInputFocus;
+        refAsAny.current.theInput.onblur = handleInputBlur;
       }
-    },
-    [onBlur],
-  );
+    }, [handleInputBlur, handleInputFocus, ref, variant]);
 
-  useEffect(() => {
-    const refAsAny = ref as any;
+    const renderVariantComponent = useMemo(() => {
+      if (variant === 'currency') {
+        return (
+          <CurrencyInput
+            ref={ref}
+            decimalSeparator=","
+            onChangeEvent={(_event, _masked, value: number) => {
+              setCurrencyValue(value);
 
-    if (variant === 'currency' && refAsAny.current) {
-      refAsAny.current.theInput.onfocus = handleInputFocus;
-      refAsAny.current.theInput.onblur = handleInputBlur;
-    }
-  }, [handleInputBlur, handleInputFocus, ref, variant]);
+              if (currencyValue) {
+                onChangeValue(value as never);
+              }
+            }}
+            thousandSeparator="."
+            value={currencyValue}
+          />
+        );
+      }
 
-  const renderVariantComponent = useMemo(() => {
-    if (variant === 'currency') {
-      return (
-        <CurrencyInput
-          ref={ref}
-          decimalSeparator=","
-          onChangeEvent={(_event, _masked, value: number) => {
-            setCurrencyValue(value);
-
-            if (currencyValue) {
-              onChangeValue(value as never);
+      if (variant === 'number-format') {
+        return (
+          <NumberFormat
+            allowedDecimalSeparators={[',', '.']}
+            decimalScale={2}
+            decimalSeparator=","
+            defaultValue={Number(defaultValue)}
+            thousandSeparator="."
+            {...(rest as NumberFormatProps)}
+            getInputRef={(numberFormatInputRef: HTMLInputElement) => {
+              (ref as any).current = numberFormatInputRef; // eslint-disable-line no-param-reassign
+            }}
+            onBlur={handleInputBlur}
+            onFocus={handleInputFocus}
+            onValueChange={({ floatValue }) =>
+              onChangeValue(floatValue as never)
             }
-          }}
-          thousandSeparator="."
-          value={currencyValue}
-        />
-      );
-    }
+          />
+        );
+      }
 
-    if (variant === 'number-format') {
       return (
-        <NumberFormat
-          allowedDecimalSeparators={[',', '.']}
-          decimalScale={2}
-          decimalSeparator=","
-          defaultValue={Number(defaultValue)}
-          thousandSeparator="."
-          {...(rest as NumberFormatProps)}
-          getInputRef={(numberFormatInputRef: HTMLInputElement) => {
-            (ref as any).current = numberFormatInputRef; // eslint-disable-line no-param-reassign
-          }}
+        <input
+          {...rest}
+          ref={ref}
+          defaultValue={defaultValue}
           onBlur={handleInputBlur}
+          onChange={event => onChangeValue(event.target.value as never)}
           onFocus={handleInputFocus}
-          onValueChange={({ floatValue }) => onChangeValue(floatValue as never)}
         />
       );
-    }
+    }, [
+      currencyValue,
+      defaultValue,
+      handleInputBlur,
+      handleInputFocus,
+      onChangeValue,
+      ref,
+      rest,
+      variant,
+    ]);
 
     return (
-      <input
-        {...rest}
-        ref={ref}
-        defaultValue={defaultValue}
-        onBlur={handleInputBlur}
-        onChange={event => onChangeValue(event.target.value as never)}
-        onFocus={handleInputFocus}
-      />
+      <Container id="input-handler" isFocused={isFocused}>
+        {renderVariantComponent}
+      </Container>
     );
-  }, [
-    currencyValue,
-    defaultValue,
-    handleInputBlur,
-    handleInputFocus,
-    onChangeValue,
-    ref,
-    rest,
-    variant,
-  ]);
-
-  return (
-    <Container id="input-handler" isFocused={isFocused}>
-      {renderVariantComponent}
-    </Container>
-  );
-};
-
-export default forwardRef(InputHandler);
+  },
+);

@@ -1,0 +1,1 @@
+{"version":3,"file":"getExpirationPeriodTime.d.ts","sourceRoot":"","sources":["../../../../lib/utils/getExpirationPeriodTime.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,UAAU,CAAA;AAE3C,aAAK,IAAI,GAAG,cAAc,GAAG,SAAS,GAAG,SAAS,GAAG,OAAO,CAAA;AAc5D,wBAAgB,uBAAuB,CACrC,gBAAgB,EAAE,gBAAgB,EAClC,IAAI,GAAE,IAAgB,GACrB,MAAM,CAYR"}

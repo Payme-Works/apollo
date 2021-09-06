@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { Container, Label, Hint } from './styles';
 
 interface IFormLabel {
   hint?: string;
+  children: ReactNode;
 }
 
-const FormLabel: React.FC<IFormLabel> = ({ hint, children }) => {
+export function FormLabel({ hint, children }: IFormLabel) {
   return (
     <Container id="form-label">
       <Label>{children}</Label>
@@ -14,6 +15,4 @@ const FormLabel: React.FC<IFormLabel> = ({ hint, children }) => {
       {hint && <Hint>{hint}</Hint>}
     </Container>
   );
-};
-
-export default FormLabel;
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"Request.d.ts","sourceRoot":"","sources":["../../../../../lib/websocket/events/Request.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,aAAa,CAAA;AAE9C,8BAAsB,OAAO,CAAC,OAAO,GAAG,GAAG,EAAE,IAAI,GAAG,SAAS,CAC3D,YAAW,gBAAgB,CAAC,OAAO,EAAE,IAAI,CAAC;IAC1C,aAAoB,IAAI,IAAI,MAAM,CAAA;aAElB,KAAK,CAAC,IAAI,EAAE,IAAI,GAAG,OAAO,CAAC,OAAO,CAAC;CACpD"}

@@ -1,4 +1,4 @@
-export default function getRandomInt(min: number, max: number): number {
+export function getRandomInt(min: number, max: number): number {
   const minCeil = Math.ceil(min);
   const maxFloor = Math.floor(max);
 

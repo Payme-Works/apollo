@@ -2,7 +2,7 @@ import { DefaultTheme } from 'styled-components';
 
 import defaultTheme from './default';
 
-const darkTheme: DefaultTheme = {
+export const darkTheme: DefaultTheme = {
   ...defaultTheme,
   colors: {
     background: {
@@ -10,6 +10,7 @@ const darkTheme: DefaultTheme = {
       'accent-1': '#111111',
       'accent-2': '#333333',
       'accent-3': '#444444',
+      'accent-4': '#555555',
     },
     foreground: {
       base: '#FFFFFF',
@@ -46,5 +47,3 @@ const darkTheme: DefaultTheme = {
     },
   },
 };
-
-export default darkTheme;

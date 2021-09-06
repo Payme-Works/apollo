@@ -49,6 +49,7 @@
     "no-async-promise-executor": "off",
     "no-underscore-dangle": "off",
     "no-await-in-loop": "off",
+    "no-useless-constructor": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-use-before-define": "error",
@@ -103,15 +104,14 @@
       {
         "newlinesBetween": "always",
         "groups": [
-          "/^react$/", // "react" module always at the first line
-          "/^react/",
+          "/^react$/",
           "module",
           "/^@config$/",
           "/^@\//",
           "parent",
           "sibling",
           "index",
-          "/^./styles$/" // "./styles" import always at last line
+          "/^./styles$/"
         ],
         "alphabetize": {
           "order": "asc",

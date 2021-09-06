@@ -1,31 +1,30 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FiBarChart2, FiClock } from 'react-icons/fi';
-
 import { FormHandles, Scope } from '@unform/core';
 import { Form } from '@unform/web';
+import { FiBarChart2, FiClock } from 'react-icons/fi';
 import * as Yup from 'yup';
 
-import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
-import FormControl from '@/components/Form/FormControl';
-import FormLabel from '@/components/Form/FormLabel';
-import Input from '@/components/Form/Input';
-import Select, { ISelectValue } from '@/components/Form/Select';
-import Switch from '@/components/Form/Switch';
+import { FooterBox, IFooterBoxProps } from '@/components/FooterBox';
+import { FormControl } from '@/components/Form/FormControl';
+import { FormLabel } from '@/components/Form/FormLabel';
+import { Input } from '@/components/Form/Input';
+import { Select, ISelectValue } from '@/components/Form/Select';
+import { Switch } from '@/components/Form/Switch';
 import { useConfig } from '@/hooks/useConfig';
-import getValidationErrors from '@/utils/getValidationErrors';
+import { getValidationErrors } from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
 
 interface IFiltersFormData {
   expirations: ISelectValue[];
   parallelOrders: boolean;
-  operationType: ISelectValue;
+  instrumentType: ISelectValue;
   maximumPayments: string;
   minimumPayments: string;
 }
 
-const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
+export function Filters({ ...rest }: Partial<IFooterBoxProps>) {
   const formRef = useRef<FormHandles>(null);
 
   const [
@@ -68,7 +67,7 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
     [],
   );
 
-  const operationTypeOptions = useMemo(
+  const instrumentTypeOptions = useMemo(
     () => [
       {
         value: 'all',
@@ -106,13 +105,13 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
               }),
             )
             .min(1, 'Mínimo de 1 expiração obrigatória'),
-          operationType: Yup.object()
+          instrumentType: Yup.object()
             .shape({
               value: Yup.string()
-                .oneOf(operationTypeOptions.map(item => item.value))
+                .oneOf(instrumentTypeOptions.map(item => item.value))
                 .required(),
               label: Yup.string()
-                .oneOf(operationTypeOptions.map(item => item.label))
+                .oneOf(instrumentTypeOptions.map(item => item.label))
                 .required(),
             })
             .required('Tipo de operação obrigatório'),
@@ -163,7 +162,7 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
         setTimeout(() => setIsButtonLoading(false), 500);
       }
     },
-    [expirationOptions, operationTypeOptions, setConfig],
+    [expirationOptions, instrumentTypeOptions, setConfig],
   );
 
   const handleChange = useCallback(() => {
@@ -205,11 +204,11 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
           <FormLabel>Tipo de operação</FormLabel>
 
           <Select
-            defaultValue={filters.operationType}
+            defaultValue={filters.instrumentType}
             icon={FiBarChart2}
-            name="operationType"
+            name="instrumentType"
             onChange={handleChange}
-            options={operationTypeOptions}
+            options={instrumentTypeOptions}
           />
         </FormControl>
 
@@ -327,6 +326,4 @@ const Filters: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
       </Form>
     </FooterBox>
   );
-};
-
-export default Filters;
+}

@@ -1,18 +1,17 @@
 import React, { useCallback, useRef, useState } from 'react';
 
-import { FiClock } from 'react-icons/fi';
-
 import { FormHandles, Scope } from '@unform/core';
 import { Form } from '@unform/web';
+import { FiClock } from 'react-icons/fi';
 import * as Yup from 'yup';
 
-import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
-import FormControl from '@/components/Form/FormControl';
-import FormLabel from '@/components/Form/FormLabel';
-import Input from '@/components/Form/Input';
-import Switch from '@/components/Form/Switch';
+import { FooterBox, IFooterBoxProps } from '@/components/FooterBox';
+import { FormControl } from '@/components/Form/FormControl';
+import { FormLabel } from '@/components/Form/FormLabel';
+import { Input } from '@/components/Form/Input';
+import { Switch } from '@/components/Form/Switch';
 import { useConfig } from '@/hooks/useConfig';
-import getValidationErrors from '@/utils/getValidationErrors';
+import { getValidationErrors } from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
 
@@ -24,7 +23,7 @@ interface IEconomicEventsFormData {
   };
 }
 
-const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
+export function EconomicEvents({ ...rest }: Partial<IFooterBoxProps>) {
   const formRef = useRef<FormHandles>(null);
 
   const [
@@ -196,6 +195,6 @@ const EconomicEvents: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
       </Form>
     </FooterBox>
   );
-};
+}
 
 export default EconomicEvents;

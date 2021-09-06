@@ -2,19 +2,23 @@ import React, { useCallback } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
-import Button from '@/components/Button';
-import { useAuthentication } from '@/context/authentication';
+import { Button } from '@/components/Button';
+import { useAuth } from '@/context/AuthContext';
+import { useHemes } from '@/context/HemesContext';
 
-const SignIn: React.FC = () => {
+export function SignIn() {
   const history = useHistory();
 
-  const { logIn } = useAuthentication();
+  const { logIn } = useAuth();
+  const { logInHemes } = useHemes();
 
   const handleLogIn = useCallback(async () => {
     await logIn();
 
+    await logInHemes();
+
     history.push('/app');
-  }, [history, logIn]);
+  }, [history, logIn, logInHemes]);
 
   return (
     <div>
@@ -23,6 +27,4 @@ const SignIn: React.FC = () => {
       <Button onClick={handleLogIn}>Entrar</Button>
     </div>
   );
-};
-
-export default SignIn;
+}

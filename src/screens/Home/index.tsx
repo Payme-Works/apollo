@@ -1,24 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { useBrokerAuthentication } from '@/context/broker-authentication';
+import { Profile } from './Profile';
+import { SignalsList } from './SignalsList';
+import { Status } from './Status';
 
-import Profile from './Profile';
-import SignalsList from './SignalsList';
-import Status from './Status';
-
-const Home: React.FC = () => {
-  const { isBrokerLoggedIn, isBrokerLoggingIn, logInBroker } =
-    useBrokerAuthentication();
-
-  useEffect(() => {
-    if (isBrokerLoggedIn) {
-      return;
-    }
-
-    logInBroker();
-  }, [isBrokerLoggedIn, logInBroker]);
-
-  return !isBrokerLoggingIn ? (
+export function Home() {
+  return (
     <>
       <Profile />
 
@@ -26,9 +13,5 @@ const Home: React.FC = () => {
 
       <SignalsList />
     </>
-  ) : (
-    <div>Logging in...</div>
   );
-};
-
-export default Home;
+}

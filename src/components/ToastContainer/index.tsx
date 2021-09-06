@@ -3,7 +3,7 @@ import React, { memo, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useTransition } from 'react-spring';
 
-import { ToastMessage } from '../../context/toast';
+import { ToastMessage } from '../../context/ToastContext';
 
 import Toast from './Toast';
 

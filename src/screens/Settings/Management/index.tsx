@@ -1,21 +1,21 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { FiDollarSign } from 'react-icons/fi';
-
 import { FormHandles, Scope } from '@unform/core';
 import { Form } from '@unform/web';
+import { FiDollarSign } from 'react-icons/fi';
 import * as Yup from 'yup';
 
-import FooterBox, { IFooterBoxProps } from '@/components/FooterBox';
-import FormControl from '@/components/Form/FormControl';
-import FormLabel from '@/components/Form/FormLabel';
-import Input from '@/components/Form/Input';
-import SelectableInput, {
+import { FooterBox, IFooterBoxProps } from '@/components/FooterBox';
+import { FormControl } from '@/components/Form/FormControl';
+import { FormLabel } from '@/components/Form/FormLabel';
+import { Input } from '@/components/Form/Input';
+import {
+  SelectableInput,
   ISelectableInputValue,
 } from '@/components/Form/SelectableInput';
-import Switch from '@/components/Form/Switch';
+import { Switch } from '@/components/Form/Switch';
 import { useConfig } from '@/hooks/useConfig';
-import getValidationErrors from '@/utils/getValidationErrors';
+import { getValidationErrors } from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
 
@@ -29,7 +29,7 @@ interface IManagementsFormData {
   stopLoss: ISelectableInputValue;
 }
 
-const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
+export function Management({ ...rest }: Partial<IFooterBoxProps>) {
   const formRef = useRef<FormHandles>(null);
 
   const [
@@ -309,6 +309,4 @@ const Management: React.FC<Partial<IFooterBoxProps>> = ({ ...rest }) => {
       </Form>
     </FooterBox>
   );
-};
-
-export default Management;
+}

@@ -69,6 +69,5 @@ export const Window = styled.div`
   ${({ theme }) => css`
     background: ${theme.colors.background.base};
     border: 1px solid ${theme.transparencies[10](theme.colors.primary.base)};
-    border-radius: 8px;
   `}
 `;

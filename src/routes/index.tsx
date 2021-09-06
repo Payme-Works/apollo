@@ -1,18 +1,17 @@
 import React from 'react';
 
+import { AnimatePresence } from 'framer-motion';
 import { Switch, useLocation } from 'react-router-dom';
 
-import { AnimatePresence } from 'framer-motion';
+import { Home } from '@/screens/Home';
+import { Settings } from '@/screens/Settings';
+import { SignIn } from '@/screens/SignIn';
 
-import Home from '@/screens/Home';
-import Settings from '@/screens/Settings';
-import SignIn from '@/screens/SignIn';
-
-import Route from './Route';
+import { Route } from './Route';
 
 import { Container } from './styles';
 
-const Routes: React.FC = () => {
+export function Routes() {
   const location = useLocation();
 
   return (
@@ -28,6 +27,4 @@ const Routes: React.FC = () => {
       </AnimatePresence>
     </Container>
   );
-};
-
-export default Routes;
+}

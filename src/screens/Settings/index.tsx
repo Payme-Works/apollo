@@ -2,17 +2,17 @@ import React, { useCallback } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
-import Button from '@/components/Button';
-import EconomicEvents from '@/screens/Settings/EconomicEvents';
+import { Button } from '@/components/Button';
 
-import Application from './Application';
-import Broker from './Broker';
-import Filters from './Filters';
-import Management from './Management';
+import { Application } from './Application';
+import { Broker } from './Broker';
+import { EconomicEvents } from './EconomicEvents';
+import { Filters } from './Filters';
+import { Management } from './Management';
 
 import { Container } from './styles';
 
-const Settings: React.FC = () => {
+export function Settings() {
   const history = useHistory();
 
   const handleGoBack = useCallback(() => {
@@ -44,6 +44,4 @@ const Settings: React.FC = () => {
       </button>
     </Container>
   );
-};
-
-export default Settings;
+}

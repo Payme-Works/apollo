@@ -1,20 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { compareAsc, isAfter } from 'date-fns';
-import { compareDesc, parseISO } from 'date-fns/esm';
+import { compareAsc, isAfter, compareDesc, parseISO } from 'date-fns';
 
-import Signal from '@/components/Signal';
-import { useSignals } from '@/context/signals';
-import ISignalWithStatus from '@/interfaces/signal/ISignalWithStatus';
+import { Signal } from '@/components/Signal';
+import { useSignals } from '@/context/SignalsContext';
+import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
 
 import { Container } from './styles';
 
-const SignalsList: React.FC = () => {
+export function SignalsList() {
   const { signals, updateSignal, isSignalAvailable, hasSignalResult } =
     useSignals();
 
   const handleToggleSignalStatus = useCallback(
-    (signal: ISignalWithStatus, status: 'canceled' | 'waiting') => {
+    (signal: SignalWithStatus, status: 'canceled' | 'waiting') => {
       if (signal.status !== 'waiting' && signal.status !== 'canceled') {
         return;
       }
@@ -31,7 +30,7 @@ const SignalsList: React.FC = () => {
   );
 
   const sortedSignals = useMemo(() => {
-    const list: ISignalWithStatus[] = [];
+    const list: SignalWithStatus[] = [];
 
     list.push(
       ...signals
@@ -64,6 +63,4 @@ const SignalsList: React.FC = () => {
       ))}
     </Container>
   );
-};
-
-export default SignalsList;
+}
