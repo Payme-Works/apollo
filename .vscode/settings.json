@@ -7,5 +7,6 @@
     "unmaximize",
     "uuidv",
     "venv"
-  ]
+  ],
+  "jest.jestCommandLine": "yarn test"
 }

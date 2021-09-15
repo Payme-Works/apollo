@@ -1,0 +1,1 @@
+{"version":3,"file":"Heartbeat.d.ts","sourceRoot":"","sources":["../../../../../../lib/websocket/events/subscribers/Heartbeat.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,gBAAgB,CAAA;AAE/C,OAAO,EAAE,UAAU,EAAE,MAAM,eAAe,CAAA;AAE1C,qBAAa,mBAAoB,SAAQ,UAAU,CAAC,MAAM,CAAC;IACzD,IAAW,IAAI,IAAI,MAAM,CAExB;IAEM,MAAM,CAAC,KAAK,EAAE,cAAc,CAAC,MAAM,CAAC,GAAG,IAAI;CAGnD"}

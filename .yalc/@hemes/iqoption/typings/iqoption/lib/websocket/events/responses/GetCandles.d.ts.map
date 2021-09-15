@@ -1,0 +1,1 @@
+{"version":3,"file":"GetCandles.d.ts","sourceRoot":"","sources":["../../../../../../lib/websocket/events/responses/GetCandles.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,6BAA6B,CAAA;AAEpD,OAAO,EAAE,QAAQ,EAAE,MAAM,aAAa,CAAA;AAEtC,MAAM,WAAW,eAAe;IAC9B,OAAO,EAAE,MAAM,EAAE,CAAA;CAClB;AAED,qBAAa,kBAAmB,SAAQ,QAAQ,CAAC,eAAe,CAAC;IAC/D,IAAW,IAAI,IAAI,MAAM,CAExB;CACF"}
