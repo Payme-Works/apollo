@@ -60,7 +60,7 @@ export function HemesContextProvider({ children }) {
         IQOptionProvider,
       ).getProvider<BaseIQOptionProvider>();
 
-      provider.enableCorsBypass();
+      provider.enableCorsBypass('http://localhost:49981');
 
       const newHemes = await provider.logIn({
         email: String(process.env.IQ_OPTION_ACCOUNT_EMAIL),

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+import corsProxy from 'cors-anywhere';
 import {
   app,
   BrowserWindow,
@@ -23,6 +24,15 @@ let mainWindow: Electron.BrowserWindow | null;
 
 console.log("app.getPath('userData')");
 console.log(app.getPath('userData'));
+
+corsProxy
+  .createServer({
+    originWhitelist: [],
+    requireHeader: ['origin', 'x-requested-with'],
+  })
+  .listen(49981, '0.0.0.0', () => {
+    console.log('Running CORS Anywhere on localhost:49981');
+  });
 
 function createWindow() {
   const icon = nativeImage.createFromPath(`${app.getAppPath()}/build/icon.png`);

@@ -9,7 +9,7 @@ export interface LogInCredentials {
     password: string;
 }
 export interface BaseIQOptionProvider {
-    enableCorsBypass(): Promise<void>;
+    enableCorsBypass(server: string): Promise<void>;
     logIn(credentials: LogInCredentials): Promise<BaseIQOptionAccount>;
 }
 export interface PlaceDigitalOption {
