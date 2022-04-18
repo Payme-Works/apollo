@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import { FiAlertCircle } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { v4 as uuid } from 'uuid';
@@ -8,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 import galeImg from '@/assets/gale.png';
 import { Tooltip } from '@/components/Tooltip';
 import { useSignals } from '@/context/SignalsContext';
+import { useConfig } from '@/hooks/useConfig';
 import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
 import { formatPrice } from '@/utils/formatPrice';
 
@@ -24,14 +26,23 @@ export function Signal({ data, onCancel, onResume }: ISignalProps) {
 
   const { isSignalAvailable, hasSignalResult } = useSignals();
 
+  const [
+    {
+      current: { application },
+    },
+  ] = useConfig('robot');
+
   const formattedData = useMemo(() => {
+    const dateUTC = new Date(data.date);
+    const toZoneDate = utcToZonedTime(dateUTC, application.timezone.value);
+
     return {
-      date: format(parseISO(data.date), 'HH:mm'),
+      date: format(toZoneDate, 'HH:mm'),
       currency: data.active.toUpperCase(),
       expiration: data.expiration.toUpperCase(),
       operation: data.direction.toUpperCase(),
     };
-  }, [data]);
+  }, [application.timezone.value, data]);
 
   const isAvailable = useMemo(
     () => isSignalAvailable(data) && !hasSignalResult(data),

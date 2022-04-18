@@ -13,6 +13,8 @@ import { Switch } from '@/components/Form/Switch';
 import { useConfig } from '@/hooks/useConfig';
 import { getValidationErrors } from '@/utils/getValidationErrors';
 
+import timezones from './timezones.json';
+
 import { Flex } from './styles';
 
 interface IApplicationFormData {
@@ -35,15 +37,11 @@ export function Application({ ...rest }: Partial<IFooterBoxProps>) {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
-  const timezoneOptions = useMemo(
-    (): ISelectValue[] => [
-      {
-        value: 'America/Sao_Paulo',
-        label: 'Brasil, São Paulo',
-      },
-    ],
-    [],
-  );
+  const times = timezones.sort((a, b) => {
+    return a.value.localeCompare(b.value);
+  });
+
+  const timezoneOptions = useMemo((): ISelectValue[] => times, [times]);
 
   const themeOptions = useMemo(
     (): ISelectValue[] => [

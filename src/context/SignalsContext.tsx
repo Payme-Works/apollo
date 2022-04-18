@@ -21,6 +21,7 @@ import {
   addMinutes,
   parse,
 } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import { setMinutes } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
@@ -131,7 +132,6 @@ export function SignalsContextProvider({ children }) {
           M1;14:17;EURGBP;CALL
           M1;14:37;GBPJPY;CALL
           M1;14:47;AUDCAD;CALL
-
           M5;00:50;EURGBP;PUT
           M5;03:10;EURUSD;CALL
           M5;03:20;EURGBP;CALL
@@ -162,10 +162,10 @@ export function SignalsContextProvider({ children }) {
             const values = line.trim().replace(/ {2}/g, ' ').split(';');
 
             const expiration = values[0].toLowerCase() as Expiration;
-            const date = parse(values[1], 'HH:mm', fromDate);
+            const dateSaoPaulo = parse(values[1], 'HH:mm', fromDate);
+            const date = zonedTimeToUtc(dateSaoPaulo, 'America/Sao_Paulo');
             const active = values[2] as Active;
             const direction = values[3].toLowerCase() as Direction;
-
             date.setSeconds(0);
 
             return {
