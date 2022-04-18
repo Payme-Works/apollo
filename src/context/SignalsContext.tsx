@@ -7,6 +7,7 @@ import React, {
   useMemo,
 } from 'react';
 
+import { Active } from '@hemes/iqoption';
 import {
   addDays,
   isBefore,
@@ -14,21 +15,19 @@ import {
   subSeconds,
   parseISO,
   format,
-  isToday,
   isAfter,
   startOfDay,
   addHours,
   addMinutes,
+  parse,
 } from 'date-fns';
 import { setMinutes } from 'date-fns/esm';
 import { assign } from 'lodash';
 import { PartialDeep } from 'type-fest';
 import { v4 as uuid } from 'uuid';
 
-import { useWebSocket } from '@/hooks/useWebSocket';
-import { KoreSignal, Signal } from '@/interfaces/signals/Signal';
+import { Direction, Expiration, Signal } from '@/interfaces/signals/Signal';
 import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
-import { getSignalsFromDate } from '@/services/kore/signals/GetSignalsFromDateService';
 
 type UpdateSignalData = PartialDeep<Omit<SignalWithStatus, 'id'>>;
 
@@ -52,61 +51,61 @@ export function SignalsContextProvider({ children }) {
     startOfDay(Date.now()),
   );
 
-  const formattedDate = useMemo(
+  const _formattedDate = useMemo(
     () => format(dateForSignals, 'yyyy-M-d'),
     [dateForSignals],
   );
 
-  if (!DEBUG_SIGNALS) {
-    useWebSocket(`signals:premium:${formattedDate}`, socket => {
-      socket.on('new', (newSignals: KoreSignal[]) => {
-        const mapNewSignals = newSignals.map<SignalWithStatus>(signal => ({
-          id: signal.id,
-          active: signal.currency.replace('/', '') as any,
-          date: signal.date,
-          direction: signal.operation,
-          expiration: signal.expiration,
-          status: 'waiting',
-        }));
+  // if (!DEBUG_SIGNALS) {
+  //   useWebSocket(`signals:premium:${formattedDate}`, socket => {
+  //     socket.on('new', (newSignals: KoreSignal[]) => {
+  //       const mapNewSignals = newSignals.map<SignalWithStatus>(signal => ({
+  //         id: signal.id,
+  //         active: signal.currency.replace('/', '') as any,
+  //         date: signal.date,
+  //         direction: signal.operation,
+  //         expiration: signal.expiration,
+  //         status: 'waiting',
+  //       }));
 
-        if (isToday(dateForSignals)) {
-          setSignals(state => [...state, ...mapNewSignals]);
-        } else {
-          setSignals(mapNewSignals);
-        }
-      });
+  //       if (isToday(dateForSignals)) {
+  //         setSignals(state => [...state, ...mapNewSignals]);
+  //       } else {
+  //         setSignals(mapNewSignals);
+  //       }
+  //     });
 
-      socket.on('update', (newSignal: KoreSignal) => {
-        setSignals(state => {
-          const newSignals = [...state];
+  //     socket.on('update', (newSignal: KoreSignal) => {
+  //       setSignals(state => {
+  //         const newSignals = [...state];
 
-          const signalIndex = newSignals.findIndex(
-            signal => signal.id === newSignal.id,
-          );
+  //         const signalIndex = newSignals.findIndex(
+  //           signal => signal.id === newSignal.id,
+  //         );
 
-          newSignals[signalIndex] = {
-            ...assign(newSignals[signalIndex], {
-              id: newSignal.id,
-              active: newSignal.currency.replace('/', '') as any,
-              date: newSignal.date,
-              direction: newSignal.operation,
-              expiration: newSignal.expiration,
-            }),
-          };
+  //         newSignals[signalIndex] = {
+  //           ...assign(newSignals[signalIndex], {
+  //             id: newSignal.id,
+  //             active: newSignal.currency.replace('/', '') as any,
+  //             date: newSignal.date,
+  //             direction: newSignal.operation,
+  //             expiration: newSignal.expiration,
+  //           }),
+  //         };
 
-          return newSignals;
-        });
-      });
-    });
-  }
+  //         return newSignals;
+  //       });
+  //     });
+  //   });
+  // }
 
   useEffect(() => {
     async function loadSignals() {
-      async function getSignals(date: Date): Promise<Signal[]> {
-        const data = {
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          day: date.getDate(),
+      async function getSignals(fromDate: Date): Promise<Signal[]> {
+        /* const data = {
+          year: fromDate.getFullYear(),
+          month: fromDate.getMonth() + 1,
+          day: fromDate.getDate(),
         };
 
         const [m1, m5, m15, m30, h1] = await Promise.all([
@@ -119,7 +118,67 @@ export function SignalsContextProvider({ children }) {
 
         const joinSignals = [...m1, ...m5, ...m15, ...m30, ...h1];
 
-        return joinSignals;
+        return joinSignals; */
+
+        const signalsTemplate = `
+          M1;04:27;GBPUSD;CALL
+          M1;05:37;GBPUSD;PUT️
+          M1;05:47;AUDCAD;PUT
+          M1;09:32;AUDJPY;CALL
+          M1;10:02;AUDJPY;CALL
+          M1;10:37;AUDCAD;CALL
+          M1;11:57;AUDJPY;PUT
+          M1;14:17;EURGBP;CALL
+          M1;14:37;GBPJPY;CALL
+          M1;14:47;AUDCAD;CALL
+
+          M5;00:50;EURGBP;PUT
+          M5;03:10;EURUSD;CALL
+          M5;03:20;EURGBP;CALL
+          M5;04:15;EURJPY;CALL️
+          M5;04:35;GBPJPY;PUT
+          M5;05:00;USDCHF;PUT️
+          M5;05:45;GBPUSD;PUT
+          M5;06:05;GBPJPY;CALL
+          M5;06:10;EURGBP;PUT
+          M5;06:30;AUDUSD;CALL
+          M5;07:15;EURCHF;PUT
+          M5;07:25;EURGBP;PUT️
+          M5;07:35;EURUSD;PUT
+          M5;10:25;AUDUSD;CALL
+          M5;10:50;GBPJPY;CALL
+          M5;11:00;AUDCAD;CALL
+          M5;11:50;GBPJPY;CALL
+          M5;14:00;AUDJPY;PUT
+          M5;14:15;EURJPY;CALL
+          M5;15:30;AUDJPY;CALL
+        `;
+
+        const parsedSignals = signalsTemplate
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length)
+          .map<Signal>(line => {
+            const values = line.trim().replace(/ {2}/g, ' ').split(';');
+
+            const expiration = values[0].toLowerCase() as Expiration;
+            const date = parse(values[1], 'HH:mm', fromDate);
+            const active = values[2] as Active;
+            const direction = values[3].toLowerCase() as Direction;
+
+            date.setSeconds(0);
+
+            return {
+              id: uuid(),
+              active,
+              date: date.toISOString(),
+              expiration,
+              direction,
+              status: 'waiting',
+            };
+          });
+
+        return parsedSignals;
       }
 
       if (!DEBUG_SIGNALS) {

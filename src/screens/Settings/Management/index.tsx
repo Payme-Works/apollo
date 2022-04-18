@@ -250,9 +250,6 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
                 allowNegative={false}
                 decimalScale={0}
                 defaultValue={management.martingale.amount}
-                isAllowed={({ floatValue }) =>
-                  !floatValue || (floatValue >= 0 && floatValue <= 3)
-                }
                 name="amount"
                 onChange={handleChange}
                 variant="number-format"

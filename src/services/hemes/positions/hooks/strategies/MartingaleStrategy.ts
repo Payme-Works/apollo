@@ -70,15 +70,27 @@ export function useMartingaleStrategy(
             priceDifference *= -1;
           }
 
+          console.log('positionState', positionState);
+
           if (
             open_position.data.expiration_period !== 'm1' &&
             priceDifference > 0.0001
           ) {
+            console.log('MartingaleStrategy', 1);
+            console.log(
+              position.instrument_type,
+              position.raw_event.instrument_dir || position.raw_event.direction,
+              {
+                open: position.open_quote,
+                close: positionState.current_price,
+              },
+            );
+
             result = getCandleResult(
               position.instrument_type,
               position.raw_event.instrument_dir || position.raw_event.direction,
               {
-                open: positionState.open_price,
+                open: position.open_quote,
                 close: positionState.current_price,
               },
             );
@@ -88,16 +100,30 @@ export function useMartingaleStrategy(
               timeout: 10000,
             });
 
+            console.log('MartingaleStrategy', 2);
+            console.log(
+              closedPosition.instrument_type,
+              closedPosition.raw_event.instrument_dir ||
+                closedPosition.raw_event.direction,
+              {
+                open: position.open_quote,
+                close: closedPosition.close_quote,
+              },
+            );
+
             result = getCandleResult(
               closedPosition.instrument_type,
               closedPosition.raw_event.instrument_dir ||
                 closedPosition.raw_event.direction,
               {
-                open: closedPosition.open_quote,
+                open: position.open_quote,
                 close: closedPosition.close_quote,
               },
             );
           }
+
+          console.log('result', result);
+          console.log('martingale', _current, max);
 
           if (result === 'loss' && max > 0 && _current < max) {
             const { price: lastPositionPrice } = open_position.data;
