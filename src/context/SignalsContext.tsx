@@ -122,36 +122,37 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;04:27;GBPUSD;CALL
-          M1;05:37;GBPUSD;PUT️
-          M1;05:47;AUDCAD;PUT
-          M1;09:32;AUDJPY;CALL
-          M1;10:02;AUDJPY;CALL
-          M1;10:37;AUDCAD;CALL
-          M1;11:57;AUDJPY;PUT
-          M1;14:17;EURGBP;CALL
-          M1;14:37;GBPJPY;CALL
-          M1;14:47;AUDCAD;CALL
-          M5;00:50;EURGBP;PUT
-          M5;03:10;EURUSD;CALL
-          M5;03:20;EURGBP;CALL
-          M5;04:15;EURJPY;CALL️
-          M5;04:35;GBPJPY;PUT
-          M5;05:00;USDCHF;PUT️
-          M5;05:45;GBPUSD;PUT
-          M5;06:05;GBPJPY;CALL
-          M5;06:10;EURGBP;PUT
-          M5;06:30;AUDUSD;CALL
-          M5;07:15;EURCHF;PUT
-          M5;07:25;EURGBP;PUT️
-          M5;07:35;EURUSD;PUT
-          M5;10:25;AUDUSD;CALL
-          M5;10:50;GBPJPY;CALL
-          M5;11:00;AUDCAD;CALL
-          M5;11:50;GBPJPY;CALL
-          M5;14:00;AUDJPY;PUT
-          M5;14:15;EURJPY;CALL
-          M5;15:30;AUDJPY;CALL
+          M1;03:12;USDJPY;CALL
+          M1;04:32;BTCUSD;PUT
+          M1;05:32;AUDCAD;CALL
+          M1;07:42;USDJPY;CALL
+          M1;08:57;GBPJPY;PUT
+          M1;10:42;GBPJPY;PUT
+          M1;11:12;EURJPY;PUT
+          M1;11:37;AUDCAD;CALL
+          M1;13:32;AUDCAD;PUT
+          M1;13:57;EURJPY;CALL
+
+          M5;01:05;EURUSD;PUT
+          M5;02:50;AUDUSD;CALL
+          M5;02:55;EURUSD;PUT
+          M5;03:10;USDJPY;CALL️
+          M5;04:15;USDCAD;PUT
+          M5;04:50;EURGBP;PUT
+          M5;05:00;EURJPY;CALL
+          M5;07:40;USDJPY;CALL
+          M5;07:50;AUDJPY;PUT
+          M5;08:20;USDCAD;CALL
+          M5;08:55;GBPJPY;PUT
+          M5;09:40;AUDUSD;PUT
+          M5;09:40;EURJPY;CALL
+          M5;11:10;EURUSD;PUT
+          M5;11:35;AUDCAD;CALL
+          M5;12:20;EURJPY;PUT
+          M5;12:55;EURUSD;CALL
+          M5;13:30;AUDCAD;PUT️
+          M5;15:40;EURUSD;PUT
+          M5;16:00;EURJPY;CALL
         `;
 
         const parsedSignals = signalsTemplate
