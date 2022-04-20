@@ -122,37 +122,37 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;03:12;USDJPY;CALL
+          M1;02:17;ETHUSD;PUT
+          M1;04:12;EURGBP;PUT
           M1;04:32;BTCUSD;PUT
-          M1;05:32;AUDCAD;CALL
-          M1;07:42;USDJPY;CALL
-          M1;08:57;GBPJPY;PUT
-          M1;10:42;GBPJPY;PUT
-          M1;11:12;EURJPY;PUT
-          M1;11:37;AUDCAD;CALL
-          M1;13:32;AUDCAD;PUT
-          M1;13:57;EURJPY;CALL
-
-          M5;01:05;EURUSD;PUT
-          M5;02:50;AUDUSD;CALL
-          M5;02:55;EURUSD;PUT
-          M5;03:10;USDJPY;CALL️
-          M5;04:15;USDCAD;PUT
-          M5;04:50;EURGBP;PUT
-          M5;05:00;EURJPY;CALL
-          M5;07:40;USDJPY;CALL
-          M5;07:50;AUDJPY;PUT
-          M5;08:20;USDCAD;CALL
-          M5;08:55;GBPJPY;PUT
-          M5;09:40;AUDUSD;PUT
-          M5;09:40;EURJPY;CALL
-          M5;11:10;EURUSD;PUT
-          M5;11:35;AUDCAD;CALL
-          M5;12:20;EURJPY;PUT
-          M5;12:55;EURUSD;CALL
-          M5;13:30;AUDCAD;PUT️
-          M5;15:40;EURUSD;PUT
-          M5;16:00;EURJPY;CALL
+          M1;05:02;GBPJPY;CALL
+          M1;06:42;USDJPY;CALL
+          M1;09:17;USDCAD;CALL️
+          M1;09:47;AUDUSD;PUT️
+          M1;11:07;AUDCAD;PUT
+          M1;12:22;EURJPY;PUT
+          M1;14:32;AUDJPY;CALL
+                                                                                                                                                                                    🕯05m ⏰5M de expiração
+          M5;00:25;EURUSD;PUT
+          M5;01:40;AUDUSD;CALL️
+          M5;03:35;USDCAD;PUT
+          M5;03:55;AUDUSD;PUT️
+          M5;04:10;EURGBP;PUT️
+          M5;05:00;GBPJPY;CALL️
+          M5;05:05;AUDJPY;CALL
+          M5;06:20;EURJPY;PUT
+          M5;06:40;USDJPY;CALL
+          M5;07:50;AUDJPY;CALL
+          M5;08:45;AUDJPY;CALL️
+          M5;09:15;USDCAD;CALL️
+          M5;09:40;USDCAD;CALL
+          M5;09:45;AUDUSD;PUT
+          M5;11:05;AUDCAD;PUT
+          M5;11:40;AUDJPY;PUT
+          M5;12:20;EURJPY;PUT️
+          M5;13:55;EURAUD;CALL
+          M5;14:40;AUDCAD;CALL
+          M5;15:55;EURAUD;PUT
         `;
 
         const parsedSignals = signalsTemplate
