@@ -38,16 +38,20 @@ export function SignalsList() {
         .sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date)))
         .filter(
           signal =>
-            isSignalAvailable(signal) ||
-            (hasSignalResult(signal) && signal.status !== 'expired'),
+            isSignalAvailable(signal) &&
+            hasSignalResult(signal) &&
+            signal.status !== 'expired',
         ),
     );
 
     list.push(
       ...signals
         .sort((a, b) => compareDesc(parseISO(a.date), parseISO(b.date)))
-        .filter(signal => !list.some(item => item.id === signal.id)),
+        .filter(signal => !list.some(item => item.id === signal.id))
+        .filter(signal => isSignalAvailable(signal)),
     );
+
+    list.sort((a, b) => compareDesc(parseISO(b.date), parseISO(a.date)));
 
     return list;
   }, [hasSignalResult, isSignalAvailable, signals]);
