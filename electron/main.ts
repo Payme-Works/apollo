@@ -46,8 +46,8 @@ function createWindow() {
     icon,
     minWidth: 512,
     minHeight: 556,
-    maxWidth: 616,
-    maxHeight: 664,
+    maxWidth: 1024,
+    maxHeight: 1024,
     frame: false,
     transparent: true,
     webPreferences: {
