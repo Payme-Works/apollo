@@ -132,7 +132,6 @@ export function SignalsContextProvider({ children }) {
           M1;11:07;AUDCAD;PUT
           M1;12:22;EURJPY;PUT
           M1;14:32;AUDJPY;CALL
-                                                                                                                                                                                    🕯05m ⏰5M de expiração
           M5;00:25;EURUSD;PUT
           M5;01:40;AUDUSD;CALL️
           M5;03:35;USDCAD;PUT
