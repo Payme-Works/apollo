@@ -122,36 +122,36 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;02:17;ETHUSD;PUT
-          M1;04:12;EURGBP;PUT
-          M1;04:32;BTCUSD;PUT
-          M1;05:02;GBPJPY;CALL
-          M1;06:42;USDJPY;CALL
-          M1;09:17;USDCAD;CALL️
-          M1;09:47;AUDUSD;PUT️
-          M1;11:07;AUDCAD;PUT
-          M1;12:22;EURJPY;PUT
-          M1;14:32;AUDJPY;CALL
-          M5;00:25;EURUSD;PUT
-          M5;01:40;AUDUSD;CALL️
-          M5;03:35;USDCAD;PUT
-          M5;03:55;AUDUSD;PUT️
-          M5;04:10;EURGBP;PUT️
-          M5;05:00;GBPJPY;CALL️
-          M5;05:05;AUDJPY;CALL
-          M5;06:20;EURJPY;PUT
-          M5;06:40;USDJPY;CALL
-          M5;07:50;AUDJPY;CALL
-          M5;08:45;AUDJPY;CALL️
-          M5;09:15;USDCAD;CALL️
-          M5;09:40;USDCAD;CALL
-          M5;09:45;AUDUSD;PUT
-          M5;11:05;AUDCAD;PUT
-          M5;11:40;AUDJPY;PUT
+          M1;02:22;AUDUSD;PUT
+          M1;05:12;USDCAD;CALL
+          M1;05:37;USDCHF;CALL
+          M1;09:22;GBPJPY;CALL️
+          M1;10:47;EURJPY;CALL
+          M1;10:57;EURGBP;CALL
+          M1;12:17;GBPJPY;PUT️
+          M1;13:17;AUDJPY;CALL️
+          M1;14:32;EURJPY;CALL️
+          M1;15:52;EURJPY;CALL
+          M5;01:30;EURGBP;PUT
+          M5;02:05;AUDUSD;PUT
+          M5;04:50;GBPUSD;CALL
+          M5;05:10;USDCAD;CALL
+          M5;06:35;EURUSD;CALL
+          M5;06:35;USDCHF;PUT
+          M5;07:05;AUDUSD;PUT
+          M5;07:10;AUDJPY;PUT
+          M5;07:55;GBPUSD;CALL
+          M5;08:55;EURJPY;PUT️
+          M5;09:20;GBPJPY;CALL️
+          M5;09:45;EURUSD;PUT
+          M5;10:45;EURGBP;PUT
+          M5;12:05;GBPJPY;CALL️
           M5;12:20;EURJPY;PUT️
-          M5;13:55;EURAUD;CALL
-          M5;14:40;AUDCAD;CALL
-          M5;15:55;EURAUD;PUT
+          M5;13:15;AUDJPY;CALL️
+          M5;13:30;EURAUD;CALL
+          M5;14:05;EURJPY;CALL
+          M5;14:20;USDCHF;PUT
+          M5;14:40;USDCAD;CALL
         `;
 
         const parsedSignals = signalsTemplate
