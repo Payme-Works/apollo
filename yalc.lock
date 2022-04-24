@@ -2,11 +2,11 @@
   "version": "v1",
   "packages": {
     "@hemes/core": {
-      "signature": "3d53c1adc406549c790786f64d5f2b6a",
+      "signature": "b6b1f6b87e59ecd7e59688ad2a391736",
       "file": true
     },
     "@hemes/iqoption": {
-      "signature": "69ef2597a425d2569fa079b20f1c8482",
+      "signature": "1debe14b5df045d9d268d8435eedb7b2",
       "file": true
     }
   }
