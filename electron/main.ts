@@ -10,7 +10,6 @@ import {
   shell,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
-import events from 'events';
 import path from 'path';
 import url from 'url';
 
@@ -20,10 +19,6 @@ import {
   getWindowBounds,
   setWindowBounds,
 } from './utils/windowBoundsController';
-
-events.defaultMaxListeners = 56;
-
-app.setMaxListeners(56);
 
 let mainWindow: Electron.BrowserWindow | null;
 
