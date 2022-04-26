@@ -80,3 +80,9 @@ export const Info = styled.dl<IInfoProps>`
     }
   `}
 `;
+
+export const DataTitle = styled.dt`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;

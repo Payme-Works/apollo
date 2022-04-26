@@ -1,6 +1,6 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useState, useMemo } from 'react';
 
-import { FiSettings } from 'react-icons/fi';
+import { FiSettings, FiEye, FiEyeOff } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import { useHistory } from 'react-router-dom';
 import { ThemeContext } from 'styled-components';
@@ -9,34 +9,56 @@ import { Avatar } from '@/components/Avatar';
 import { useProfile } from '@/context/ProfileContext';
 import { formatPrice } from '@/utils/formatPrice';
 
-import { Container, Flex, Info } from './styles';
+import { Container, Flex, Info, DataTitle } from './styles';
+
+type FormattedProfileValues = {
+  main: string;
+  decimals: string;
+};
 
 export function Profile() {
   const { isProfileLoading, balanceMode, balance, profit } = useProfile();
 
   const theme = useContext(ThemeContext);
 
+  const [hiddenBalance, setHiddenBalance] = useState(false);
+  const [hiddenProfit, setHiddenProfit] = useState(false);
+
   const history = useHistory();
 
-  const formattedBalance = useMemo(() => {
+  const formattedBalance = useMemo((): FormattedProfileValues => {
+    if (hiddenBalance) {
+      return {
+        main: 'R$ •••••••',
+        decimals: null,
+      };
+    }
+
     const formatted = formatPrice(balance);
     const split = formatted.split(',');
 
     return {
-      main: split[0],
+      main: `${split[0]},`,
       decimals: split[1],
     };
-  }, [balance]);
+  }, [balance, hiddenBalance]);
 
-  const formattedProfit = useMemo(() => {
+  const formattedProfit = useMemo((): FormattedProfileValues => {
+    if (hiddenProfit) {
+      return {
+        main: 'R$ •••••••',
+        decimals: null,
+      };
+    }
+
     const formatted = formatPrice(profit);
     const split = formatted.split(',');
 
     return {
-      main: split[0],
+      main: `${split[0]},`,
       decimals: split[1],
     };
-  }, [profit]);
+  }, [profit, hiddenProfit]);
 
   const balanceLabelColor = useMemo(
     () =>
@@ -58,20 +80,33 @@ export function Profile() {
     [profit, theme],
   );
 
+  const handleToggleHiddenBalance = () => {
+    setHiddenBalance(!hiddenBalance);
+  };
+
+  const handleToggleHiddenProfit = () => {
+    setHiddenProfit(!hiddenProfit);
+  };
+
   return (
     <Container>
       <Flex>
         <Avatar />
 
-        <Info color={/* theme.colors.foreground.base */ balanceLabelColor}>
-          <dt>Seu saldo</dt>
+        <Info color={balanceLabelColor}>
+          <DataTitle>
+            Seu saldo
+            {hiddenBalance ? (
+              <FiEyeOff onClick={handleToggleHiddenBalance} strokeWidth={1} />
+            ) : (
+              <FiEye onClick={handleToggleHiddenBalance} strokeWidth={1} />
+            )}
+          </DataTitle>
 
           <dd>
-            {/* R$ ••••••• */}
-
             {!isProfileLoading ? (
               <>
-                {`${formattedBalance.main},`}
+                {`${formattedBalance.main}`}
 
                 <span id="decimals">{formattedBalance.decimals}</span>
               </>
@@ -82,10 +117,17 @@ export function Profile() {
         </Info>
 
         <Info color={profitLabelColor}>
-          <dt>Lucro hoje</dt>
+          <DataTitle>
+            Lucro hoje
+            {hiddenProfit ? (
+              <FiEyeOff onClick={handleToggleHiddenProfit} strokeWidth={1} />
+            ) : (
+              <FiEye onClick={handleToggleHiddenProfit} strokeWidth={1} />
+            )}
+          </DataTitle>
 
           <dd>
-            {`${formattedProfit.main},`}
+            {`${formattedProfit.main}`}
 
             <span id="decimals">{formattedProfit.decimals}</span>
           </dd>
