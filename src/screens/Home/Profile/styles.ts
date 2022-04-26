@@ -86,3 +86,15 @@ export const DataTitle = styled.dt`
   align-items: center;
   gap: 10px;
 `;
+
+export const HiddenToggleButton = styled.button`
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+  }
+`;

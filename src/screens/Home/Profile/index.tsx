@@ -9,7 +9,7 @@ import { Avatar } from '@/components/Avatar';
 import { useProfile } from '@/context/ProfileContext';
 import { formatPrice } from '@/utils/formatPrice';
 
-import { Container, Flex, Info, DataTitle } from './styles';
+import { Container, Flex, Info, DataTitle, HiddenToggleButton } from './styles';
 
 type FormattedProfileValues = {
   main: string;
@@ -97,9 +97,13 @@ export function Profile() {
           <DataTitle>
             Seu saldo
             {hiddenBalance ? (
-              <FiEyeOff onClick={handleToggleHiddenBalance} strokeWidth={1} />
+              <HiddenToggleButton>
+                <FiEyeOff onClick={handleToggleHiddenBalance} strokeWidth={1} />
+              </HiddenToggleButton>
             ) : (
-              <FiEye onClick={handleToggleHiddenBalance} strokeWidth={1} />
+              <HiddenToggleButton>
+                <FiEye onClick={handleToggleHiddenBalance} strokeWidth={1} />
+              </HiddenToggleButton>
             )}
           </DataTitle>
 
@@ -120,9 +124,13 @@ export function Profile() {
           <DataTitle>
             Lucro hoje
             {hiddenProfit ? (
-              <FiEyeOff onClick={handleToggleHiddenProfit} strokeWidth={1} />
+              <HiddenToggleButton>
+                <FiEyeOff onClick={handleToggleHiddenProfit} strokeWidth={1} />
+              </HiddenToggleButton>
             ) : (
-              <FiEye onClick={handleToggleHiddenProfit} strokeWidth={1} />
+              <HiddenToggleButton>
+                <FiEye onClick={handleToggleHiddenProfit} strokeWidth={1} />
+              </HiddenToggleButton>
             )}
           </DataTitle>
 
