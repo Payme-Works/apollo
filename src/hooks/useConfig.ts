@@ -4,14 +4,14 @@ import { store, schema } from '../store/config';
 
 type Schema = typeof schema;
 
-interface IUseConfig {
+type UseConfig = {
   setConfig(key: string, value: any): void;
-}
+};
 
 export function useConfig<Key extends keyof Schema>(
   key: Key,
   onChange?: (value: Schema[Key]['default']) => void,
-): [MutableRefObject<Schema[Key]['default']>, IUseConfig] {
+): [MutableRefObject<Schema[Key]['default']>, UseConfig] {
   const defaultValue = store.get(
     key,
     schema[key].default,

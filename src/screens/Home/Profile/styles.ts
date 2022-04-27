@@ -80,3 +80,21 @@ export const Info = styled.dl<IInfoProps>`
     }
   `}
 `;
+
+export const DataTitle = styled.dt`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+export const ToggleHiddenButton = styled.button`
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+  }
+`;
