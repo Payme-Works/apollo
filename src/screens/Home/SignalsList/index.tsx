@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { compareAsc, isAfter, compareDesc, parseISO } from 'date-fns';
 
+import { Box } from '@/components/Box';
 import { Signal } from '@/components/Signal';
 import { useSignals } from '@/context/SignalsContext';
 import { SignalWithStatus } from '@/interfaces/signals/SignalWithStatus';
@@ -37,15 +38,35 @@ export function SignalsList() {
         .sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date)))
         .filter(
           signal =>
-            isSignalAvailable(signal) ||
-            (hasSignalResult(signal) && signal.status !== 'expired'),
+            isSignalAvailable(signal) &&
+            hasSignalResult(signal) &&
+            signal.status !== 'expired',
         ),
     );
 
     list.push(
       ...signals
         .sort((a, b) => compareDesc(parseISO(a.date), parseISO(b.date)))
-        .filter(signal => !list.some(item => item.id === signal.id)),
+        .filter(signal => !list.some(item => item.id === signal.id))
+        .filter(signal => isSignalAvailable(signal)),
+    );
+
+    list.sort((a, b) => compareDesc(parseISO(b.date), parseISO(a.date)));
+
+    return list;
+  }, [hasSignalResult, isSignalAvailable, signals]);
+
+  const sortedPastSignals = useMemo(() => {
+    const list: SignalWithStatus[] = [];
+
+    list.push(
+      ...signals
+        .sort((a, b) => compareAsc(parseISO(a.date), parseISO(b.date)))
+        .filter(
+          signal =>
+            !isSignalAvailable(signal) ||
+            (hasSignalResult(signal) && signal.status !== 'expired'),
+        ),
     );
 
     return list;
@@ -53,14 +74,41 @@ export function SignalsList() {
 
   return (
     <Container>
-      {sortedSignals.map(signal => (
-        <Signal
-          key={signal.id}
-          data={signal}
-          onCancel={() => handleToggleSignalStatus(signal, 'canceled')}
-          onResume={() => handleToggleSignalStatus(signal, 'waiting')}
-        />
-      ))}
+      <Box
+        description="Esses são os movimentos do mercado recomendados pelo Apollo para as próximas horas, "
+        footer={{
+          hint: 'Caso deseje pausar um movimento especificamente clique no ícone de pausa em cada sinal.',
+        }}
+        title="Proximos movimentos"
+      >
+        {sortedSignals.map(signal => (
+          <Signal
+            key={signal.id}
+            data={signal}
+            onCancel={() => handleToggleSignalStatus(signal, 'canceled')}
+            onResume={() => handleToggleSignalStatus(signal, 'waiting')}
+          />
+        ))}
+      </Box>
+
+      <Box
+        description="Movimentos já executados ou com falha serão exibidos abaixo."
+        footer={{
+          hint: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perferendis, nihil. Rem vitae libero.',
+        }}
+        title="Histórico de movimentos"
+      >
+        {sortedPastSignals.map(signal => (
+          <Signal
+            key={signal.id}
+            data={signal}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onCancel={() => {}}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onResume={() => {}}
+          />
+        ))}
+      </Box>
     </Container>
   );
 }

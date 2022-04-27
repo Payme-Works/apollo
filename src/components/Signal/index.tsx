@@ -1,8 +1,10 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import { BsFillPauseFill, BsFillPlayFill } from 'react-icons/bs';
 import { FiAlertCircle } from 'react-icons/fi';
+import { TiArrowUpThick } from 'react-icons/ti';
 import { ThemeContext } from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
@@ -23,6 +25,8 @@ interface ISignalProps {
 
 export function Signal({ data, onCancel, onResume }: ISignalProps) {
   const theme = useContext(ThemeContext);
+
+  const [isHovering, setHovering] = useState(false);
 
   const { isSignalAvailable, hasSignalResult } = useSignals();
 
@@ -65,47 +69,94 @@ export function Signal({ data, onCancel, onResume }: ISignalProps) {
   );
 
   return (
-    <Container status={data.status}>
-      <div>
-        <Label width={theme.sizes[14]}>{formattedData.date}</Label>
+    <Container
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      status={data.status}
+    >
+      <div className="bar">
+        <div className="gales">
+          {shouldShowMartingales &&
+            [...Array(data.result?.martingales)].map((_item, index) => (
+              <GaleImage key={uuid()} alt={`Gale ${index + 1}`} src={galeImg} />
+            ))}
+        </div>
 
-        <Label width={activeLabelWidth}>{formattedData.currency}</Label>
-
-        <Label width={theme.sizes[10]}>{formattedData.expiration}</Label>
-
-        <Label width={theme.sizes[10]}>{formattedData.operation}</Label>
-
-        {data.info && (
-          <Tooltip style={{ marginLeft: theme.spaces[4] }} text={data.info}>
-            <FiAlertCircle
-              color={theme.colors.foreground['accent-2']}
-              size={theme.sizes[5]}
-              strokeWidth={1}
-            />
-          </Tooltip>
-        )}
-
-        {shouldShowMartingales &&
-          [...Array(data.result?.martingales)].map((_item, index) => (
-            <GaleImage key={uuid()} alt={`Gale ${index + 1}`} src={galeImg} />
-          ))}
+        {data.result ? <span>{formattedProfit}</span> : <span>&nbsp;</span>}
       </div>
 
-      {isAvailable ? (
-        <>
-          {data.status === 'canceled' ? (
-            <button onClick={onResume} type="button">
-              Retomar
-            </button>
-          ) : (
-            <button onClick={onCancel} type="button">
-              Cancelar
-            </button>
+      <div>
+        <div className="labels">
+          <Label width={activeLabelWidth}>
+            <h3>
+              {`${formattedData.currency.substring(
+                0,
+                3,
+              )}/${formattedData.currency.substring(3, 6)}`}
+            </h3>
+          </Label>
+
+          <Label width={activeLabelWidth}>{formattedData.date}</Label>
+
+          <Label width={activeLabelWidth}>{formattedData.expiration}</Label>
+        </div>
+
+        {/* {formattedData.operation} */}
+
+        <div className="right">
+          {!isHovering && (
+            <>
+              <button type="button">
+                <TiArrowUpThick
+                  color={
+                    formattedData.operation === 'PUT' ? '#22B573' : '#FF6058'
+                  }
+                  size={theme.sizes[5]}
+                  style={
+                    formattedData.operation === 'PUT'
+                      ? { rotate: '180deg' }
+                      : {}
+                  }
+                />
+              </button>
+            </>
           )}
-        </>
-      ) : (
-        <>{data.result?.profit && <span>{formattedProfit}</span>}</>
-      )}
+
+          {isAvailable && (
+            <>
+              {data.status === 'canceled' ? (
+                <>
+                  {isHovering && (
+                    <button onClick={onResume} type="button">
+                      <BsFillPlayFill size={theme.sizes[5]} />
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  {isHovering && (
+                    <button onClick={onCancel} type="button">
+                      <BsFillPauseFill size={theme.sizes[5]} />
+                    </button>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+          {isHovering && !isAvailable && data.info && (
+            <Tooltip style={{ marginLeft: theme.spaces[4] }} text={data.info}>
+              <button type="button">
+                <FiAlertCircle
+                  color={theme.colors.foreground['accent-2']}
+                  size={theme.sizes[5]}
+                  strokeWidth={1}
+                />
+              </button>
+            </Tooltip>
+          )}
+        </div>
+      </div>
     </Container>
   );
 }

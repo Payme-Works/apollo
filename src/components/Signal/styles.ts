@@ -9,7 +9,9 @@ interface IContainerProps {
 export const Container = styled.div<IContainerProps>`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  width: 31.35%;
+  flex-wrap: wrap;
 
   ${({ theme, status }) => css`
     --color: ${theme.colors.foreground['accent-1']};
@@ -48,17 +50,48 @@ export const Container = styled.div<IContainerProps>`
       --border-color-hover: ${theme.colors.palette.red['accent-1']};
     `}
 
+    background-color: var(--border-color);
+
+    margin-bottom: ${theme.spaces[2]};
+    margin-left: ${theme.spaces[1]};
+    margin-right: ${theme.spaces[1]};
     color: var(--color);
 
     border: 1px solid var(--border-color);
     border-radius: ${theme.borderRadius.md};
 
-    padding: ${theme.spaces[2]} ${theme.spaces[4]};
-
     transition: all 0.2s;
 
-    & + ${Container} {
-      margin-top: ${theme.spaces[4]};
+    .bar {
+      width: 100%;
+      display: flex;
+      padding: 1px 5px;
+      background-color: transparent;
+
+      span {
+        height: ${theme.sizes[5]};
+        font-size: 12px;
+        margin-left: auto;
+        margin-right: 5px;
+      }
+    }
+
+    .labels {
+      display: flex;
+      flex-wrap: wrap;
+      width: 50%;
+      justify-content: start;
+    }
+
+    .right {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      margin-left: auto;
+
+      > svg:only-child {
+        margin-bottom: 27px;
+      }
     }
 
     &:hover {
@@ -77,6 +110,9 @@ export const Container = styled.div<IContainerProps>`
     > div {
       display: flex;
       align-items: center;
+      padding: ${theme.spaces[2]} ${theme.spaces[2]};
+      background: #000000;
+      border-radius: ${theme.borderRadius.md};
 
       > img#gale {
         transition: all 0.2s;
@@ -85,9 +121,15 @@ export const Container = styled.div<IContainerProps>`
       }
     }
 
-    > button {
+    div > button {
       background: none;
       border: 0;
+      height: 36px;
+      width: 36px;
+      margin: auto;
+      border-radius: 50%;
+      margin-top: 5px;
+      background: #212121;
 
       color: ${theme.transparencies[5](theme.colors.foreground['accent-1'])};
       font-size: ${theme.fonts.sizes.sm};
@@ -107,15 +149,14 @@ interface ILabelProps {
 
 export const Label = styled.span<ILabelProps>`
   width: ${props => props.width};
-
-  & + span {
-    margin-left: ${props => props.theme.spaces[1]};
-  }
 `;
 
 export const GaleImage = styled.img`
   ${({ theme }) => css`
     height: ${theme.sizes[5]};
-    margin-left: ${theme.spaces[4]};
+    width: ${theme.sizes[4]};
+    margin: auto;
+    margin-left: 1px;
+    margin-right: 1px;
   `}
 `;

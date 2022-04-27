@@ -6,7 +6,7 @@ import { Button, ButtonProps } from '@/components/Button';
 
 import { Container, Content, HeaderContainer, Footer } from './styles';
 
-export interface IFooterBoxProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface IBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
   description: string;
   footer: {
@@ -17,13 +17,13 @@ export interface IFooterBoxProps extends React.HTMLAttributes<HTMLDivElement> {
   };
 }
 
-export function FooterBox({
+export function Box({
   title,
   description,
   footer,
   children,
   ...rest
-}: IFooterBoxProps) {
+}: IBoxProps) {
   const headerContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
