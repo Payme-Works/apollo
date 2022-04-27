@@ -87,7 +87,7 @@ export const DataTitle = styled.dt`
   gap: 10px;
 `;
 
-export const HiddenToggleButton = styled.button`
+export const ToggleHiddenButton = styled.button`
   cursor: pointer;
   background-color: transparent;
   border: none;
