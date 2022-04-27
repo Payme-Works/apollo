@@ -26,21 +26,21 @@ export const schema = {
         recoverLostOrder: true,
         martingale: {
           active: true,
-          amount: 1,
+          amount: 6,
         },
         stopGain: {
           selected: {
             value: 'real',
             label: 'R$',
           },
-          value: 4,
+          value: 10,
         },
         stopLoss: {
           selected: {
             value: 'real',
             label: 'R$',
           },
-          value: 8,
+          value: 100,
         },
       },
       filters: {
@@ -67,21 +67,21 @@ export const schema = {
           label: 'Todos',
         },
         payout: {
-          minimum: 70,
-          maximum: 95,
+          minimum: 75,
+          maximum: 100,
         },
-        filterTrend: true,
+        filterTrend: false,
         parallelOrders: false,
         randomSkipSignals: {
-          active: true,
+          active: false,
           chancePercentage: 75,
         },
       },
       economicEvents: {
         filter: true,
         minutes: {
-          before: 30,
-          after: 30,
+          before: 15,
+          after: 15,
         },
       },
       application: {

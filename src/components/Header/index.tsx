@@ -2,17 +2,26 @@ import React, { useCallback, useMemo } from 'react';
 
 import { remote } from 'electron';
 import os from 'os';
-import { FiX, FiMinus, FiSquare, FiChevronLeft } from 'react-icons/fi';
+import {
+  FiX,
+  FiMinus,
+  FiSquare,
+  FiChevronLeft,
+  FiArrowLeft,
+} from 'react-icons/fi';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import { useConfig } from '../../hooks/useConfig';
 
 import {
   Container,
-  WindowActions,
+  MacWindowActions,
   MacActionButton,
-  DefaultActionButton,
-  GoBackButton,
+  WindowsActionButton,
+  MacGoBackButton,
+  WindowsWindowActions,
+  WindowsButtonsContainer,
+  WindowsGoBackButton,
 } from './styles';
 
 export function Header() {
@@ -76,7 +85,7 @@ export function Header() {
       <strong>Apollo</strong>
 
       {shouldUseMacOSWindowActions ? (
-        <WindowActions position="left">
+        <MacWindowActions>
           <MacActionButton action="close" onClick={handleCloseWindow} />
 
           <MacActionButton action="minimize" onClick={handleMinimize} />
@@ -84,31 +93,33 @@ export function Header() {
           <MacActionButton action="maximize" onClick={handleMaximize} />
 
           {shouldShowGoBackButton && (
-            <GoBackButton onClick={() => history.goBack()}>
+            <MacGoBackButton onClick={() => history.goBack()}>
               <FiChevronLeft />
-            </GoBackButton>
+            </MacGoBackButton>
           )}
-        </WindowActions>
+        </MacWindowActions>
       ) : (
-        <WindowActions position="right">
+        <WindowsWindowActions>
           {shouldShowGoBackButton && (
-            <GoBackButton onClick={() => history.goBack()}>
-              <FiChevronLeft />
-            </GoBackButton>
+            <WindowsGoBackButton onClick={() => history.goBack()}>
+              <FiArrowLeft />
+            </WindowsGoBackButton>
           )}
 
-          <DefaultActionButton onClick={handleMinimize}>
-            <FiMinus />
-          </DefaultActionButton>
+          <WindowsButtonsContainer>
+            <WindowsActionButton action="minimize" onClick={handleMinimize}>
+              <FiMinus />
+            </WindowsActionButton>
 
-          <DefaultActionButton onClick={handleMaximize}>
-            <FiSquare />
-          </DefaultActionButton>
+            <WindowsActionButton action="maximize" onClick={handleMaximize}>
+              <FiSquare />
+            </WindowsActionButton>
 
-          <DefaultActionButton onClick={handleCloseWindow}>
-            <FiX />
-          </DefaultActionButton>
-        </WindowActions>
+            <WindowsActionButton action="close" onClick={handleCloseWindow}>
+              <FiX />
+            </WindowsActionButton>
+          </WindowsButtonsContainer>
+        </WindowsWindowActions>
       )}
     </Container>
   );

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import corsProxy from 'cors-anywhere';
+import corsAnywhere from 'cors-anywhere';
 import {
   app,
   BrowserWindow,
@@ -25,7 +25,7 @@ let mainWindow: Electron.BrowserWindow | null;
 console.log("app.getPath('userData')");
 console.log(app.getPath('userData'));
 
-corsProxy
+corsAnywhere
   .createServer({
     originWhitelist: [],
     requireHeader: ['origin', 'x-requested-with'],
@@ -46,8 +46,9 @@ function createWindow() {
     icon,
     minWidth: 512,
     minHeight: 556,
-    maxWidth: 1024,
-    maxHeight: 1024,
+    // maxWidth: 616,
+    maxWidth: 1248,
+    maxHeight: 664,
     frame: false,
     transparent: true,
     webPreferences: {
