@@ -15,6 +15,11 @@ export const schema = {
   robot: {
     type: JSONSchemaType.Object,
     default: {
+      broker: {
+        email: null,
+        password: null,
+        balanceMode: 'practice',
+      },
       management: {
         orderPrice: {
           selected: {

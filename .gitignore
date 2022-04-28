@@ -11,6 +11,8 @@ node_modules
 
 # Distribution
 dist
+release/*
+!release/builder-effective-config.yaml
 
 # Coverage directory used by tools like istanbul
 coverage

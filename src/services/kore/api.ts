@@ -3,6 +3,8 @@ import os from 'os';
 
 import getTimeZone from '@/utils/getTimeZone';
 
+console.log('process.env.KORE_API_URL', String(process.env.KORE_API_URL));
+
 export const koreApi = axios.create({
   baseURL: String(process.env.KORE_API_URL),
 });

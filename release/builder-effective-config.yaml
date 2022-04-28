@@ -1,0 +1,15 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.paymetrade.apollo
+productName: Apollo
+files:
+  - filter:
+      - dist/
+mac:
+  category: public.app-category.developer-tools
+linux:
+  target:
+    - AppImage
+  category: Development
+electronVersion: 11.5.0

@@ -15,6 +15,7 @@ import {
 } from '@hemes/iqoption';
 
 import { useProfile } from '@/context/ProfileContext';
+import { useConfig } from '@/hooks/useConfig';
 
 interface HemesContextData {
   hemes?: BaseIQOptionAccount;
@@ -27,6 +28,12 @@ interface HemesContextData {
 const HemesContext = createContext<HemesContextData>({} as HemesContextData);
 
 export function HemesContextProvider({ children }) {
+  const [
+    {
+      current: { broker },
+    },
+  ] = useConfig('robot');
+
   const [hemes, setHemes] = useState<BaseIQOptionAccount>();
   const [isHemesLoggingIn, setHemesIsLoggingIn] = useState(false);
 
@@ -63,12 +70,16 @@ export function HemesContextProvider({ children }) {
       provider.enableCorsBypass('http://localhost:49981');
 
       const newHemes = await provider.logIn({
-        email: String(process.env.IQ_OPTION_ACCOUNT_EMAIL),
-        password: String(process.env.IQ_OPTION_ACCOUNT_PASSWORD),
+        email: String(process.env.IQ_OPTION_ACCOUNT_EMAIL || broker.email),
+        password: String(
+          process.env.IQ_OPTION_ACCOUNT_PASSWORD || broker.password,
+        ),
       });
 
       await newHemes.setBalanceMode(
-        String(process.env.IQ_OPTION_ACCOUNT_BALANCE_MODE) as BalanceMode,
+        String(
+          process.env.IQ_OPTION_ACCOUNT_BALANCE_MODE || broker.balanceMode,
+        ) as BalanceMode,
       );
 
       console.log('Hemes:', newHemes);
@@ -81,7 +92,13 @@ export function HemesContextProvider({ children }) {
     } finally {
       setHemesIsLoggingIn(false);
     }
-  }, [refreshProfile, setProfileIsLoading]);
+  }, [
+    broker.balanceMode,
+    broker.email,
+    broker.password,
+    refreshProfile,
+    setProfileIsLoading,
+  ]);
 
   return (
     <HemesContext.Provider
