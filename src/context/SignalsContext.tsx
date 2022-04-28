@@ -122,36 +122,36 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;01:02;EURUSD;CALL
-          M1;04:47;EURJPY;CALL️
-          M1;05:32;EURGBP;CALL
-          M1;06:27;AUDCAD;PUT
-          M1;06:47;AUDUSD;PUT
-          M1;07:22;GBPUSD;CALL
-          M1;09:57;AUDJPY;CALL
-          M1;11:22;AUDJPY;CALL
-          M1;14:12;GBPJPY;CALL
-          M1;14:17;EURGBP;CALL
-          M5;01:10;EURGBP;PUT️
-          M5;02:05;EURUSD;PUT
-          M5;03:55;EURJPY;PUT
-          M5;04:10;USDCHF;PUT
-          M5;04:30;EURUSD;CALL
-          M5;04:35;AUDUSD;CALL
-          M5;04:45;EURJPY;CALL
-          M5;04:55;GBPJPY;CALL️
-          M5;06:10;EURGBP;PUT
+          M1;01:27;EURUSD;CALL
+          M1;04:42;AUDUSD;CALL
+          M1;07:17;USDJPY;CALL
+          M1;07:27;AUDCAD;PUT
+          M1;08:02;EURUSD;PUT
+          M1;09:57;AUDCAD;PUT
+          M1;11:37;GBPJPY;PUT
+          M1;12:17;AUDCAD;CALL
+          M1;13:02;EURGBP;PUT
+          M1;15:52;GBPUSD;CALL
+          M5;00:35;EURJPY;CALL
+          M5;01:55;EURGBP;PUT
+          M5;03:05;AUDJPY;PUT
+          M5;03:15;EURUSD;CALL
+          M5;04:15;USDJPY;CALL️
+          M5;04:40;AUDUSD;CALL
+          M5;05:05;USDJPY;CALL️
+          M5;05:35;EURGBP;CALL
           M5;06:40;AUDUSD;CALL️
-          M5;07:15;AUDJPY;PUT
-          M5;07:20;EURGBP;PUT
-          M5;08:15;EURJPY;PUT
-          M5;08:25;EURUSD;PUT
-          M5;11:00;EURGBP;CALL
-          M5;11:55;AUDJPY;PUT
-          M5;12:30;USDCHF;CALL
-          M5;13:55;AUDJPY;CALL
-          M5;14:15;EURGBP;CALL
-          M5;15:10;EURUSD;PUT
+          M5;07:00;AUDCAD;PUT
+          M5;07:45;EURJPY;CALL
+          M5;08:00;EURUSD;PUT
+          M5;09:50;USDJPY;CALL️
+          M5;09:55;AUDCAD;PUT
+          M5;11:10;EURGBP;PUT
+          M5;11:35;GBPJPY;PUT️
+          M5;11:40;USDJPY;PUT️
+          M5;11:50;USDCHF;PUT
+          M5;14:45;EURCHF;PUT
+          M5;15:50;GBPJPY;CALL️
         `;
 
         const parsedSignals = signalsTemplate
@@ -166,6 +166,7 @@ export function SignalsContextProvider({ children }) {
             const date = zonedTimeToUtc(dateSaoPaulo, 'America/Sao_Paulo');
             const active = values[2] as Active;
             const direction = values[3].toLowerCase() as Direction;
+
             date.setSeconds(0);
 
             return {
