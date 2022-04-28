@@ -25,14 +25,9 @@ let mainWindow: Electron.BrowserWindow | null;
 console.log("app.getPath('userData')");
 console.log(app.getPath('userData'));
 
-corsAnywhere
-  .createServer({
-    originWhitelist: [],
-    requireHeader: ['origin', 'x-requested-with'],
-  })
-  .listen(49981, '0.0.0.0', () => {
-    console.log('Running CORS Anywhere on localhost:49981');
-  });
+corsAnywhere.createServer().listen(49981, '0.0.0.0', () => {
+  console.log('Running CORS Anywhere on localhost:49981');
+});
 
 function createWindow() {
   const icon = nativeImage.createFromPath(`${app.getAppPath()}/build/icon.png`);
