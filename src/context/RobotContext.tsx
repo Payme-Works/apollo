@@ -230,13 +230,17 @@ export function RobotContextProvider({ children }) {
             .filter(event =>
               active.toLowerCase().includes(event.economy.toLowerCase()),
             )
-            .some(event => {
+            .filter(event => {
               const dateParsed = parseISO(event.date);
 
               return isWithinInterval(dateParsed, interval);
             });
 
-          return hasEconomicCalendarEvent;
+          if (hasEconomicCalendarEvent.length > 0) {
+            console.log(hasEconomicCalendarEvent);
+          }
+
+          return hasEconomicCalendarEvent.length > 0;
         } catch {
           throw new SignalTaskError({
             signal,
@@ -615,6 +619,7 @@ export function RobotContextProvider({ children }) {
                       info: 'Erro inesperado ao criar ordem do martingale',
                     });
 
+                    console.log('margingale error');
                     console.error(err);
 
                     return;
