@@ -70,17 +70,11 @@ export function HemesContextProvider({ children }) {
       provider.enableCorsBypass('http://localhost:49981');
 
       const newHemes = await provider.logIn({
-        email: String(broker.email || process.env.IQ_OPTION_ACCOUNT_EMAIL),
-        password: String(
-          broker.password || process.env.IQ_OPTION_ACCOUNT_PASSWORD,
-        ),
+        email: String(broker.email),
+        password: String(broker.password),
       });
 
-      await newHemes.setBalanceMode(
-        String(
-          process.env.IQ_OPTION_ACCOUNT_BALANCE_MODE || broker.balanceMode,
-        ) as BalanceMode,
-      );
+      await newHemes.setBalanceMode(String(broker.balanceMode) as BalanceMode);
 
       console.log('Hemes:', newHemes);
 
