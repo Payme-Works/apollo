@@ -1,22 +1,17 @@
+import { UpdateSignalData } from '@/context/SignalsContext';
 import { Signal } from '@/interfaces/signals/Signal';
-import { Status } from '@/interfaces/signals/SignalWithStatus';
 
-interface SignalTaskErrorData {
+interface SignalTaskErrorData extends UpdateSignalData {
   signal: Signal;
-  status: Status;
-  info?: string;
 }
 
 export class SignalTaskError {
   public signal: Signal;
 
-  public status: Status;
+  public update: UpdateSignalData;
 
-  public info?: string;
-
-  constructor({ signal, status, info }: SignalTaskErrorData) {
+  constructor({ signal, ...update }: SignalTaskErrorData) {
     this.signal = signal;
-    this.status = status;
-    this.info = info;
+    this.update = update;
   }
 }
