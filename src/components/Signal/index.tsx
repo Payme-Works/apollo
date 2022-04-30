@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-import { FiAlertCircle } from 'react-icons/fi';
+import { FiAlertCircle, FiCalendar } from 'react-icons/fi';
 import { ThemeContext } from 'styled-components';
 import { v4 as uuid } from 'uuid';
 
@@ -78,6 +78,19 @@ export function Signal({ data, onCancel, onResume }: ISignalProps) {
         {data.info && (
           <Tooltip style={{ marginLeft: theme.spaces[4] }} text={data.info}>
             <FiAlertCircle
+              color={theme.colors.foreground['accent-2']}
+              size={theme.sizes[5]}
+              strokeWidth={1}
+            />
+          </Tooltip>
+        )}
+
+        {data.hasEconomicCalendarEvent && (
+          <Tooltip
+            style={{ marginLeft: theme.spaces[4] }}
+            text={`Evento econômico em um intervalo de ${data.hasEconomicCalendarEvent.before} <> ${data.hasEconomicCalendarEvent.after} minutos`}
+          >
+            <FiCalendar
               color={theme.colors.foreground['accent-2']}
               size={theme.sizes[5]}
               strokeWidth={1}

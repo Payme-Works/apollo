@@ -70,9 +70,9 @@ export function HemesContextProvider({ children }) {
       provider.enableCorsBypass('http://localhost:49981');
 
       const newHemes = await provider.logIn({
-        email: String(process.env.IQ_OPTION_ACCOUNT_EMAIL || broker.email),
+        email: String(broker.email || process.env.IQ_OPTION_ACCOUNT_EMAIL),
         password: String(
-          process.env.IQ_OPTION_ACCOUNT_PASSWORD || broker.password,
+          broker.password || process.env.IQ_OPTION_ACCOUNT_PASSWORD,
         ),
       });
 

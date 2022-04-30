@@ -83,6 +83,10 @@ export const Container = styled.div<IContainerProps>`
 
         opacity: var(--gale-image-opacity);
       }
+
+      svg {
+        color: var(--color-hover);
+      }
     }
 
     > button {

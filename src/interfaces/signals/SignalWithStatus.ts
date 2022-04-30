@@ -15,4 +15,8 @@ export interface SignalWithStatus extends Signal {
     martingales: number;
     profit: number;
   };
+  hasEconomicCalendarEvent?: {
+    before: number;
+    after: number;
+  };
 }

@@ -406,17 +406,17 @@ export function RobotContextProvider({ children }) {
                 }
               } */
 
+              const dateLessConfiguredMinutes = subMinutes(
+                parseISO(signal.date),
+                robotConfig.current.economicEvents.minutes.before,
+              );
+
+              const datePlusConfiguredMinutes = addMinutes(
+                parseISO(signal.date),
+                robotConfig.current.economicEvents.minutes.after,
+              );
+
               if (robotConfig.current.economicEvents.filter) {
-                const dateLessConfiguredMinutes = subMinutes(
-                  parseISO(signal.date),
-                  robotConfig.current.economicEvents.minutes.before,
-                );
-
-                const datePlusConfiguredMinutes = addMinutes(
-                  parseISO(signal.date),
-                  robotConfig.current.economicEvents.minutes.after,
-                );
-
                 const hasEconomicCalendarEvent =
                   await checkHasEconomicCalendarEventWithinMinutes(
                     signal.active,
@@ -430,9 +430,24 @@ export function RobotContextProvider({ children }) {
                   throw new SignalTaskError({
                     signal,
                     status: 'expired',
-                    info: `Evento econômico em um intervalo de ${robotConfig.current.economicEvents.minutes.before} <> ${robotConfig.current.economicEvents.minutes.after} minutos`,
                   });
                 }
+              } else {
+                checkHasEconomicCalendarEventWithinMinutes(signal.active, {
+                  start: dateLessConfiguredMinutes,
+                  end: datePlusConfiguredMinutes,
+                }).then(hasEconomicCalendarEvent => {
+                  if (hasEconomicCalendarEvent) {
+                    updateSignal(signal.id, {
+                      status: 'in_progress',
+                      hasEconomicCalendarEvent: {
+                        before:
+                          robotConfig.current.economicEvents.minutes.before,
+                        after: robotConfig.current.economicEvents.minutes.after,
+                      },
+                    });
+                  }
+                });
               }
 
               const randomInt = getRandomInt(1, 100);
@@ -702,10 +717,7 @@ export function RobotContextProvider({ children }) {
                   console.error(new Date().toISOString());
 
                   if (error instanceof SignalTaskError) {
-                    updateSignal(signal.id, {
-                      status: error.status,
-                      info: error.info,
-                    });
+                    updateSignal(signal.id, error.update);
 
                     return;
                   }
@@ -720,10 +732,7 @@ export function RobotContextProvider({ children }) {
               console.log('ERROR', new Date().toISOString());
 
               if (error instanceof SignalTaskError) {
-                updateSignal(signal.id, {
-                  status: error.status,
-                  info: error.info,
-                });
+                updateSignal(signal.id, error.update);
 
                 return;
               }
