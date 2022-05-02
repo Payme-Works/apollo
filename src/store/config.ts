@@ -16,8 +16,8 @@ export const schema = {
     type: JSONSchemaType.Object,
     default: {
       broker: {
-        email: null,
-        password: null,
+        email: '',
+        password: '',
         balanceMode: 'practice',
       },
       management: {
@@ -31,14 +31,14 @@ export const schema = {
         recoverLostOrder: true,
         martingale: {
           active: true,
-          amount: 6,
+          amount: 2,
         },
         stopGain: {
           selected: {
             value: 'real',
             label: 'R$',
           },
-          value: 10,
+          value: 20,
         },
         stopLoss: {
           selected: {
@@ -76,14 +76,14 @@ export const schema = {
           maximum: 100,
         },
         filterTrend: false,
-        parallelOrders: false,
+        parallelOrders: true,
         randomSkipSignals: {
           active: false,
           chancePercentage: 75,
         },
       },
       economicEvents: {
-        filter: true,
+        filter: false,
         minutes: {
           before: 15,
           after: 15,

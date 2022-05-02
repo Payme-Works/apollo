@@ -4,10 +4,12 @@ import { Container } from './styles';
 
 interface IFormControl extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
+  hint?: string;
 }
 
 export function FormControl({
   disabled = false,
+  hint,
   children,
   ...rest
 }: IFormControl) {
@@ -26,6 +28,8 @@ export function FormControl({
   return (
     <Container {...rest} disabled={disabled}>
       {childrenWithProps}
+
+      <p>{hint}</p>
     </Container>
   );
 }
