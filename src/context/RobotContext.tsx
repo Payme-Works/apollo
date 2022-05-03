@@ -52,6 +52,7 @@ interface ITask {
 }
 
 interface IRecoverLostOrder {
+  signal: SignalWithStatus;
   profit: number;
 }
 
@@ -490,6 +491,7 @@ export function RobotContextProvider({ children }) {
                   if (
                     robotConfig.current.management.recoverLostOrder &&
                     recoverLostOrder &&
+                    // recoverLostOrder.signal.direction !== signal.direction &&
                     recoverLostOrder.profit < 0
                   ) {
                     const positiveLastProfit = recoverLostOrder.profit * -1;
@@ -708,6 +710,7 @@ export function RobotContextProvider({ children }) {
                     }
 
                     Cache.set<IRecoverLostOrder>('recover-lost-order', {
+                      signal,
                       profit: recoverProfit,
                     });
                   }
