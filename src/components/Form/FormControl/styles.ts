@@ -7,6 +7,14 @@ interface IContainerProps {
 export const Container = styled.div<IContainerProps>`
   width: 100%;
 
+  ${({ theme }) => css`
+    > p {
+      color: ${theme.colors.foreground['accent-2']};
+      font-size: ${theme.fonts.sizes.xs};
+      margin-top: ${theme.spaces['1.5']};
+    }
+  `}
+
   ${({ disabled }) =>
     disabled &&
     css`

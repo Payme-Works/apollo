@@ -15,6 +15,7 @@ import {
 } from '@/components/Form/SelectableInput';
 import { Switch } from '@/components/Form/Switch';
 import { useConfig } from '@/hooks/useConfig';
+import { formatPrice } from '@/utils/formatPrice';
 import { getValidationErrors } from '@/utils/getValidationErrors';
 
 import { Flex } from './styles';
@@ -34,7 +35,7 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
 
   const [
     {
-      current: { management },
+      current: { management, filters },
     },
     { setConfig },
   ] = useConfig('robot');
@@ -42,8 +43,15 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
+  const [orderPrice, setOrderPrice] = useState<ISelectableInputValue>({
+    selected: management.orderPrice.selected,
+    value: management.orderPrice.value,
+  });
   const [isMartingaleChecked, setIsMartingaleChecked] = useState(
     management.martingale.active,
+  );
+  const [martingaleAmount, setMartingaleAmount] = useState(
+    management.martingale.amount,
   );
 
   const priceOptions = useMemo(
@@ -55,6 +63,18 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
     ],
     [],
   );
+
+  const minimumBalanceAccordingToMartingale = useMemo(() => {
+    const minimumPayoutPercentage = filters.payout.minimum / 100;
+
+    let value = Number(orderPrice.value);
+
+    for (let i = 0; i < martingaleAmount; i += 1) {
+      value += value / minimumPayoutPercentage + value;
+    }
+
+    return formatPrice(value);
+  }, [filters.payout.minimum, martingaleAmount, orderPrice.value]);
 
   const handleSave = useCallback(
     async (data: IManagementsFormData) => {
@@ -190,13 +210,17 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
               icon={FiDollarSign}
               inputProps={{
                 variant: 'currency',
-                defaultValue: management.orderPrice.value,
+                defaultValue: orderPrice.value,
               }}
               name="orderPrice"
-              onChange={handleChange}
+              onChange={value => {
+                setOrderPrice(value);
+
+                handleChange();
+              }}
               selectProps={{
                 options: priceOptions,
-                defaultValue: management.orderPrice.selected,
+                defaultValue: orderPrice.selected,
               }}
             />
           </FormControl>
@@ -240,6 +264,7 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
 
             <FormControl
               disabled={!isMartingaleChecked}
+              hint={`Seu saldo precisa ser de no minimo ${minimumBalanceAccordingToMartingale}`}
               style={{
                 width: '47%',
               }}
@@ -249,9 +274,13 @@ export function Management({ ...rest }: Partial<IFooterBoxProps>) {
               <Input
                 allowNegative={false}
                 decimalScale={0}
-                defaultValue={management.martingale.amount}
+                defaultValue={martingaleAmount}
                 name="amount"
-                onChange={handleChange}
+                onChange={value => {
+                  setMartingaleAmount(value);
+
+                  handleChange();
+                }}
                 variant="number-format"
               />
             </FormControl>

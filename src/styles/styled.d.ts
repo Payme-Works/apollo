@@ -37,6 +37,7 @@ declare module 'styled-components' {
         mono: string;
       };
       sizes: {
+        xxs: string;
         xs: string;
         sm: string;
         md: string;
