@@ -122,11 +122,11 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M5;18:25;EURGBP-OTC;PUT 
-          M5;18:40;USDJPY-OTC;PUT 
-          M5;19:25;USDCHF-OTC;PUT 
-          M5;20:00;GBPUSD-OTC;PUT️ 
-          M5;20:20;EURUSD-OTC;PUT 
+          M5;18:25;EURGBP-OTC;PUT
+          M5;18:40;USDJPY-OTC;PUT
+          M5;19:25;USDCHF-OTC;PUT
+          M5;20:00;GBPUSD-OTC;PUT️
+          M5;20:20;EURUSD-OTC;PUT
           M5;20:55;EURUSD-OTC;CALL
           M5;21:00;EURUSD-OTC;CALL
           M5;21:55;NZDUSD-OTC;CALL
