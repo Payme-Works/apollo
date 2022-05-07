@@ -122,36 +122,31 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;04:27;GBPUSD;CALL
-          M1;05:37;GBPUSD;PUT
-          M1;05:47;AUDCAD;PUT
-          M1;09:32;AUDJPY;CALL
-          M1;10:02;AUDJPY;CALL
-          M1;10:37;AUDCAD;CALL
-          M1;11:57;AUDJPY;PUT
-          M1;14:17;EURGBP;CALL
-          M1;14:37;GBPJPY;CALL️
-          M1;14:47;AUDCAD;CALL️
-          M5;00:50;EURGBP;PUT
-          M5;03:10;EURUSD;CALL
-          M5;03:20;EURGBP;CALL
-          M5;04:15;EURJPY;CALL
-          M5;04:35;GBPJPY;PUT️
-          M5;05:00;USDCHF;PUT
-          M5;05:45;GBPUSD;PUT
-          M5;06:05;GBPJPY;CALL
-          M5;06:10;EURGBP;PUT
-          M5;06:30;AUDUSD;CALL
-          M5;07:15;EURCHF;PUT
-          M5;07:25;EURGBP;PUT
-          M5;07:35;EURUSD;PUT
-          M5;10:25;AUDUSD;CALL
-          M5;10:50;GBPJPY;CALL
-          M5;11:00;AUDCAD;CALL
-          M5;11:50;GBPJPY;CALL
-          M5;14:00;AUDJPY;PUT
-          M5;14:15;EURJPY;CALL
-          M5;15:30;AUDJPY;CALL
+          M1;02:37;EURJPY-OTC;PUT
+          M1;05:12;USDJPY-OTC;CALL
+          M1;06:57;EURGBP-OTC;CALL
+          M1;08:37;EURJPY-OTC;PUT
+          M1;09:37;AUDCAD-OTC;PUT️
+          M1;13:32;AUDCAD-OTC;CALL
+          M1;16:52;EURJPY-OTC;CALL
+          M5;00:35;EURUSD-OTC;PUT
+          M5;01:00;NZDUSD-OTC;PUT️
+          M5;02:35;EURJPY-OTC;PUT
+          M5;04:45;USDCHF-OTC;PUT
+          M5;05:10;USDJPY-OTC;CALL️
+          M5;05:15;EURUSD-OTC;CALL️
+          M5;06:55;EURGBP-OTC;CALL
+          M5;07:25;USDCHF-OTC;PUT
+          M5;08:15;EURJPY-OTC;PUT
+          M5;08:30;USDJPY-OTC;CALL️
+          M5;09:35;AUDCAD-OTC;PUT
+          M5;10:55;EURGBP-OTC;CALL️
+          M5;11:55;EURGBP-OTC;CALL️
+          M5;13:30;AUDCAD-OTC;CALL
+          M5;15:55;EURJPY-OTC;PUT
+          M5;16:50;EURJPY-OTC;CALL
+          M5;17:10;USDJPY-OTC;CALL
+          M5;17:30;EURJPY-OTC;CALL
         `;
 
         const parsedSignals = signalsTemplate
