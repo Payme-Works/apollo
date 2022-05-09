@@ -122,31 +122,36 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;01:27;EURGBP-OTC;PUT️
-          M1;04:17;EURUSD-OTC;PUT
-          M1;08:22;USDCHF-OTC;PUT️
-          M1;09:52;GBPUSD-OTC;CALL
-          M1;13:12;GBPUSD-OTC;PUT
-          M1;14:02;NZDUSD-OTC;PUT
-          M1;17:27;EURUSD-OTC;PUT
-          M5;00:55;USDJPY-OTC;CALL
-          M5;01:00;EURJPY-OTC;PUT
-          M5;01:25;EURGBP-OTC;PUT
-          M5;03:00;EURGBP-OTC;PUT
-          M5;03:30;AUDCAD-OTC;PUT
-          M5;04:15;EURUSD-OTC;PUT
-          M5;04:40;EURGBP-OTC;PUT
-          M5;06:20;EURGBP-OTC;PUT️
-          M5;07:10;USDJPY-OTC;CALL️
-          M5;08:15;USDCHF-OTC;PUT️
-          M5;09:35;AUDCAD-OTC;PUT
-          M5;09:50;GBPUSD-OTC;CALL
-          M5;11:15;EURJPY-OTC;PUT
-          M5;12:45;AUDCAD-OTC;PUT
-          M5;13:10;GBPUSD-OTC;PUT
-          M5;14:00;NZDUSD-OTC;PUT️
-          M5;14:15;EURUSD-OTC;PUT️
-          M5;17:25;EURUSD-OTC;PUT
+          M1;02:22;AUDUSD;PUT
+          M1;05:12;USDCAD;CALL
+          M1;05:37;USDCHF;CALL
+          M1;09:22;GBPJPY;CALL
+          M1;10:47;EURJPY;CALL️
+          M1;10:57;EURGBP;CALL️
+          M1;12:17;GBPJPY;PUT
+          M1;13:17;AUDJPY;CALL
+          M1;14:32;EURJPY;CALL
+          M1;15:52;EURJPY;CALL️
+          M5;01:30;EURGBP;PUT
+          M5;02:05;AUDUSD;PUT
+          M5;04:50;GBPUSD;CALL️
+          M5;05:10;USDCAD;CALL️
+          M5;06:35;EURUSD;CALL
+          M5;06:35;USDCHF;PUT
+          M5;07:05;AUDUSD;PUT
+          M5;07:10;AUDJPY;PUT
+          M5;07:55;GBPUSD;CALL️
+          M5;08:55;EURJPY;PUT️
+          M5;09:20;GBPJPY;CALL
+          M5;09:45;EURUSD;PUT
+          M5;10:45;EURGBP;PUT
+          M5;12:05;GBPJPY;CALL️
+          M5;12:20;EURJPY;PUT
+          M5;13:15;AUDJPY;CALL
+          M5;13:30;EURAUD;CALL
+          M5;14:05;EURJPY;CALL
+          M5;14:20;USDCHF;PUT
+          M5;14:40;USDCAD;CALL️
         `;
 
         const parsedSignals = signalsTemplate
