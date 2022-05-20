@@ -122,36 +122,37 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;03:52;BTCUSD;PUT️
-          M1;03:52;USDCAD;CALL
-          M1;04:22;GBPUSD;CALL
-          M1;05:12;GBPJPY;PUT
-          M1;05:27;USDJPY;CALL️
-          M1;06:07;AUDJPY;PUT️
-          M1;07:32;GBPUSD;PUT️
-          M1;08:22;GBPJPY;PUT️
-          M1;09:02;GBPJPY;PUT️
-          M1;10:47;EURGBP;PUT
-          M1;12:47;AUDJPY;PUT️
-          M1;13:57;USDCHF;PUT️
-          M5;01:05;EURUSD;PUT
-          M5;02:05;AUDUSD;PUT️
-          M5;02:55;EURGBP;PUT
-          M5;03:05;USDJPY;CALL
-          M5;04:30;EURUSD;PUT
-          M5;05:10;USDJPY;PUT
-          M5;06:25;EURUSD;CALL
-          M5;06:40;EURUSD;CALL
-          M5;07:30;GBPUSD;PUT
-          M5;08:20;GBPUSD;PUT️
-          M5;08:40;EURGBP;CALL️
-          M5;08:55;GBPJPY;PUT
-          M5;09:40;EURUSD;CALL️
+          M1;03:02;AUDUSD;CALL️
+          M1;03:57;EURJPY;PUT
+          M1;05:02;AUDCAD;CALL️
+          M1;05:42;AUDUSD;CALL
+          M1;07:37;GBPUSD;PUT️
+          M1;10:47;AUDJPY;CALL
+          M1;11:37;GBPJPY;CALL️
+          M1;11:42;EURJPY;CALL
+          M1;13:02;EURGBP;PUT️
+          M1;13:47;AUDJPY;CALL
+
+          M5;01:30;EURGBP;PUT
+          M5;02:30;EURUSD;PUT️
+          M5;02:35;EURGBP;PUT
+          M5;03:55;EURJPY;PUT
+          M5;05:10;GBPCAD;CALL
+          M5;05:35;EURJPY;PUT
+          M5;06:50;AUDCAD;PUT️
+          M5;07:15;EURUSD;PUT
+          M5;07:35;GBPUSD;PUT
+          M5;08:10;AUDCAD;PUT️
+          M5;08:35;EURUSD;CALL
+          M5;09:45;EURJPY;CALL
           M5;09:50;EURUSD;PUT
-          M5;11:05;AUDCAD;PUT
-          M5;13:00;EURUSD;PUT
-          M5;14:35;AUDCAD;PUT
-          M5;15:55;EURUSD;PUT
+          M5;10:35;GBPJPY;CALL️
+          M5;12:00;GBPUSD;CALL️
+          M5;13:15;EURUSD;PUT
+          M5;13:20;AUDJPY;CALL
+          M5;13:30;EURJPY;CALL️
+          M5;14:05;EURUSD;CALL
+          M5;14:40;EURUSD;PUT
         `;
 
         const parsedSignals = signalsTemplate
