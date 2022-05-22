@@ -122,37 +122,32 @@ export function SignalsContextProvider({ children }) {
         return joinSignals; */
 
         const signalsTemplate = `
-          M1;03:02;AUDUSD;CALL️
-          M1;03:57;EURJPY;PUT
-          M1;05:02;AUDCAD;CALL️
-          M1;05:42;AUDUSD;CALL
-          M1;07:37;GBPUSD;PUT️
-          M1;10:47;AUDJPY;CALL
-          M1;11:37;GBPJPY;CALL️
-          M1;11:42;EURJPY;CALL
-          M1;13:02;EURGBP;PUT️
-          M1;13:47;AUDJPY;CALL
+          M1;01:57;EURJPY-OTC;CALL
+          M1;03:17;USDCHF-OTC;PUT
+          M1;04:17;USDCHF-OTC;PUT
+          M1;09:12;AUDCAD-OTC;PUT
+          M1;10:27;EURUSD-OTC;PUT
+          M1;11:37;USDJPY-OTC;PUT
+          M1;15:57;EURGBP-OTC;PUT
+          M1;16:02;USDJPY-OTC;PUT
 
-          M5;01:30;EURGBP;PUT
-          M5;02:30;EURUSD;PUT️
-          M5;02:35;EURGBP;PUT
-          M5;03:55;EURJPY;PUT
-          M5;05:10;GBPCAD;CALL
-          M5;05:35;EURJPY;PUT
-          M5;06:50;AUDCAD;PUT️
-          M5;07:15;EURUSD;PUT
-          M5;07:35;GBPUSD;PUT
-          M5;08:10;AUDCAD;PUT️
-          M5;08:35;EURUSD;CALL
-          M5;09:45;EURJPY;CALL
-          M5;09:50;EURUSD;PUT
-          M5;10:35;GBPJPY;CALL️
-          M5;12:00;GBPUSD;CALL️
-          M5;13:15;EURUSD;PUT
-          M5;13:20;AUDJPY;CALL
-          M5;13:30;EURJPY;CALL️
-          M5;14:05;EURUSD;CALL
-          M5;14:40;EURUSD;PUT
+          M5;01:20;AUDCAD-OTC;PUT
+          M5;01:55;EURJPY-OTC;CALL
+          M5;03:15;USDCHF-OTC;PUT
+          M5;04:15;USDCHF-OTC;PUT
+          M5;04:15;EURJPY-OTC;CALL
+          M5;06:20;AUDCAD-OTC;CALL
+          M5;07:25;USDJPY-OTC;CALL
+          M5;08:10;EURJPY-OTC;PUT
+          M5;09:10;AUDCAD-OTC;PUT
+          M5;10:25;EURUSD-OTC;PUT
+          M5;10:50;AUDCAD-OTC;PUT
+          M5;11:35;USDJPY-OTC;PUT
+          M5;12:40;GBPUSD-OTC;PUT
+          M5;13:55;NZDUSD-OTC;PUT
+          M5;14:10;GBPUSD-OTC;PUT
+          M5;15:50;EURGBP-OTC;PUT
+          M5;16:00;USDCHF-OTC;CALL
         `;
 
         const parsedSignals = signalsTemplate
